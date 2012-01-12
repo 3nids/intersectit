@@ -37,6 +37,8 @@ class triangulation ():
 		self.pointLayer = False
 		# create rubber band to emphasis selected circles
 		self.rubber = QgsRubberBand(self.iface.mapCanvas())
+		# settings
+		self.settings = QSettings()
 
 	def initGui(self):
 		# DISTANCE
@@ -166,8 +168,11 @@ class triangulation ():
 		self.iface.mapCanvas().unsetMapTool(self.getInitialTriangulationPoint)
 		
 	def getCircles(self,point):
-		mapTolerance = 0.6 # in meters
-		rect = QgsRectangle(point.x()-mapTolerance,point.y()-mapTolerance,point.x()+mapTolerance,point.y()+mapTolerance)
+		tolerance = self.settings.value("Triangulation/tolerance",0.6).toDouble()[0]
+		units = self.settings.value("Triangulation/units","map").toString
+		if units == "pixel":
+			tolerance *= self.mapCanvas().mapUnitsPerPixel()
+		rect = QgsRectangle(point.x()-tolerance,point.y()-tolerance,point.x()+tolerance,point.y()+tolerance)
 		provider = self.lineLayer.dataProvider()
 		ix = provider.fieldNameIndex('x')
 		iy = provider.fieldNameIndex('y')
@@ -179,11 +184,11 @@ class triangulation ():
 		self.rubber.reset()
 		while (provider.nextFeature(f)):
 			fm = f.attributeMap()
-			x = fm[ix].toDouble()
-			y = fm[iy].toDouble()
-			r = fm[ir].toDouble()
-			p = fm[ip].toDouble()
-			xyrp.append([QgsPoint(x[0],y[0]),r[0],p[0]])
+			x = fm[ix].toDouble()[0]
+			y = fm[iy].toDouble()[0]
+			r = fm[ir].toDouble()[0]
+			p = fm[ip].toDouble()[0]
+			xyrp.append([QgsPoint(x,y),r,p])
 			self.rubber.addGeometry(f.geometry(),self.lineLayer)
 		return xyrp
 		
