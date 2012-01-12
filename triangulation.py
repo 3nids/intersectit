@@ -17,6 +17,7 @@ from qgis.gui import *
 
 from distance import distance
 from settings import settings
+from place_arc import placeArc
 from triangulation_process import triangulationProcess
 
 
@@ -57,7 +58,7 @@ class triangulation ():
 		self.toolBar.addAction(self.triangulAction)
 		self.iface.addPluginToMenu("&Triangulation", self.triangulAction)	
 		# settings
-		self.uisettings = settings()
+		self.uisettings = settings(self.iface)
 		QObject.connect(self.uisettings , SIGNAL( "accepted()" ) , self.applySettings)
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
@@ -174,7 +175,11 @@ class triangulation ():
 		self.pointLayer.dataProvider().addFeatures( [f] )
 		self.pointLayer.updateExtents()
 		canvas.refresh()
-
+		if self.settings.value("placeArc",1).toInt()[0] == 1:
+			dlg = placeArc(xyrp)
+			if dlg.exec_():
+				print 1
+		
 
 	def triangulationToolChanged(self, tool):
 		self.rubber.reset()
