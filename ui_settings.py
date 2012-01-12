@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Thu Jan 12 11:43:19 2012
+# Created: Thu Jan 12 14:32:50 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
         Settings.resize(292, 215)
-        Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "Triangulation :: settings", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.label = QtGui.QLabel(Settings)
@@ -54,10 +54,10 @@ class Ui_Settings(object):
         self.pixels.setObjectName(_fromUtf8("pixels"))
         self.gridLayout_2.addWidget(self.pixels, 1, 0, 1, 1)
         self.gridLayout.addWidget(self.groupBox, 0, 2, 1, 2)
-        self.createArc = QtGui.QCheckBox(Settings)
-        self.createArc.setText(QtGui.QApplication.translate("Settings", "Dimension arc in", None, QtGui.QApplication.UnicodeUTF8))
-        self.createArc.setObjectName(_fromUtf8("createArc"))
-        self.gridLayout.addWidget(self.createArc, 3, 0, 2, 2)
+        self.placeArc = QtGui.QCheckBox(Settings)
+        self.placeArc.setText(QtGui.QApplication.translate("Settings", "Dimension arc in", None, QtGui.QApplication.UnicodeUTF8))
+        self.placeArc.setObjectName(_fromUtf8("placeArc"))
+        self.gridLayout.addWidget(self.placeArc, 3, 0, 2, 2)
         self.layerList = QtGui.QComboBox(Settings)
         self.layerList.setObjectName(_fromUtf8("layerList"))
         self.gridLayout.addWidget(self.layerList, 3, 2, 1, 2)
@@ -78,6 +78,13 @@ class Ui_Settings(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Settings.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Settings.reject)
         QtCore.QMetaObject.connectSlotsByName(Settings)
+        Settings.setTabOrder(self.tolerance, self.mapUnits)
+        Settings.setTabOrder(self.mapUnits, self.pixels)
+        Settings.setTabOrder(self.pixels, self.rubberWidth)
+        Settings.setTabOrder(self.rubberWidth, self.rubberColor)
+        Settings.setTabOrder(self.rubberColor, self.placeArc)
+        Settings.setTabOrder(self.placeArc, self.layerList)
+        Settings.setTabOrder(self.layerList, self.buttonBox)
 
     def retranslateUi(self, Settings):
         pass

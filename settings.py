@@ -9,6 +9,7 @@ Init dialog for distance
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
+from qgis.core import *
 from ui_settings import Ui_Settings
 
 try:
@@ -18,7 +19,8 @@ except AttributeError:
 
 # create the dialog to connect layers
 class settings(QDialog, Ui_Settings ):
-	def __init__(self):
+	def __init__(self,iface):
+		self.iface = iface
 		QDialog.__init__(self)
 		# Set up the user interface from Designer.
 		self.setupUi(self)
@@ -39,7 +41,20 @@ class settings(QDialog, Ui_Settings ):
 		self.colorB = self.settings.value("rubber_colorB",0  ).toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
-		self.createArc.setChecked( self.settings.value( "createArc" , 1).toInt()[0] ) 
+		self.placeArc.setChecked( self.settings.value( "placeArc" , 1).toInt()[0] ) 
+		
+	def showEvent(self, e):
+		self.layers = self.iface.mapCanvas().layers()
+		dimLayerId = QgsProject.instance().readEntry("Translation", "dimension_layer", "")[0]
+		self.layerList.clear()
+		self.layerList.addItem(_fromUtf8(""))
+		l = 1
+		for layer in self.layers:
+			self.layerList.addItem(_fromUtf8(""))
+			self.layerList.setItemText(l, layer.name())
+			if layer.id() == dimLayerId:
+				self.layerList.setCurrentIndex(l)
+			l+=1
 			
 	def applySettings(self):
 		self.settings.setValue( "tolerance" , self.tolerance.value() )
@@ -51,7 +66,12 @@ class settings(QDialog, Ui_Settings ):
 		self.settings.setValue( "rubber_colorR" , self.color.red() )
 		self.settings.setValue( "rubber_colorG" , self.color.green() )
 		self.settings.setValue( "rubber_colorB" , self.color.blue() )
-		self.settings.setValue( "createArc" , int(self.createArc.isChecked()) )
+		self.settings.setValue( "placeArc" , int(self.placeArc.isChecked()) )
+		l = self.layerList.currentIndex()
+		dimLayerId = ""
+		if l > 0:
+			dimLayerId = self.layers[l-1].id()
+		QgsProject.instance().writeEntry("Translation", "dimension_layer", dimLayerId)
 
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):
@@ -61,3 +81,6 @@ class settings(QDialog, Ui_Settings ):
 	def applyColorStyle(self):
 		self.rubberColor.setStyleSheet("background-color: rgb(%u,%u,%u)" % (self.color.red(),self.color.green(),self.color.blue()))	
 			
+
+
+

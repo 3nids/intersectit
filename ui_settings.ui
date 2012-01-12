@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Triangulation :: settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
@@ -75,7 +75,7 @@
     </widget>
    </item>
    <item row="3" column="0" rowspan="2" colspan="2">
-    <widget class="QCheckBox" name="createArc">
+    <widget class="QCheckBox" name="placeArc">
      <property name="text">
       <string>Dimension arc in</string>
      </property>
@@ -112,6 +112,16 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>tolerance</tabstop>
+  <tabstop>mapUnits</tabstop>
+  <tabstop>pixels</tabstop>
+  <tabstop>rubberWidth</tabstop>
+  <tabstop>rubberColor</tabstop>
+  <tabstop>placeArc</tabstop>
+  <tabstop>layerList</tabstop>
+  <tabstop>buttonBox</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
