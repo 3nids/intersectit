@@ -126,7 +126,7 @@ class triangulation ():
 				return
 			precision = dlg.precision.value()
 			f = QgsFeature()
-			f.setGeometry(QgsGeometry.fromPolyline( [QgsPoint(point.x()+radius*math.cos(math.pi/180*a),point.y()+radius*math.sin(math.pi/180*a)) for a in range(0,360,1)] ))
+			f.setGeometry(QgsGeometry.fromPolyline( [QgsPoint(point.x()+radius*math.cos(math.pi/180*a),point.y()+radius*math.sin(math.pi/180*a)) for a in range(0,361,3)] ))
 			f.setAttributeMap( {0: QVariant(point.x()),
 								1: QVariant(point.y()),
 								2: QVariant(radius),
@@ -177,12 +177,11 @@ class triangulation ():
 		canvas.refresh()
 		if self.settings.value("placeArc",1).toInt()[0] == 1:
 			# check that dimension layer has been set
-			dimLayerId = QgsProject.instance().readEntry("Translation", "dimension_layer", "")[0]
-			layers = self.iface.mapCanvas().layers()
-			if next(    ( True for layer in layers if layer.id() == dimLayerId ),  False ) is False:
-				QMessageBox.warning( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences." )			
-				# TODO: propose to open settings dialog
-				return
+			while next(    ( True for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Translation", "dimension_layer", "")[0] ),  False ) is False:
+				reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+				if reply == QMessageBox.No:	
+					return
+				self.uisettings.exec_()
 			dlg = placeArc(self.iface,xyrp)
 			if dlg.exec_():
 				print 1
