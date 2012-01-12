@@ -6,8 +6,11 @@ Jan. 2012
 
 Process class
 """
-import math
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
 from qgis.core import *
+
+import math
 
 import numpy as np
 from numpy import linalg as la
