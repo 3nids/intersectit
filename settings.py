@@ -22,6 +22,42 @@ class settings(QDialog, Ui_Settings ):
 		QDialog.__init__(self)
 		# Set up the user interface from Designer.
 		self.setupUi(self)
-
+		QObject.connect(self , SIGNAL( "accepted()" ) , self.applySettings)
+		# load settings
+		self.settings = QSettings("Triangulation","Triangulation")
 		
+		self.tolerance.setValue(self.settings.value("tolerance",0.6).toDouble()[0])
+		if self.settings.value( "units" , "map").toString() == "map":
+			self.mapUnits.setChecked(True)
+			self.pixels.setChecked(False)
+		else:
+			self.mapUnits.setChecked(False)
+			self.pixels.setChecked(True)
+		self.rubberWidth.setValue(self.settings.value("rubber_width",2).toDouble()[0])
+		self.colorR = self.settings.value("rubber_colorR",255).toInt()[0]
+		self.colorG = self.settings.value("rubber_colorG",0  ).toInt()[0]
+		self.colorB = self.settings.value("rubber_colorB",0  ).toInt()[0]
+		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
+		self.applyColorStyle()
+		self.createArc.setChecked( self.settings.value( "createArc" , 1).toInt()[0] ) 
+			
+	def applySettings(self):
+		self.settings.setValue( "tolerance" , self.tolerance.value() )
+		if self.mapUnits.isChecked():
+			self.settings.setValue( "units" , "map")
+		else:
+			self.settings.setValue( "units" , "pixels")		
+		self.settings.setValue( "rubber_width" , self.rubberWidth.value() )	
+		self.settings.setValue( "rubber_colorR" , self.color.red() )
+		self.settings.setValue( "rubber_colorG" , self.color.green() )
+		self.settings.setValue( "rubber_colorB" , self.color.blue() )
+		self.settings.setValue( "createArc" , int(self.createArc.isChecked()) )
+
+	@pyqtSignature("on_rubberColor_clicked()")
+	def on_rubberColor_clicked(self):
+		self.color = QColorDialog.getColor(self.color)
+		self.applyColorStyle()
+		
+	def applyColorStyle(self):
+		self.rubberColor.setStyleSheet("background-color: rgb(%u,%u,%u)" % (self.color.red(),self.color.green(),self.color.blue()))	
 			

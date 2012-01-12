@@ -39,7 +39,7 @@ class triangulation ():
 		# create rubber band to emphasis selected circles
 		self.rubber = QgsRubberBand(self.iface.mapCanvas())
 		# settings
-		self.settings = QSettings()
+		self.settings = QSettings("Triangulation","Triangulation")
 
 	def initGui(self):
 		self.toolBar = self.iface.addToolBar("Triangulation")
@@ -76,12 +76,12 @@ class triangulation ():
 			return
 			
 	def applySettings(self):
-		self.settings.setValue( "triangulation/tolerance" , self.uisettings.tolerance.value() )
-		if self.uisettings.mapUnits.isChecked():
-			self.settings.setValue( "triangulation/units" , "map")
-		else:
-			self.settings.setValue( "triangulation/units" , "pixels")
-
+		self.rubber.setWidth( self.settings.value("rubber_width",2).toDouble()[0] )
+		R = self.settings.value("rubber_colorR",255).toInt()[0]
+		G = self.settings.value("rubber_colorG",0  ).toInt()[0]
+		B = self.settings.value("rubber_colorB",0  ).toInt()[0]
+		self.rubber.setColor(QColor(R,G,B,255))		
+			
 	def lineLayerDeleted(self):
 		self.lineLayer = False
 
@@ -183,8 +183,8 @@ class triangulation ():
 		self.iface.mapCanvas().unsetMapTool(self.getInitialTriangulationPoint)
 		
 	def getCircles(self,point):
-		tolerance = self.settings.value("Triangulation/tolerance",0.6).toDouble()[0]
-		units = self.settings.value("Triangulation/units","map").toString()
+		tolerance = self.settings.value("tolerance",0.6).toDouble()[0]
+		units = self.settings.value("units","map").toString()
 		if units == "pixels":
 			tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
 		rect = QgsRectangle(point.x()-tolerance,point.y()-tolerance,point.x()+tolerance,point.y()+tolerance)
