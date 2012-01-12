@@ -1,3 +1,0 @@
-rm ~/.qgis/python/plugins/triangulation/*
-cp ~/Documents/triangulation/* ~/.qgis/python/plugins/triangulation/
-~/opt/builds/bin/qgis &
