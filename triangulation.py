@@ -176,7 +176,14 @@ class triangulation ():
 		self.pointLayer.updateExtents()
 		canvas.refresh()
 		if self.settings.value("placeArc",1).toInt()[0] == 1:
-			dlg = placeArc(xyrp)
+			# check that dimension layer has been set
+			dimLayerId = QgsProject.instance().readEntry("Translation", "dimension_layer", "")[0]
+			layers = self.iface.mapCanvas().layers()
+			if next(    ( True for layer in layers if layer.id() == dimLayerId ),  False ) is False:
+				QMessageBox.warning( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences." )			
+				# TODO: propose to open settings dialog
+				return
+			dlg = placeArc(self.iface,xyrp)
 			if dlg.exec_():
 				print 1
 		
