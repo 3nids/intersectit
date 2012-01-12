@@ -73,7 +73,7 @@ class triangulationProcess:
 		return QgsPoint(x0[0],x0[1])
 						
 	def twoCirclesIntersect(self):
-		# cf http://www.mathpages.com/home/kmath396/kmath396.htm
+		# see http://www.mathpages.com/home/kmath396/kmath396.htm
 		[pt1,r1,p1] = self.xyrp[0]
 		[pt2,r2,p2] = self.xyrp[1]
 		x1 = pt1.x()
