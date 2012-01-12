@@ -16,6 +16,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from distance import distance
+from settings import settings
 from triangulation_process import triangulationProcess
 
 
@@ -41,23 +42,28 @@ class triangulation ():
 		self.settings = QSettings()
 
 	def initGui(self):
-		# DISTANCE
-		self.distanceAction = QAction(QIcon(":/plugins/triangulation/icons/distance.png"), "distance tool", self.iface.mainWindow())
+		self.toolBar = self.iface.addToolBar("Triangulation")
+		self.toolBar.setObjectName("Triangulation")
+		# distance
+		self.distanceAction = QAction(QIcon(":/plugins/triangulation/icons/distance.png"), "insert distance", self.iface.mainWindow())
 		self.distanceAction.setCheckable(True)
-		# connect the action to the run method
 		QObject.connect(self.distanceAction, SIGNAL("triggered()"), self.distanceStart)
-		# Add toolbar button and menu item
-		self.iface.addToolBarIcon(self.distanceAction)
+		self.toolBar.addAction(self.distanceAction)
 		self.iface.addPluginToMenu("&Triangulation", self.distanceAction)	
-		# TRIANGULATION
-		self.triangulAction = QAction(QIcon(":/plugins/triangulation/icons/intersect.png"), "distance tool", self.iface.mainWindow())
+		# triangulation
+		self.triangulAction = QAction(QIcon(":/plugins/triangulation/icons/intersect.png"), "triangulate", self.iface.mainWindow())
 		self.triangulAction.setCheckable(True)
-		# connect the action to the run method
 		QObject.connect(self.triangulAction, SIGNAL("triggered()"), self.triangulationStart)
-		# Add toolbar button and menu item
-		self.iface.addToolBarIcon(self.triangulAction)
+		self.toolBar.addAction(self.triangulAction)
 		self.iface.addPluginToMenu("&Triangulation", self.triangulAction)	
+		# settings
+		self.uisettings = settings()
+		QObject.connect(self.uisettings , SIGNAL( "accepted()" ) , self.applySettings)
+		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
+		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
+		self.iface.addPluginToMenu("&Triangulation", self.uisettingsAction)	
 		
+				
 	def unload(self):
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
@@ -68,6 +74,13 @@ class triangulation ():
 			QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer.id()) 
 		except AttributeError:
 			return
+			
+	def applySettings(self):
+		self.settings.setValue( "triangulation/tolerance" , self.uisettings.tolerance.value() )
+		if self.uisettings.mapUnits.isChecked():
+			self.settings.setValue( "triangulation/units" , "map")
+		else:
+			self.settings.setValue( "triangulation/units" , "pixels")
 
 	def lineLayerDeleted(self):
 		self.lineLayer = False
@@ -154,7 +167,8 @@ class triangulation ():
 		try:
 			triangulatedPoint =  self.triangulationProcess.getSolution()
 		except NameError as detail:
-				QMessageBox.warning( self.iface , "Triangulation", detail )
+				QMessageBox.warning( self.iface.mainWindow() , "Triangulation", "%s" % detail )
+				return
 		f = QgsFeature()
 		f.setGeometry(QgsGeometry.fromPoint(triangulatedPoint))
 		self.pointLayer.dataProvider().addFeatures( [f] )
@@ -163,15 +177,16 @@ class triangulation ():
 
 
 	def triangulationToolChanged(self, tool):
+		self.rubber.reset()
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
 		self.triangulAction.setChecked( False )
 		self.iface.mapCanvas().unsetMapTool(self.getInitialTriangulationPoint)
 		
 	def getCircles(self,point):
 		tolerance = self.settings.value("Triangulation/tolerance",0.6).toDouble()[0]
-		units = self.settings.value("Triangulation/units","map").toString
-		if units == "pixel":
-			tolerance *= self.mapCanvas().mapUnitsPerPixel()
+		units = self.settings.value("Triangulation/units","map").toString()
+		if units == "pixels":
+			tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
 		rect = QgsRectangle(point.x()-tolerance,point.y()-tolerance,point.x()+tolerance,point.y()+tolerance)
 		provider = self.lineLayer.dataProvider()
 		ix = provider.fieldNameIndex('x')
