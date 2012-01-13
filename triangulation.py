@@ -91,7 +91,7 @@ class triangulation ():
 		layerID = QgsProject.instance().readEntry("Triangulation", "memory_line_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=x:double&field=y:double&field=radius:double&field=precision:double&index=yes", "Triangulation", "memory") 
+			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=x:double&field=y:double&field=radius:double&field=precision:double&index=yes", "Triangulation Lines", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
 			QgsProject.instance().writeEntry("Triangulation", "memory_line_layer", layer.id())
@@ -101,7 +101,7 @@ class triangulation ():
 		layerID = QgsProject.instance().readEntry("Triangulation", "memory_point_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("Point?crs=EPSG:21781&index=yes", "Triangulation", "memory") 
+			layer = QgsVectorLayer("Point?crs=EPSG:21781&index=yes", "Triangulation Points", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
 			QgsProject.instance().writeEntry("Triangulation", "memory_point_layer", layer.id())
