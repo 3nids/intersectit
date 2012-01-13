@@ -105,7 +105,6 @@ class triangulation ():
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
 			QgsProject.instance().writeEntry("Triangulation", "memory_point_layer", layer.id())
-		print layer.id()
 		return layer			
 
 	def distanceStart(self):
@@ -182,7 +181,7 @@ class triangulation ():
 			while next(    ( True for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ),  False ) is False:
 				reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	 return
-				if self.uisettings.exec_() is False: return
+				if self.uisettings.exec_() == 0: return
 			dlg = placeArc(self.iface,xyrp)
 			if dlg.exec_():
 				print 1
