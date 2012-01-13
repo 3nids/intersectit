@@ -45,7 +45,7 @@ class settings(QDialog, Ui_Settings ):
 		
 	def showEvent(self, e):
 		self.layers = self.iface.mapCanvas().layers()
-		dimLayerId = QgsProject.instance().readEntry("Translation", "dimension_layer", "")[0]
+		dimLayerId = QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0]
 		self.layerList.clear()
 		self.layerList.addItem(_fromUtf8(""))
 		l = 1
@@ -71,7 +71,7 @@ class settings(QDialog, Ui_Settings ):
 		dimLayerId = ""
 		if l > 0:
 			dimLayerId = self.layers[l-1].id()
-		QgsProject.instance().writeEntry("Translation", "dimension_layer", dimLayerId)
+		QgsProject.instance().writeEntry("Triangulation", "dimension_layer", dimLayerId)
 
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):
