@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Thu Jan 12 14:32:50 2012
+# Created: Fri Jan 13 14:38:40 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -58,9 +58,9 @@ class Ui_Settings(object):
         self.placeArc.setText(QtGui.QApplication.translate("Settings", "Dimension arc in", None, QtGui.QApplication.UnicodeUTF8))
         self.placeArc.setObjectName(_fromUtf8("placeArc"))
         self.gridLayout.addWidget(self.placeArc, 3, 0, 2, 2)
-        self.layerList = QtGui.QComboBox(Settings)
-        self.layerList.setObjectName(_fromUtf8("layerList"))
-        self.gridLayout.addWidget(self.layerList, 3, 2, 1, 2)
+        self.layerCombo = QtGui.QComboBox(Settings)
+        self.layerCombo.setObjectName(_fromUtf8("layerCombo"))
+        self.gridLayout.addWidget(self.layerCombo, 3, 2, 1, 2)
         self.rubberWidth = QtGui.QDoubleSpinBox(Settings)
         self.rubberWidth.setToolTip(_fromUtf8(""))
         self.rubberWidth.setDecimals(1)
@@ -83,8 +83,8 @@ class Ui_Settings(object):
         Settings.setTabOrder(self.pixels, self.rubberWidth)
         Settings.setTabOrder(self.rubberWidth, self.rubberColor)
         Settings.setTabOrder(self.rubberColor, self.placeArc)
-        Settings.setTabOrder(self.placeArc, self.layerList)
-        Settings.setTabOrder(self.layerList, self.buttonBox)
+        Settings.setTabOrder(self.placeArc, self.layerCombo)
+        Settings.setTabOrder(self.layerCombo, self.buttonBox)
 
     def retranslateUi(self, Settings):
         pass

@@ -46,16 +46,31 @@ class settings(QDialog, Ui_Settings ):
 	def showEvent(self, e):
 		self.layers = self.iface.mapCanvas().layers()
 		dimLayerId = QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0]
-		self.layerList.clear()
-		self.layerList.addItem(_fromUtf8(""))
+		self.layerCombo.clear()
+		self.layerCombo.addItem(_fromUtf8(""))
 		l = 1
 		for layer in self.layers:
-			self.layerList.addItem(_fromUtf8(""))
-			self.layerList.setItemText(l, layer.name())
+			self.layerCombo.addItem(_fromUtf8("") )
+			self.layerCombo.setItemText(l, layer.name())
 			if layer.id() == dimLayerId:
-				self.layerList.setCurrentIndex(l)
+				self.layerCombo.setCurrentIndex(l)
 			l+=1
 			
+	@pyqtSignature("on_layerCombo_currentIndexChanged(int)")
+	def on_layerCombo_currentIndexChanged(self,i):
+		if i == 0: return
+		if self.layers[i-1].type() != QgsMapLayer.VectorLayer:
+			QMessageBox.warning( self , "Triangulation", QApplication.translate("Triangulation", "The dimension layer must be a vector layer.", None, QApplication.UnicodeUTF8) )
+			self.layerCombo.setCurrentIndex(0)
+			return
+		if self.layers[i-1].hasGeometryType() is False:
+			QMessageBox.warning( self , "Triangulation", QApplication.translate("Triangulation", "The dimension layer has no geometry.", None, QApplication.UnicodeUTF8) )
+			self.layerCombo.setCurrentIndex(0)
+			return
+			
+		print self.layers[i-1].dataProvider().geometryType() , self.layers[i-1].geometryType()
+	
+						
 	def applySettings(self):
 		self.settings.setValue( "tolerance" , self.tolerance.value() )
 		if self.mapUnits.isChecked():
@@ -67,10 +82,10 @@ class settings(QDialog, Ui_Settings ):
 		self.settings.setValue( "rubber_colorG" , self.color.green() )
 		self.settings.setValue( "rubber_colorB" , self.color.blue() )
 		self.settings.setValue( "placeArc" , int(self.placeArc.isChecked()) )
-		l = self.layerList.currentIndex()
+		l = self.layerCombo.currentIndex()
 		dimLayerId = ""
 		if l > 0:
-			dimLayerId = self.layers[l-1].id()
+			dimLayerId = self.layers[l-1].id()		
 		QgsProject.instance().writeEntry("Triangulation", "dimension_layer", dimLayerId)
 
 	@pyqtSignature("on_rubberColor_clicked()")

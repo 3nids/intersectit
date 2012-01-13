@@ -82,7 +82,7 @@
     </widget>
    </item>
    <item row="3" column="2" colspan="2">
-    <widget class="QComboBox" name="layerList"/>
+    <widget class="QComboBox" name="layerCombo"/>
    </item>
    <item row="2" column="2">
     <widget class="QDoubleSpinBox" name="rubberWidth">
@@ -119,7 +119,7 @@
   <tabstop>rubberWidth</tabstop>
   <tabstop>rubberColor</tabstop>
   <tabstop>placeArc</tabstop>
-  <tabstop>layerList</tabstop>
+  <tabstop>layerCombo</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -132,7 +132,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>227</x>
-     <y>187</y>
+     <y>205</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -148,7 +148,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>248</x>
-     <y>193</y>
+     <y>205</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
