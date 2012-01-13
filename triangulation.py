@@ -35,8 +35,6 @@ class triangulation ():
 	def __init__(self, iface):
 		# Save reference to the QGIS interface
 		self.iface = iface
-		self.lineLayer = False
-		self.pointLayer = False
 		# create rubber band to emphasis selected circles
 		self.rubber = QgsRubberBand(self.iface.mapCanvas())
 		# settings
@@ -71,7 +69,7 @@ class triangulation ():
 		print "TODO: instersect unload"
 		try:
 			print "Triangulation :: Removing temporary layer"
-			QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer.id()) 
+			QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id()) 
 			QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer.id()) 
 		except AttributeError:
 			return
@@ -84,31 +82,38 @@ class triangulation ():
 		self.rubber.setColor(QColor(R,G,B,255))		
 			
 	def lineLayerDeleted(self):
-		self.lineLayer = False
+		QgsProject.instance().writeEntry("Triangulation", "memory_line_layer", "")
 
 	def pointLayerDeleted(self):
-		self.pointLayer = False
-
-	def createLineMemoryLayer(self):	
-		self.lineLayer = QgsVectorLayer("LineString?crs=EPSG:21781&field=x:double&field=y:double&field=radius:double&field=precision:double&index=yes", "Triangulation", "memory") 
-		QgsMapLayerRegistry.instance().addMapLayer(self.lineLayer) 
-		QObject.connect( self.lineLayer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
-
-	def createPointMemoryLayer(self):	
-		self.pointLayer = QgsVectorLayer("Point?crs=EPSG:21781&index=yes", "Triangulation", "memory") 
-		QgsMapLayerRegistry.instance().addMapLayer(self.pointLayer) 
-		QObject.connect( self.pointLayer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
+		QgsProject.instance().writeEntry("Triangulation", "memory_point_layer", "")
 		
+	def lineLayer(self):
+		layerID = QgsProject.instance().readEntry("Triangulation", "memory_line_layer", "")[0]
+		layer = next(    ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == layerID ),  False ) 
+		if layer is False:
+			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=x:double&field=y:double&field=radius:double&field=precision:double&index=yes", "Triangulation", "memory") 
+			QgsMapLayerRegistry.instance().addMapLayer(layer) 
+			QObject.connect( layer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
+			QgsProject.instance().writeEntry("Triangulation", "memory_line_layer", layer.id())
+		return layer			
+
+	def pointLayer(self):
+		layerID = QgsProject.instance().readEntry("Triangulation", "memory_point_layer", "")[0]
+		layer = next(    ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == layerID ),  False ) 
+		if layer is False:
+			layer = QgsVectorLayer("Point?crs=EPSG:21781&index=yes", "Triangulation", "memory") 
+			QgsMapLayerRegistry.instance().addMapLayer(layer) 
+			QObject.connect( layer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
+			QgsProject.instance().writeEntry("Triangulation", "memory_point_layer", layer.id())
+		print layer.id()
+		return layer			
+
 	def distanceStart(self):
 		canvas = self.iface.mapCanvas()
 		if self.distanceAction.isChecked() is False:
 			canvas.unsetMapTool(self.getDistancePoint)
 			return
 		self.distanceAction.setChecked( True )
-		if self.lineLayer is False:
-			self.createLineMemoryLayer()
-		if self.pointLayer is False:
-			self.createPointMemoryLayer()
 		self.getDistancePoint = getPoint(canvas)
 		QObject.connect(self.getDistancePoint , SIGNAL("canvasClickedWithModifiers") , self.distanceOnCanvasClicked ) 
 		canvas.setMapTool(self.getDistancePoint)
@@ -118,7 +123,7 @@ class triangulation ():
 		if button != Qt.LeftButton:
 			return
 		canvas = self.iface.mapCanvas()
-		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer, point)
+		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
 		dlg = distance(point)
 		if dlg.exec_():
 			radius    = dlg.distance.value()
@@ -131,12 +136,12 @@ class triangulation ():
 								1: QVariant(point.y()),
 								2: QVariant(radius),
 								3: QVariant(precision)} )
-			self.lineLayer.dataProvider().addFeatures( [f] )
-			self.lineLayer.updateExtents()
+			self.lineLayer().dataProvider().addFeatures( [f] )
+			self.lineLayer().updateExtents()
 			f = QgsFeature()
 			f.setGeometry(QgsGeometry.fromPoint(point))
-			self.pointLayer.dataProvider().addFeatures( [f] )
-			self.pointLayer.updateExtents()
+			self.pointLayer().dataProvider().addFeatures( [f] )
+			self.pointLayer().updateExtents()
 			canvas.refresh()
 		
 	def distanceToolChanged(self, tool):
@@ -149,9 +154,6 @@ class triangulation ():
 		if self.triangulAction.isChecked() is False:
 			canvas.unsetMapTool(self.getInitialTriangulationPoint)
 			return
-		if self.lineLayer is False or self.pointLayer is False:
-			self.triangulAction.setChecked(False)
-			return
 		self.triangulAction.setChecked( True )
 		self.getInitialTriangulationPoint = getPoint(canvas)
 		QObject.connect(self.getInitialTriangulationPoint , SIGNAL("canvasClickedWithModifiers") , self.triangulationOnCanvasClicked ) 
@@ -162,7 +164,7 @@ class triangulation ():
 		if button != Qt.LeftButton:
 			return
 		canvas = self.iface.mapCanvas()
-		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer, point)
+		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
 		xyrp = self.getCircles(point)
 		self.triangulationProcess = triangulationProcess(point,xyrp)		
 		try:
@@ -172,12 +174,12 @@ class triangulation ():
 				return
 		f = QgsFeature()
 		f.setGeometry(QgsGeometry.fromPoint(triangulatedPoint))
-		self.pointLayer.dataProvider().addFeatures( [f] )
-		self.pointLayer.updateExtents()
+		self.pointLayer().dataProvider().addFeatures( [f] )
+		self.pointLayer().updateExtents()
 		canvas.refresh()
 		if self.settings.value("placeArc",1).toInt()[0] == 1:
 			# check that dimension layer has been set
-			while next(    ( True for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Translation", "dimension_layer", "")[0] ),  False ) is False:
+			while next(    ( True for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ),  False ) is False:
 				reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	 return
 				if ~self.uisettings.exec_(): return
@@ -198,7 +200,7 @@ class triangulation ():
 		if units == "pixels":
 			tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
 		rect = QgsRectangle(point.x()-tolerance,point.y()-tolerance,point.x()+tolerance,point.y()+tolerance)
-		provider = self.lineLayer.dataProvider()
+		provider = self.lineLayer().dataProvider()
 		ix = provider.fieldNameIndex('x')
 		iy = provider.fieldNameIndex('y')
 		ir = provider.fieldNameIndex('radius')
@@ -214,7 +216,7 @@ class triangulation ():
 			r = fm[ir].toDouble()[0]
 			p = fm[ip].toDouble()[0]
 			xyrp.append([QgsPoint(x,y),r,p])
-			self.rubber.addGeometry(f.geometry(),self.lineLayer)
+			self.rubber.addGeometry(f.geometry(),self.lineLayer())
 		return xyrp
 		
 class getPoint(QgsMapToolEmitPoint):
