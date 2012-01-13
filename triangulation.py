@@ -164,8 +164,8 @@ class triangulation ():
 			return
 		canvas = self.iface.mapCanvas()
 		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
-		xyrp = self.getCircles(point)
-		self.triangulationProcess = triangulationProcess(point,xyrp)		
+		xyrpi = self.getCircles(point)
+		self.triangulationProcess = triangulationProcess(point,xyrpi)		
 		try:
 			triangulatedPoint =  self.triangulationProcess.getSolution()
 		except NameError as detail:
@@ -178,11 +178,13 @@ class triangulation ():
 		canvas.refresh()
 		if self.settings.value("placeArc",1).toInt()[0] == 1:
 			# check that dimension layer has been set
-			while next(    ( True for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ),  False ) is False:
+			dimLayer = next(    ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ),  False )
+			while dimLayer is False:
 				reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	 return
 				if self.uisettings.exec_() == 0: return
-			dlg = placeArc(self.iface,xyrp)
+				dimLayer = next(    ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ),  False )
+			dlg = placeArc(self.iface,dimLayer,triangulatedPoint,xyrpi)
 			if dlg.exec_():
 				print 1
 		
@@ -205,7 +207,7 @@ class triangulation ():
 		ir = provider.fieldNameIndex('radius')
 		ip = provider.fieldNameIndex('precision')
 		provider.select([ix,iy,ir,ip], rect, True, True)
-		xyrp = []
+		xyrpi = []
 		f = QgsFeature()
 		self.rubber.reset()
 		while (provider.nextFeature(f)):
@@ -214,9 +216,9 @@ class triangulation ():
 			y = fm[iy].toDouble()[0]
 			r = fm[ir].toDouble()[0]
 			p = fm[ip].toDouble()[0]
-			xyrp.append([QgsPoint(x,y),r,p])
+			xyrpi.append([QgsPoint(x,y),r,p,f.id()])
 			self.rubber.addGeometry(f.geometry(),self.lineLayer())
-		return xyrp
+		return xyrpi
 		
 class getPoint(QgsMapToolEmitPoint):
 	def __init__(self, canvas):

@@ -18,10 +18,10 @@ from numpy import linalg as la
 
 
 class triangulationProcess:
-	def __init__(self,initPoint,xyrp):
+	def __init__(self,initPoint,xyrpi):
 		self.initPoint = initPoint
-		self.xyrp = xyrp
-		self.nc = len(xyrp)
+		self.xyrpi = xyrpi
+		self.nc = len(xyrpi)
 		
 	def getSolution(self):
 		if self.nc<2:
@@ -47,15 +47,15 @@ class triangulationProcess:
 		dx = [2*threshold,2*threshold]
 		while min(dx)>threshold:
 			# jacobian for parameters
-			A   = np.array( [ [2*self.initPoint.x()-2*c[0].x(),2*self.initPoint.y()-2*c[0].y()] for c in self.xyrp ] )
+			A   = np.array( [ [2*self.initPoint.x()-2*c[0].x(),2*self.initPoint.y()-2*c[0].y()] for c in self.xyrpi ] )
 			# jacobian for observations
-			B   = np.diag( [ -2*c[1] for c in self.xyrp ] )
+			B   = np.diag( [ -2*c[1] for c in self.xyrpi ] )
 			# stochastic model
-			Qll = np.diag([math.pow(1/c[2],2)   for c in self.xyrp ])
+			Qll = np.diag([math.pow(1/c[2],2)   for c in self.xyrpi ])
 			Pm  = np.dot( B , np.dot(Qll,B.T) )
 			P   = la.inv( Pm )
 			# misclosure
-			w   = np.array([ math.pow(x0[0]-c[0].x(),2) + math.pow(x0[1]-c[0].y(),2) - math.pow(c[1],2) for c in self.xyrp ])
+			w   = np.array([ math.pow(x0[0]-c[0].x(),2) + math.pow(x0[1]-c[0].y(),2) - math.pow(c[1],2) for c in self.xyrpi ])
 			# normal matrix
 			N = np.dot( A.T , np.dot(P,A) )
 			u = np.dot( A.T , np.dot(P,w) )
@@ -74,8 +74,8 @@ class triangulationProcess:
 						
 	def twoCirclesIntersect(self):
 		# see http://www.mathpages.com/home/kmath396/kmath396.htm
-		[pt1,r1,p1] = self.xyrp[0]
-		[pt2,r2,p2] = self.xyrp[1]
+		[pt1,r1,p1,i1] = self.xyrpi[0]
+		[pt2,r2,p2,i2] = self.xyrpi[1]
 		x1 = pt1.x()
 		y1 = pt1.y()
 		x2 = pt2.x()
