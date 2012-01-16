@@ -124,8 +124,6 @@ class settings(QDialog, Ui_Settings ):
 		QgsProject.instance().writeEntry("Triangulation", "dimension_layer", dimLayerId)
 		QgsProject.instance().writeEntry("Triangulation", "dimension_field", self.fieldCombo.currentText() )
 
-
-
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):
 		self.color = QColorDialog.getColor(self.color)
@@ -133,7 +131,3 @@ class settings(QDialog, Ui_Settings ):
 		
 	def applyColorStyle(self):
 		self.rubberColor.setStyleSheet("background-color: rgb(%u,%u,%u)" % (self.color.red(),self.color.green(),self.color.blue()))	
-			
-
-
-
