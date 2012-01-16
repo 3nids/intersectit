@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_arc.ui'
 #
-# Created: Thu Jan 12 14:46:12 2012
+# Created: Mon Jan 16 16:53:15 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -21,9 +21,9 @@ class Ui_placeArc(object):
         placeArc.setWindowTitle(QtGui.QApplication.translate("placeArc", "Triangulation :: place arc", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(placeArc)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.distanceList = QtGui.QComboBox(placeArc)
-        self.distanceList.setObjectName(_fromUtf8("distanceList"))
-        self.gridLayout.addWidget(self.distanceList, 0, 1, 1, 4)
+        self.arcCombo = QtGui.QComboBox(placeArc)
+        self.arcCombo.setObjectName(_fromUtf8("arcCombo"))
+        self.gridLayout.addWidget(self.arcCombo, 0, 1, 1, 4)
         self.buttonBox = QtGui.QDialogButtonBox(placeArc)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
@@ -71,8 +71,8 @@ class Ui_placeArc(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), placeArc.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), placeArc.reject)
         QtCore.QMetaObject.connectSlotsByName(placeArc)
-        placeArc.setTabOrder(self.buttonBox, self.distanceList)
-        placeArc.setTabOrder(self.distanceList, self.nextButton)
+        placeArc.setTabOrder(self.buttonBox, self.arcCombo)
+        placeArc.setTabOrder(self.arcCombo, self.nextButton)
         placeArc.setTabOrder(self.nextButton, self.createBox)
         placeArc.setTabOrder(self.createBox, self.radiusSlider)
         placeArc.setTabOrder(self.radiusSlider, self.radiusSpin)

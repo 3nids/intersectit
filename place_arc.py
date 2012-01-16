@@ -23,6 +23,7 @@ except AttributeError:
 class placeArc(QDialog, Ui_placeArc ):
 	def __init__(self,iface,layer,triangulatedPoint,xyrpi):
 		self.layer = layer
+		defaultRadius = 40
 		QDialog.__init__(self)
 		# Set up the user interface from Designer.
 		self.setupUi(self)
@@ -33,13 +34,34 @@ class placeArc(QDialog, Ui_placeArc ):
 
 		self.settings = QSettings("Triangulation","Triangulation")
 		
-		radius = 40
 		self.xyrpi = xyrpi
 		self.arc = []
+		self.arcCombo.clear()
+		ii = 0
+		nn = len(xyrpi)
 		for c in xyrpi:
+			self.arcCombo.addItem(_fromUtf8(""))
+			self.arcCombo.setItemText( ii , "%u/%u" % (ii,nn) )
+			
 			point = c[0]
-			self.arc.append(arc(iface,layer,triangulatedPoint,point,radius))
+			self.arc.append(arc(iface,layer,triangulatedPoint,point,defaultRadius))
+			ii += 1
+			
+	def currentArc(self):
+		return self.arcCombo.currentIndex()
 		
+	def radius(self):
+		return self.radiusSlider.value()
+	
+	
+	@pyqtSignature("on_createBox_stateChanged(int)")
+	def on_createBox_stateChanged(self,i):
+		if i == 0:
+			print i,self.currentArc()
+			self.arc[self.currentArc()].delete()
+		else:
+			self.arc[self.currentArc()].createFeature(self.radius())
+	
 		
 	def radiusChanged(self,radius):
 		self.arc[0].draw(radius)
@@ -54,6 +76,7 @@ class arc():
 	def __init__(self,iface,layer,triangulatedPoint,distancePoint,radius):
 		self.iface = iface
 		self.layer = layer
+		self.provider = layer.dataProvider()
 		self.rubber = QgsRubberBand(iface.mapCanvas())
 		self.rubber.setWidth(2)
 		
@@ -65,28 +88,30 @@ class arc():
 		self.direction         = [ -(triangulatedPoint.y()-distancePoint.y())   ,  triangulatedPoint.x()-distancePoint.x()    ]
 		self.way = 1
 		
+		self.createFeature(radius)
+
+
+	def createFeature(self,radius):
 		# create feature and geometry
 		f = QgsFeature()
 		f.setGeometry(self.geometry(radius))
 		# look for dimension label
 		dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
-		ilbl = self.layer.dataProvider().fieldNameIndex(dimFieldName)
+		ilbl = self.provider.fieldNameIndex(dimFieldName)
 		if ilbl != -1:
-			f.addAttribute(ilbl,"%.2f" % self.length)
+			f.addAttribute(ilbl,QVariant("%.2f" % self.length))
 		# look for primary key
-		iid  = self.layer.dataProvider().fieldNameIndex('id')
-		iid = -1
+		iid  = self.provider.fieldNameIndex('id')
 		if iid != -1:
-			f.addAttribute(iid,'nextval(distribution.dimension_id_seq::regclass)')
+			self.fid = self.provider.maximumValue(iid).toInt()[0]+1
+			f.addAttribute(iid,self.fid)
 		# add feature to layer	
-		self.layer.dataProvider().addFeatures( [f] )
+		self.provider.addFeatures( [f] )
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
-		# save id
-		print f.attributeMap()
-		print f.id()
-		self.fid = f.id()
 		
+	def delete(self):
+		self.provider.deleteFeatures([self.fid])
 		
 	def reverse(self):
 		self.way *= 1	
@@ -94,7 +119,7 @@ class arc():
 	
 	def draw(self,radius):
 		f = QgsFeature()
-		self.layer.dataProvider().featureAtId(self.fid,f)
+		self.provider.featureAtId(self.fid,f)
 		f.setGeometry(self.geometry(radius))
 		
 		

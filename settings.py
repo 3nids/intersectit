@@ -106,7 +106,7 @@ class settings(QDialog, Ui_Settings ):
 			self.fieldCombo.setItemText( l, field )
 			if field == dimFieldName:
 				self.fieldCombo.setCurrentIndex(l)	
-			l += 1	
+			l += 1
 						
 	def applySettings(self):
 		self.settings.setValue( "tolerance" , self.tolerance.value() )

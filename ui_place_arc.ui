@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="1" colspan="4">
-    <widget class="QComboBox" name="distanceList"/>
+    <widget class="QComboBox" name="arcCombo"/>
    </item>
    <item row="5" column="1" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -107,7 +107,7 @@
  </widget>
  <tabstops>
   <tabstop>buttonBox</tabstop>
-  <tabstop>distanceList</tabstop>
+  <tabstop>arcCombo</tabstop>
   <tabstop>nextButton</tabstop>
   <tabstop>createBox</tabstop>
   <tabstop>radiusSlider</tabstop>
