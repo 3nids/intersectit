@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>292</width>
-    <height>215</height>
+    <width>366</width>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="4">
+   <item row="8" column="0" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -74,16 +74,6 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" rowspan="2" colspan="2">
-    <widget class="QCheckBox" name="placeArc">
-     <property name="text">
-      <string>Dimension arc in</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="2" colspan="2">
-    <widget class="QComboBox" name="layerCombo"/>
-   </item>
    <item row="2" column="2">
     <widget class="QDoubleSpinBox" name="rubberWidth">
      <property name="toolTip">
@@ -110,6 +100,39 @@
      </property>
     </widget>
    </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QCheckBox" name="placeArc">
+     <property name="text">
+      <string>Place dimension arc in layer</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="2" colspan="2">
+    <widget class="QComboBox" name="layerCombo"/>
+   </item>
+   <item row="3" column="0" colspan="4">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QCheckBox" name="placeLabel">
+     <property name="text">
+      <string>and place label in field</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="2" colspan="2">
+    <widget class="QComboBox" name="fieldCombo"/>
+   </item>
   </layout>
  </widget>
  <tabstops>
@@ -118,8 +141,6 @@
   <tabstop>pixels</tabstop>
   <tabstop>rubberWidth</tabstop>
   <tabstop>rubberColor</tabstop>
-  <tabstop>placeArc</tabstop>
-  <tabstop>layerCombo</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>
@@ -131,8 +152,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>227</x>
-     <y>205</y>
+     <x>236</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -147,8 +168,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>205</y>
+     <x>257</x>
+     <y>241</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>

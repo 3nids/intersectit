@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Fri Jan 13 14:38:40 2012
+# Created: Mon Jan 16 09:56:03 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
-        Settings.resize(292, 215)
+        Settings.resize(366, 251)
         Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "Triangulation :: settings", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -38,7 +38,7 @@ class Ui_Settings(object):
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout.addWidget(self.buttonBox, 5, 0, 1, 4)
+        self.gridLayout.addWidget(self.buttonBox, 8, 0, 1, 4)
         self.groupBox = QtGui.QGroupBox(Settings)
         self.groupBox.setTitle(_fromUtf8(""))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -54,13 +54,6 @@ class Ui_Settings(object):
         self.pixels.setObjectName(_fromUtf8("pixels"))
         self.gridLayout_2.addWidget(self.pixels, 1, 0, 1, 1)
         self.gridLayout.addWidget(self.groupBox, 0, 2, 1, 2)
-        self.placeArc = QtGui.QCheckBox(Settings)
-        self.placeArc.setText(QtGui.QApplication.translate("Settings", "Dimension arc in", None, QtGui.QApplication.UnicodeUTF8))
-        self.placeArc.setObjectName(_fromUtf8("placeArc"))
-        self.gridLayout.addWidget(self.placeArc, 3, 0, 2, 2)
-        self.layerCombo = QtGui.QComboBox(Settings)
-        self.layerCombo.setObjectName(_fromUtf8("layerCombo"))
-        self.gridLayout.addWidget(self.layerCombo, 3, 2, 1, 2)
         self.rubberWidth = QtGui.QDoubleSpinBox(Settings)
         self.rubberWidth.setToolTip(_fromUtf8(""))
         self.rubberWidth.setDecimals(1)
@@ -73,6 +66,27 @@ class Ui_Settings(object):
         self.tolerance.setProperty("value", 0.6)
         self.tolerance.setObjectName(_fromUtf8("tolerance"))
         self.gridLayout.addWidget(self.tolerance, 0, 1, 2, 1)
+        self.placeArc = QtGui.QCheckBox(Settings)
+        self.placeArc.setText(QtGui.QApplication.translate("Settings", "Place dimension arc in layer", None, QtGui.QApplication.UnicodeUTF8))
+        self.placeArc.setChecked(True)
+        self.placeArc.setObjectName(_fromUtf8("placeArc"))
+        self.gridLayout.addWidget(self.placeArc, 4, 0, 1, 2)
+        self.layerCombo = QtGui.QComboBox(Settings)
+        self.layerCombo.setObjectName(_fromUtf8("layerCombo"))
+        self.gridLayout.addWidget(self.layerCombo, 4, 2, 1, 2)
+        self.line = QtGui.QFrame(Settings)
+        self.line.setFrameShape(QtGui.QFrame.HLine)
+        self.line.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line.setObjectName(_fromUtf8("line"))
+        self.gridLayout.addWidget(self.line, 3, 0, 1, 4)
+        self.placeLabel = QtGui.QCheckBox(Settings)
+        self.placeLabel.setText(QtGui.QApplication.translate("Settings", "and place label in field", None, QtGui.QApplication.UnicodeUTF8))
+        self.placeLabel.setChecked(True)
+        self.placeLabel.setObjectName(_fromUtf8("placeLabel"))
+        self.gridLayout.addWidget(self.placeLabel, 6, 0, 1, 2)
+        self.fieldCombo = QtGui.QComboBox(Settings)
+        self.fieldCombo.setObjectName(_fromUtf8("fieldCombo"))
+        self.gridLayout.addWidget(self.fieldCombo, 6, 2, 1, 2)
 
         self.retranslateUi(Settings)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Settings.accept)
@@ -82,9 +96,7 @@ class Ui_Settings(object):
         Settings.setTabOrder(self.mapUnits, self.pixels)
         Settings.setTabOrder(self.pixels, self.rubberWidth)
         Settings.setTabOrder(self.rubberWidth, self.rubberColor)
-        Settings.setTabOrder(self.rubberColor, self.placeArc)
-        Settings.setTabOrder(self.placeArc, self.layerCombo)
-        Settings.setTabOrder(self.layerCombo, self.buttonBox)
+        Settings.setTabOrder(self.rubberColor, self.buttonBox)
 
     def retranslateUi(self, Settings):
         pass

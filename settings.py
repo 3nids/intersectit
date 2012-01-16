@@ -55,21 +55,58 @@ class settings(QDialog, Ui_Settings ):
 			if layer.id() == dimLayerId:
 				self.layerCombo.setCurrentIndex(l)
 			l+=1
+		self.updateFieldCombo()
+			
+	@pyqtSignature("on_placeLabel_stateChanged(int)")
+	def on_placeLabel_stateChanged(self,i):
+		self.updateFieldCombo()
 			
 	@pyqtSignature("on_layerCombo_currentIndexChanged(int)")
 	def on_layerCombo_currentIndexChanged(self,i):
-		if i == 0: return
-		if self.layers[i-1].type() != QgsMapLayer.VectorLayer:
-			QMessageBox.warning( self , "Triangulation", QApplication.translate("Triangulation", "The dimension layer must be a vector layer.", None, QApplication.UnicodeUTF8) )
+		error_msg = ''
+		if i > 0:
+			layer = self.layers[i-1]
+			if layer.type() != QgsMapLayer.VectorLayer:
+				error_msg = QApplication.translate("Triangulation", "The dimension layer must be a vector layer.", None, QApplication.UnicodeUTF8) 
+			elif layer.hasGeometryType() is False:
+				error_msg = QApplication.translate("Triangulation", "The dimension layer has no geometry.", None, QApplication.UnicodeUTF8) 
+			else:
+				# TODO CHECK GEOMETRY
+				print layer.dataProvider().geometryType() , layer.geometryType()
+		if error_msg != '':
 			self.layerCombo.setCurrentIndex(0)
-			return
-		if self.layers[i-1].hasGeometryType() is False:
-			QMessageBox.warning( self , "Triangulation", QApplication.translate("Triangulation", "The dimension layer has no geometry.", None, QApplication.UnicodeUTF8) )
-			self.layerCombo.setCurrentIndex(0)
-			return
+			QMessageBox.warning( self , "Triangulation", error_msg )
+		# update field list
+		self.updateFieldCombo()
+		
+	@pyqtSignature("on_fieldCombo_currentIndexChanged(int)")
+	def on_fieldCombo_currentIndexChanged(self,i):
+		if self.dimLayer() is not False and i > 0:
+			field = self.fieldCombo.currentText()
+			i = self.dimLayer().dataProvider().fieldNameIndex(field)
+			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
+			if self.dimLayer().dataProvider().fields()[i].type() != 10:
+				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
+				self.fieldCombo.setCurrentIndex(0)
 			
-		print self.layers[i-1].dataProvider().geometryType() , self.layers[i-1].geometryType()
-	
+	def dimLayer(self):
+		i = self.layerCombo.currentIndex()
+		if i == 0: return False
+		else: return self.layers[i-1]
+				
+	def updateFieldCombo(self):
+		self.fieldCombo.clear()
+		self.fieldCombo.addItem(_fromUtf8(""))
+		if self.dimLayer() is False: return
+		if self.placeLabel.isChecked() is False: return
+		dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
+		l = 1
+		for field in self.dimLayer().dataProvider().fieldNameMap():
+			self.fieldCombo.addItem(_fromUtf8("") )
+			self.fieldCombo.setItemText( l, field )
+			if field == dimFieldName:
+				self.fieldCombo.setCurrentIndex(l)	
+			l += 1	
 						
 	def applySettings(self):
 		self.settings.setValue( "tolerance" , self.tolerance.value() )
@@ -82,11 +119,12 @@ class settings(QDialog, Ui_Settings ):
 		self.settings.setValue( "rubber_colorG" , self.color.green() )
 		self.settings.setValue( "rubber_colorB" , self.color.blue() )
 		self.settings.setValue( "placeArc" , int(self.placeArc.isChecked()) )
-		l = self.layerCombo.currentIndex()
-		dimLayerId = ""
-		if l > 0:
-			dimLayerId = self.layers[l-1].id()		
+		if self.dimLayer() is False: dimLayerId = ''
+		else: dimLayerId = self.dimLayer().id()		
 		QgsProject.instance().writeEntry("Triangulation", "dimension_layer", dimLayerId)
+		QgsProject.instance().writeEntry("Triangulation", "dimension_field", self.fieldCombo.currentText() )
+
+
 
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):
