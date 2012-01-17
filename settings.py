@@ -28,7 +28,7 @@ class settings(QDialog, Ui_Settings ):
 		# load settings
 		self.settings = QSettings("Triangulation","Triangulation")
 		
-		self.tolerance.setValue(self.settings.value("tolerance",0.6).toDouble()[0])
+		self.tolerance.setValue(self.settings.value("tolerance",0.3).toDouble()[0])
 		if self.settings.value( "units" , "map").toString() == "map":
 			self.mapUnits.setChecked(True)
 			self.pixels.setChecked(False)

@@ -223,7 +223,7 @@ class triangulation ():
 		self.iface.mapCanvas().unsetMapTool(self.getInitialTriangulationPoint)
 		
 	def getCircles(self,point):
-		tolerance = self.settings.value("tolerance",0.6).toDouble()[0]
+		tolerance = self.settings.value("tolerance",0.3).toDouble()[0]
 		units = self.settings.value("units","map").toString()
 		if units == "pixels":
 			tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
