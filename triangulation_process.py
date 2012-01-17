@@ -51,7 +51,7 @@ class triangulationProcess:
 			# jacobian for observations
 			B   = np.diag( [ -2*c[1] for c in self.xyrpi ] )
 			# stochastic model
-			Qll = np.diag([math.pow(1/c[2],2)   for c in self.xyrpi ])
+			Qll = np.diag([math.pow(c[2],2)   for c in self.xyrpi ])
 			Pm  = np.dot( B , np.dot(Qll,B.T) )
 			P   = la.inv( Pm )
 			# misclosure
