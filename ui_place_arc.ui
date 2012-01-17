@@ -67,10 +67,10 @@
       <number>10</number>
      </property>
      <property name="value">
-      <number>40</number>
+      <number>15</number>
      </property>
      <property name="sliderPosition">
-      <number>40</number>
+      <number>15</number>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -92,7 +92,7 @@
       <number>200</number>
      </property>
      <property name="value">
-      <number>40</number>
+      <number>15</number>
      </property>
     </widget>
    </item>
@@ -124,8 +124,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>365</x>
-     <y>182</y>
+     <x>342</x>
+     <y>164</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -140,8 +140,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>398</x>
-     <y>188</y>
+     <x>342</x>
+     <y>164</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>

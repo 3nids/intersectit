@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_arc.ui'
 #
-# Created: Mon Jan 16 16:53:15 2012
+# Created: Tue Jan 17 16:14:20 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,8 +49,8 @@ class Ui_placeArc(object):
         self.radiusSlider = QtGui.QSlider(placeArc)
         self.radiusSlider.setMaximum(200)
         self.radiusSlider.setPageStep(10)
-        self.radiusSlider.setProperty("value", 40)
-        self.radiusSlider.setSliderPosition(40)
+        self.radiusSlider.setProperty("value", 15)
+        self.radiusSlider.setSliderPosition(15)
         self.radiusSlider.setOrientation(QtCore.Qt.Horizontal)
         self.radiusSlider.setInvertedAppearance(False)
         self.radiusSlider.setInvertedControls(False)
@@ -59,7 +59,7 @@ class Ui_placeArc(object):
         self.gridLayout.addWidget(self.radiusSlider, 2, 1, 1, 4)
         self.radiusSpin = QtGui.QSpinBox(placeArc)
         self.radiusSpin.setMaximum(200)
-        self.radiusSpin.setProperty("value", 40)
+        self.radiusSpin.setProperty("value", 15)
         self.radiusSpin.setObjectName(_fromUtf8("radiusSpin"))
         self.gridLayout.addWidget(self.radiusSpin, 3, 3, 1, 1)
         self.reverseButton = QtGui.QPushButton(placeArc)
