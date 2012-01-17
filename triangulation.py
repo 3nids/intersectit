@@ -61,6 +61,10 @@ class triangulation ():
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Triangulation", self.uisettingsAction)	
+		# cleaner
+		self.cleanerAction = QAction("clean points and circles", self.iface.mainWindow())
+		QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
+		self.iface.addPluginToMenu("&Triangulation", self.cleanerAction)	
 		
 				
 	def unload(self):
@@ -80,6 +84,22 @@ class triangulation ():
 		G = self.settings.value("rubber_colorG",0  ).toInt()[0]
 		B = self.settings.value("rubber_colorB",0  ).toInt()[0]
 		self.rubber.setColor(QColor(R,G,B,255))		
+		
+	def cleanMemoryLayers(self):
+		lineProv = self.lineLayer().dataProvider()
+		pointProv = self.pointLayer().dataProvider()
+		lineProv.select([])
+		pointProv.select([])
+		f = QgsFeature()
+		f2del = []
+		while lineProv.nextFeature(f):
+			f2del.append(f.id())
+		lineProv.deleteFeatures(f2del)
+		f2del = []
+		while pointProv.nextFeature(f):
+			f2del.append(f.id())
+		pointProv.deleteFeatures(f2del)
+		self.iface.mapCanvas().refresh()
 			
 	def lineLayerDeleted(self):
 		QgsProject.instance().writeEntry("Triangulation", "memory_line_layer", "")
