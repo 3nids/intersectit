@@ -23,6 +23,8 @@ except AttributeError:
 class placeArc(QDialog, Ui_placeArc ):
 	def __init__(self,iface,layer,triangulatedPoint,xyrpi):
 		self.layer = layer
+		self.rubber = QgsRubberBand(iface.mapCanvas())
+		self.rubber.setWidth(2)
 		defaultRadius = 40
 		QDialog.__init__(self)
 		# Set up the user interface from Designer.
@@ -30,7 +32,8 @@ class placeArc(QDialog, Ui_placeArc ):
 		QObject.connect(self , SIGNAL( "accepted()" ) , self.addArcToLayer)
 		QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"),	self.radiusSlider, SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"),	self.radiusSpin,   SLOT("setValue(int)"))
-		QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"), self.radiusChanged)
+		#QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"), self.radiusChanged)
+		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
 
 		self.settings = QSettings("Triangulation","Triangulation")
 		
@@ -41,31 +44,36 @@ class placeArc(QDialog, Ui_placeArc ):
 		nn = len(xyrpi)
 		for c in xyrpi:
 			self.arcCombo.addItem(_fromUtf8(""))
-			self.arcCombo.setItemText( ii , "%u/%u" % (ii,nn) )
-			
+			self.arcCombo.setItemText( ii , "%u/%u" % (ii+1,nn) )
 			point = c[0]
 			self.arc.append(arc(iface,layer,triangulatedPoint,point,defaultRadius))
 			ii += 1
+	
+		QObject.connect(self.arcCombo, SIGNAL("currentIndexChanged(int)") , self.arcSelected) # this must be placed after the combobox population
+		self.arcSelected(0)
 			
 	def currentArc(self):
 		return self.arcCombo.currentIndex()
 		
-	def radius(self):
-		return self.radiusSlider.value()
-	
+	def arcSelected(self,i):
+		self.updateRubber()
 	
 	@pyqtSignature("on_createBox_stateChanged(int)")
 	def on_createBox_stateChanged(self,i):
 		if i == 0:
-			print i,self.currentArc()
 			self.arc[self.currentArc()].delete()
 		else:
-			self.arc[self.currentArc()].createFeature(self.radius())
+			self.arc[self.currentArc()].createFeature()
 	
+	def updateRubber(self):
+		self.rubber.reset()
+		if self.createBox.isChecked():
+			geom = self.arc[self.arcCombo.currentIndex()].geometry()
+			self.rubber.addGeometry(geom,self.layer)
 		
 	def radiusChanged(self,radius):
-		self.arc[0].draw(radius)
-
+		self.updateRubber()
+		self.arc[self.currentArc()].setRadius(radius).draw()
 
 	def addArcToLayer(self):
 		print 1
@@ -77,9 +85,8 @@ class arc():
 		self.iface = iface
 		self.layer = layer
 		self.provider = layer.dataProvider()
-		self.rubber = QgsRubberBand(iface.mapCanvas())
-		self.rubber.setWidth(2)
 		
+		self.radius = radius		
 		self.length = math.sqrt( triangulatedPoint.sqrDist(distancePoint) )
 		
 		self.triangulatedPoint = triangulatedPoint
@@ -87,14 +94,17 @@ class arc():
 		self.anchorPoint       = [  (triangulatedPoint.x()+distancePoint.x())/2 , (triangulatedPoint.y()+distancePoint.y())/2 ]
 		self.direction         = [ -(triangulatedPoint.y()-distancePoint.y())   ,  triangulatedPoint.x()-distancePoint.x()    ]
 		self.way = 1
+	
+		self.createFeature()
 		
-		self.createFeature(radius)
+	def setRadius(self,radius):
+		self.radius = radius
+		return self
 
-
-	def createFeature(self,radius):
+	def createFeature(self):
 		# create feature and geometry
 		f = QgsFeature()
-		f.setGeometry(self.geometry(radius))
+		f.setGeometry(self.geometry())
 		# look for dimension label
 		dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
 		ilbl = self.provider.fieldNameIndex(dimFieldName)
@@ -103,49 +113,50 @@ class arc():
 		# look for primary key
 		iid  = self.provider.fieldNameIndex('id')
 		if iid != -1:
-			self.fid = self.provider.maximumValue(iid).toInt()[0]+1
-			f.addAttribute(iid,self.fid)
+			self.db_id = self.provider.maximumValue(iid).toInt()[0]+1
+			f.addAttribute(iid,self.db_id)
 		# add feature to layer	
 		self.provider.addFeatures( [f] )
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
 		
+		bbox = f.geometry().boundingBox()
+		attr = []
+		if iid != -1: attr = [iid]
+		self.provider.select(attr,bbox)
+		f = QgsFeature()
+		print "attr ",attr
+		while (self.provider.nextFeature(f)):
+			fieldmap=f.attributeMap()
+			if iid != -1 and fieldmap[iid] == self.db_id or iid == -1 and f.geometry() == self.geometry():
+					print f.id()
+					self.f_id = f.id()
+					break
+		print "Created db_id: ",self.db_id, " fid: ", self.f_id		
+		
 	def delete(self):
-		self.provider.deleteFeatures([self.fid])
+		print "deleting"
+		self.provider.deleteFeatures([self.f_id])
+		self.layer.updateExtents()
+		self.iface.mapCanvas().refresh()
 		
 	def reverse(self):
-		self.way *= 1	
-		
+		self.way *= 1		
 	
-	def draw(self,radius):
-		f = QgsFeature()
-		self.provider.featureAtId(self.fid,f)
-		f.setGeometry(self.geometry(radius))
-		
-		
-		
-	def geometry(self,radius):
+	def draw(self):
+
+		self.layer.startEditing()
+		self.layer.changeGeometry( self.f_id , self.geometry() )
+		self.layer.commitChanges()
+		self.layer.rollBack()
+		#self.layer.updateExtents()
+		self.iface.mapCanvas().refresh()
+		#self.provider.changeGeometryValues( { self.f_id : self.geometry() })
+			
+	def geometry(self):
 		# http://www.vb-helper.com/howto_find_quadratic_curve.html
-		"""
-		self.rubber.reset()
-		self.rubber.addGeometry(QgsGeometry.fromPoint(self.triangulatedPoint),self.layer)
-		self.rubber.addGeometry(QgsGeometry.fromPoint(self.distancePoint),self.layer)
-		"""
-		curvePoint = QgsPoint(   self.anchorPoint[0] + self.way * self.direction[0] * radius/100    ,   self.anchorPoint[1] + self.way * self.direction[1] * radius/100    )
+
+		curvePoint = QgsPoint(   self.anchorPoint[0] + self.way * self.direction[0] * self.radius/100    ,   self.anchorPoint[1] + self.way * self.direction[1] * self.radius/100    )
 		return  QgsGeometry().fromMultiPoint([self.triangulatedPoint,curvePoint,self.distancePoint])  
 
-		
-		
-				
-		#self.rubber.addGeometry(QgsGeometry.fromPoint(curvePoint),self.layer)
-		
 	
-		
-		
-		
-		
-		
-		
-		
-
-		
