@@ -22,17 +22,16 @@ except AttributeError:
 # create the dialog to connect layers
 class placeArc(QDialog, Ui_placeArc ):
 	def __init__(self,iface,layer,triangulatedPoint,xyrpi):
+		QDialog.__init__(self)
+		self.setupUi(self)
 		self.layer = layer
 		self.rubber = QgsRubberBand(iface.mapCanvas())
 		self.rubber.setWidth(2)
-		defaultRadius = 40
-		QDialog.__init__(self)
-		# Set up the user interface from Designer.
-		self.setupUi(self)
-		QObject.connect(self , SIGNAL( "accepted()" ) , self.addArcToLayer)
+		defaultRadius = self.radiusSlider.value()
+		QObject.connect(self , SIGNAL( "accepted()" ) , self.rubber.reset)
+		QObject.connect(self , SIGNAL( "rejected()" ) , self.cancel)
 		QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"),	self.radiusSlider, SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"),	self.radiusSpin,   SLOT("setValue(int)"))
-		#QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"), self.radiusChanged)
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
 
 		self.settings = QSettings("Triangulation","Triangulation")
@@ -56,8 +55,34 @@ class placeArc(QDialog, Ui_placeArc ):
 		return self.arcCombo.currentIndex()
 		
 	def arcSelected(self,i):
+		arc = self.arc[self.currentArc()]
+		self.radiusSlider.setValue(arc.radius)
+		self.createBox.setChecked(arc.isActive)
 		self.updateRubber()
+		
+	def radiusChanged(self,radius):
+		self.updateRubber()
+		self.arc[self.currentArc()].setRadius(radius).draw()
+
+	def cancel(self):
+		self.rubber.reset()
+		for a in self.arc: a.delete()
 	
+	@pyqtSignature("on_prevButton_clicked()")
+	def on_prevButton_clicked(self):
+		i = max(0,self.currentArc()-1)
+		self.arcCombo.setCurrentIndex(i)
+		
+	@pyqtSignature("on_nextButton_clicked()")
+	def on_nextButton_clicked(self):
+		self.updateRubber()
+		i = max(self.currentArc()+1,len(self.arc)-1)
+		self.arcCombo.setCurrentIndex(i)
+		
+	@pyqtSignature("on_reverseButton_clicked()")
+	def on_reverseButton_clicked(self):
+		self.arc[self.currentArc()].reverse().draw()
+		
 	@pyqtSignature("on_createBox_stateChanged(int)")
 	def on_createBox_stateChanged(self,i):
 		if i == 0:
@@ -71,14 +96,6 @@ class placeArc(QDialog, Ui_placeArc ):
 			geom = self.arc[self.arcCombo.currentIndex()].geometry()
 			self.rubber.addGeometry(geom,self.layer)
 		
-	def radiusChanged(self,radius):
-		self.updateRubber()
-		self.arc[self.currentArc()].setRadius(radius).draw()
-
-	def addArcToLayer(self):
-		print 1
-		
-		
 		
 class arc():
 	def __init__(self,iface,layer,triangulatedPoint,distancePoint,radius):
@@ -88,6 +105,7 @@ class arc():
 		
 		self.radius = radius		
 		self.length = math.sqrt( triangulatedPoint.sqrDist(distancePoint) )
+		self.isActive = True
 		
 		self.triangulatedPoint = triangulatedPoint
 		self.distancePoint     = distancePoint
@@ -100,8 +118,13 @@ class arc():
 	def setRadius(self,radius):
 		self.radius = radius
 		return self
+		
+	def reverse(self):
+		self.way *= -1
+		return self		
 
 	def createFeature(self):
+		self.isActive = True
 		# create feature and geometry
 		f = QgsFeature()
 		f.setGeometry(self.geometry())
@@ -125,37 +148,30 @@ class arc():
 		if iid != -1: attr = [iid]
 		self.provider.select(attr,bbox)
 		f = QgsFeature()
-		print "attr ",attr
 		while (self.provider.nextFeature(f)):
 			fieldmap=f.attributeMap()
 			if iid != -1 and fieldmap[iid] == self.db_id or iid == -1 and f.geometry() == self.geometry():
-					print f.id()
 					self.f_id = f.id()
 					break
-		print "Created db_id: ",self.db_id, " fid: ", self.f_id		
 		
 	def delete(self):
-		print "deleting"
+		self.isActive = False
 		self.provider.deleteFeatures([self.f_id])
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
 		
-	def reverse(self):
-		self.way *= 1		
-	
 	def draw(self):
-
-		self.layer.startEditing()
-		self.layer.changeGeometry( self.f_id , self.geometry() )
-		self.layer.commitChanges()
-		self.layer.rollBack()
-		#self.layer.updateExtents()
-		self.iface.mapCanvas().refresh()
-		#self.provider.changeGeometryValues( { self.f_id : self.geometry() })
+		if self.isActive:
+			self.layer.startEditing()
+			self.layer.changeGeometry( self.f_id , self.geometry() )
+			self.layer.commitChanges()
+			self.layer.rollBack()
+			#self.layer.updateExtents()
+			self.iface.mapCanvas().refresh()
+			#self.provider.changeGeometryValues( { self.f_id : self.geometry() }) not working as it expects a QMap. Asked to developer list. Waiting.
 			
 	def geometry(self):
 		# http://www.vb-helper.com/howto_find_quadratic_curve.html
-
 		curvePoint = QgsPoint(   self.anchorPoint[0] + self.way * self.direction[0] * self.radius/100    ,   self.anchorPoint[1] + self.way * self.direction[1] * self.radius/100    )
 		return  QgsGeometry().fromMultiPoint([self.triangulatedPoint,curvePoint,self.distancePoint])  
 
