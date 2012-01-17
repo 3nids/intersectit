@@ -45,7 +45,9 @@ class placeArc(QDialog, Ui_placeArc ):
 			self.arcCombo.addItem(_fromUtf8(""))
 			self.arcCombo.setItemText( ii , "%u/%u" % (ii+1,nn) )
 			point = c[0]
-			self.arc.append(arc(iface,layer,triangulatedPoint,point,defaultRadius))
+			distance  = c[1] # this is the measure
+			precision = c[2]
+			self.arc.append(arc(iface,layer,triangulatedPoint,point,distance,defaultRadius))
 			ii += 1
 	
 		QObject.connect(self.arcCombo, SIGNAL("currentIndexChanged(int)") , self.arcSelected) # this must be placed after the combobox population
@@ -98,13 +100,14 @@ class placeArc(QDialog, Ui_placeArc ):
 		
 		
 class arc():
-	def __init__(self,iface,layer,triangulatedPoint,distancePoint,radius):
+	def __init__(self,iface,layer,triangulatedPoint,distancePoint,distance,radius):
 		self.iface = iface
 		self.layer = layer
 		self.provider = layer.dataProvider()
 		
-		self.radius = radius		
-		self.length = math.sqrt( triangulatedPoint.sqrDist(distancePoint) )
+		self.radius   = radius	
+		self.distance = distance
+		self.length   = math.sqrt( triangulatedPoint.sqrDist(distancePoint) )
 		self.isActive = True
 		
 		self.triangulatedPoint = triangulatedPoint
@@ -132,7 +135,7 @@ class arc():
 		dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
 		ilbl = self.provider.fieldNameIndex(dimFieldName)
 		if ilbl != -1:
-			f.addAttribute(ilbl,QVariant("%.2f" % self.length))
+			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))
 		# look for primary key
 		iid  = self.provider.fieldNameIndex('id')
 		if iid != -1:

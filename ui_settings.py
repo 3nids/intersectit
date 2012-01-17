@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Mon Jan 16 09:56:03 2012
+# Created: Tue Jan 17 17:04:39 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
-        Settings.resize(366, 251)
+        Settings.resize(377, 251)
         Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "Triangulation :: settings", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -80,7 +80,7 @@ class Ui_Settings(object):
         self.line.setObjectName(_fromUtf8("line"))
         self.gridLayout.addWidget(self.line, 3, 0, 1, 4)
         self.placeLabel = QtGui.QCheckBox(Settings)
-        self.placeLabel.setText(QtGui.QApplication.translate("Settings", "and place label in field", None, QtGui.QApplication.UnicodeUTF8))
+        self.placeLabel.setText(QtGui.QApplication.translate("Settings", "and place observation in field", None, QtGui.QApplication.UnicodeUTF8))
         self.placeLabel.setChecked(True)
         self.placeLabel.setObjectName(_fromUtf8("placeLabel"))
         self.gridLayout.addWidget(self.placeLabel, 6, 0, 1, 2)
