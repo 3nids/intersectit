@@ -50,7 +50,7 @@ class triangulation ():
 		self.toolBar.addAction(self.distanceAction)
 		self.iface.addPluginToMenu("&Triangulation", self.distanceAction)	
 		# triangulation
-		self.triangulAction = QAction(QIcon(":/plugins/triangulation/icons/intersect.png"), "triangulate", self.iface.mainWindow())
+		self.triangulAction = QAction(QIcon(":/plugins/triangulation/icons/triangulate.png"), "triangulate", self.iface.mainWindow())
 		self.triangulAction.setCheckable(True)
 		QObject.connect(self.triangulAction, SIGNAL("triggered()"), self.triangulationStart)
 		self.toolBar.addAction(self.triangulAction)
@@ -62,8 +62,9 @@ class triangulation ():
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Triangulation", self.uisettingsAction)	
 		# cleaner
-		self.cleanerAction = QAction("clean points and circles", self.iface.mainWindow())
+		self.cleanerAction = QAction(QIcon(":/plugins/triangulation/icons/cleaner.png"), "clean points and circles", self.iface.mainWindow())
 		QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
+		self.toolBar.addAction(self.cleanerAction)
 		self.iface.addPluginToMenu("&Triangulation", self.cleanerAction)	
 		
 				
@@ -86,6 +87,7 @@ class triangulation ():
 		self.rubber.setColor(QColor(R,G,B,255))		
 		
 	def cleanMemoryLayers(self):
+		self.rubber.reset()
 		lineProv = self.lineLayer().dataProvider()
 		pointProv = self.pointLayer().dataProvider()
 		lineProv.select([])

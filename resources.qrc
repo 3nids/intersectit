@@ -3,6 +3,9 @@
         <file>icons/distance.png</file>
     </qresource>    
     <qresource prefix="/plugins/triangulation" >
-        <file>icons/intersect.png</file>
+        <file>icons/triangulate.png</file>
+    </qresource>
+    <qresource prefix="/plugins/triangulation" >
+        <file>icons/cleaner.png</file>
     </qresource>
 </RCC>
