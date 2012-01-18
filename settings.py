@@ -92,7 +92,7 @@ class settings(QDialog, Ui_Settings ):
 			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
 			if self.dimLayer().dataProvider().fields()[i].type() != 10:
 				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The dimension field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
-				self.fieldCombo.setCurrentIndex(0)
+				self.dimensionFieldCombo.setCurrentIndex(0)
 				
 	@pyqtSignature("on_precisionFieldCombo_currentIndexChanged(int)")
 	def on_precisionFieldCombo_currentIndexChanged(self,i):
@@ -102,7 +102,7 @@ class settings(QDialog, Ui_Settings ):
 			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
 			if self.dimLayer().dataProvider().fields()[i].type() != 10:
 				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The precision field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
-				self.fieldCombo.setCurrentIndex(0)
+				self.precisionFieldCombo.setCurrentIndex(0)
 			
 	def dimLayer(self):
 		i = self.layerCombo.currentIndex()
