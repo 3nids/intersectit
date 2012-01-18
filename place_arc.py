@@ -21,10 +21,10 @@ except AttributeError:
 
 # create the dialog to connect layers
 class placeArc(QDialog, Ui_placeArc ):
-	def __init__(self,iface,layer,triangulatedPoint,xyrpi):
+	def __init__(self,iface,triangulatedPoint,xyrpi):
 		QDialog.__init__(self)
 		self.setupUi(self)
-		self.layer = layer
+		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ), False )
 		self.rubber = QgsRubberBand(iface.mapCanvas())
 		self.rubber.setWidth(2)
 		defaultRadius = self.radiusSlider.value()
@@ -47,7 +47,7 @@ class placeArc(QDialog, Ui_placeArc ):
 			point = c[0]
 			distance  = c[1] # this is the measure
 			precision = c[2]
-			self.arc.append(arc(iface,layer,triangulatedPoint,point,distance,defaultRadius))
+			self.arc.append(arc(iface,self.layer,triangulatedPoint,point,distance,precision,defaultRadius))
 			ii += 1
 	
 		QObject.connect(self.arcCombo, SIGNAL("currentIndexChanged(int)") , self.arcSelected) # this must be placed after the combobox population
@@ -97,25 +97,28 @@ class placeArc(QDialog, Ui_placeArc ):
 		if self.createBox.isChecked():
 			geom = self.arc[self.arcCombo.currentIndex()].geometry()
 			self.rubber.addGeometry(geom,self.layer)
-		
-		
+
+
+
+
+
+
 class arc():
-	def __init__(self,iface,layer,triangulatedPoint,distancePoint,distance,radius):
+	def __init__(self,iface,layer,triangulatedPoint,distancePoint,distance,precision,radius):
 		self.iface = iface
 		self.layer = layer
 		self.provider = layer.dataProvider()
-		
-		self.radius   = radius	
-		self.distance = distance
-		self.length   = math.sqrt( triangulatedPoint.sqrDist(distancePoint) )
-		self.isActive = True
-		
+		self.radius    = radius	
+		self.distance  = distance
+		self.precision = precision 
+		self.length    = math.sqrt( triangulatedPoint.sqrDist(distancePoint) )
+		self.isActive  = True
 		self.triangulatedPoint = triangulatedPoint
 		self.distancePoint     = distancePoint
 		self.anchorPoint       = [  (triangulatedPoint.x()+distancePoint.x())/2 , (triangulatedPoint.y()+distancePoint.y())/2 ]
 		self.direction         = [ -(triangulatedPoint.y()-distancePoint.y())   ,  triangulatedPoint.x()-distancePoint.x()    ]
 		self.way = 1
-	
+		self.settings = QSettings("Triangulation","Triangulation")
 		self.createFeature()
 		
 	def setRadius(self,radius):
@@ -131,18 +134,25 @@ class arc():
 		# create feature and geometry
 		f = QgsFeature()
 		f.setGeometry(self.geometry())
-		# look for dimension label
-		dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
-		ilbl = self.provider.fieldNameIndex(dimFieldName)
-		if ilbl != -1:
+		# look for dimension and precision fields
+		if self.settings.value("placeDimension",1).toInt()[0] == 1:
+			dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
+			ilbl = self.provider.fieldNameIndex(dimFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))
+		if self.settings.value("placePrecision",1).toInt()[0] == 1:
+			preFieldName = QgsProject.instance().readEntry("Triangulation", "precision_field", "")[0]
+			ilbl = self.provider.fieldNameIndex(preFieldName)
+			f.addAttribute(ilbl,QVariant("%.2f" % self.precision))
 		# look for primary key
-		iid  = self.provider.fieldNameIndex('id')
+		iid = self.provider.fieldNameIndex('id')
+		#iid = -1
 		if iid != -1:
 			self.db_id = self.provider.maximumValue(iid).toInt()[0]+1
 			f.addAttribute(iid,self.db_id)
 		# add feature to layer	
+		print "before",f.id()
 		self.provider.addFeatures( [f] )
+		print "after",f.id()
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
 		

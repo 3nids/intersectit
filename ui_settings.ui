@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>377</width>
-    <height>251</height>
+    <width>366</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0" colspan="4">
+   <item row="9" column="0" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -96,14 +96,14 @@
       <double>0.100000000000000</double>
      </property>
      <property name="value">
-      <double>0.600000000000000</double>
+      <double>0.300000000000000</double>
      </property>
     </widget>
    </item>
    <item row="4" column="0" colspan="2">
-    <widget class="QCheckBox" name="placeArc">
+    <widget class="QCheckBox" name="placeArcBox">
      <property name="text">
-      <string>Place dimension arc in layer</string>
+      <string>place dimension arc in layer</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -120,18 +120,28 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QCheckBox" name="placeLabel">
+   <item row="6" column="2" colspan="2">
+    <widget class="QComboBox" name="dimensionFieldCombo"/>
+   </item>
+   <item row="7" column="2" colspan="2">
+    <widget class="QComboBox" name="precisionFieldCombo"/>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="QCheckBox" name="placePrecisionBox">
      <property name="text">
-      <string>and place observation in field</string>
+      <string>place precision in field</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QCheckBox" name="placeDimensionBox">
+     <property name="text">
+      <string>place dimension in field</string>
      </property>
      <property name="checked">
       <bool>true</bool>
      </property>
     </widget>
-   </item>
-   <item row="6" column="2" colspan="2">
-    <widget class="QComboBox" name="fieldCombo"/>
    </item>
   </layout>
  </widget>

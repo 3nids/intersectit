@@ -41,7 +41,9 @@ class settings(QDialog, Ui_Settings ):
 		self.colorB = self.settings.value("rubber_colorB",0  ).toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
-		self.placeArc.setChecked( self.settings.value( "placeArc" , 1).toInt()[0] ) 
+		self.placeArcBox.setChecked(       self.settings.value( "placeArc"       , 1).toInt()[0] ) 
+		self.placeDimensionBox.setChecked( self.settings.value( "placeDimension" , 1).toInt()[0] ) 
+		self.placePrecisionBox.setChecked( self.settings.value( "placePrecision" , 0).toInt()[0] ) 
 		
 	def showEvent(self, e):
 		self.layers = self.iface.mapCanvas().layers()
@@ -55,11 +57,14 @@ class settings(QDialog, Ui_Settings ):
 			if layer.id() == dimLayerId:
 				self.layerCombo.setCurrentIndex(l)
 			l+=1
-		self.updateFieldCombo()
+		self.updateFieldsCombo()
 			
-	@pyqtSignature("on_placeLabel_stateChanged(int)")
-	def on_placeLabel_stateChanged(self,i):
-		self.updateFieldCombo()
+	@pyqtSignature("on_placeArcBox_toggled(bool)")
+	def on_placeArcBox_toggled(self,b):
+		self.placeDimensionBox.setEnabled(b)
+		self.dimensionFieldCombo.setEnabled(b)
+		self.placePrecisionBox.setEnabled(b)
+		self.precisionFieldCombo.setEnabled(b)
 			
 	@pyqtSignature("on_layerCombo_currentIndexChanged(int)")
 	def on_layerCombo_currentIndexChanged(self,i):
@@ -77,16 +82,26 @@ class settings(QDialog, Ui_Settings ):
 			self.layerCombo.setCurrentIndex(0)
 			QMessageBox.warning( self , "Triangulation", error_msg )
 		# update field list
-		self.updateFieldCombo()
+		self.updateFieldsCombo()
 		
-	@pyqtSignature("on_fieldCombo_currentIndexChanged(int)")
-	def on_fieldCombo_currentIndexChanged(self,i):
+	@pyqtSignature("on_dimensionFieldCombo_currentIndexChanged(int)")
+	def on_dimensionFieldCombo_currentIndexChanged(self,i):
 		if self.dimLayer() is not False and i > 0:
-			field = self.fieldCombo.currentText()
+			field = self.dimensionFieldCombo.currentText()
 			i = self.dimLayer().dataProvider().fieldNameIndex(field)
 			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
 			if self.dimLayer().dataProvider().fields()[i].type() != 10:
-				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
+				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The dimension field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
+				self.fieldCombo.setCurrentIndex(0)
+				
+	@pyqtSignature("on_precisionFieldCombo_currentIndexChanged(int)")
+	def on_precisionFieldCombo_currentIndexChanged(self,i):
+		if self.dimLayer() is not False and i > 0:
+			field = self.precisionFieldCombo.currentText()
+			i = self.dimLayer().dataProvider().fieldNameIndex(field)
+			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
+			if self.dimLayer().dataProvider().fields()[i].type() != 10:
+				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The precision field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
 				self.fieldCombo.setCurrentIndex(0)
 			
 	def dimLayer(self):
@@ -94,35 +109,45 @@ class settings(QDialog, Ui_Settings ):
 		if i == 0: return False
 		else: return self.layers[i-1]
 				
-	def updateFieldCombo(self):
-		self.fieldCombo.clear()
-		self.fieldCombo.addItem(_fromUtf8(""))
+	def updateFieldsCombo(self):
+		self.dimensionFieldCombo.clear()
+		self.precisionFieldCombo.clear()
+		self.dimensionFieldCombo.addItem(_fromUtf8(""))
+		self.precisionFieldCombo.addItem(_fromUtf8(""))
 		if self.dimLayer() is False: return
-		if self.placeLabel.isChecked() is False: return
-		dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
 		l = 1
 		for field in self.dimLayer().dataProvider().fieldNameMap():
-			self.fieldCombo.addItem(_fromUtf8("") )
-			self.fieldCombo.setItemText( l, field )
-			if field == dimFieldName:
-				self.fieldCombo.setCurrentIndex(l)	
+			self.dimensionFieldCombo.addItem(_fromUtf8("") )
+			self.dimensionFieldCombo.setItemText( l, field )
+			if field == QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]:
+				self.dimensionFieldCombo.setCurrentIndex(l)	
 			l += 1
-						
+		l = 1
+		for field in self.dimLayer().dataProvider().fieldNameMap():
+			self.precisionFieldCombo.addItem(_fromUtf8("") )
+			self.precisionFieldCombo.setItemText( l, field )
+			if field == QgsProject.instance().readEntry("Triangulation", "precision_field", "")[0]:
+				self.precisionFieldCombo.setCurrentIndex(l)	
+			l += 1
+
 	def applySettings(self):
 		self.settings.setValue( "tolerance" , self.tolerance.value() )
 		if self.mapUnits.isChecked():
 			self.settings.setValue( "units" , "map")
 		else:
 			self.settings.setValue( "units" , "pixels")		
-		self.settings.setValue( "rubber_width" , self.rubberWidth.value() )	
-		self.settings.setValue( "rubber_colorR" , self.color.red() )
-		self.settings.setValue( "rubber_colorG" , self.color.green() )
-		self.settings.setValue( "rubber_colorB" , self.color.blue() )
-		self.settings.setValue( "placeArc" , int(self.placeArc.isChecked()) )
+		self.settings.setValue( "rubber_width"   , self.rubberWidth.value() )	
+		self.settings.setValue( "rubber_colorR"  , self.color.red() )
+		self.settings.setValue( "rubber_colorG"  , self.color.green() )
+		self.settings.setValue( "rubber_colorB"  , self.color.blue() )
+		self.settings.setValue( "placeArc"       , int(self.placeArcBox.isChecked()) )
+		self.settings.setValue( "placePrecision" , int(self.placePrecisionBox.isChecked()) )
+		self.settings.setValue( "placeDimension" , int(self.placeDimensionBox.isChecked()) )
 		if self.dimLayer() is False: dimLayerId = ''
 		else: dimLayerId = self.dimLayer().id()		
 		QgsProject.instance().writeEntry("Triangulation", "dimension_layer", dimLayerId)
-		QgsProject.instance().writeEntry("Triangulation", "dimension_field", self.fieldCombo.currentText() )
+		QgsProject.instance().writeEntry("Triangulation", "dimension_field", self.dimensionFieldCombo.currentText() )
+		QgsProject.instance().writeEntry("Triangulation", "precision_field", self.precisionFieldCombo.currentText() )
 
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):

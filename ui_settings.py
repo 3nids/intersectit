@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Tue Jan 17 17:04:39 2012
+# Created: Wed Jan 18 08:02:09 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
-        Settings.resize(377, 251)
+        Settings.resize(366, 284)
         Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "Triangulation :: settings", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -38,7 +38,7 @@ class Ui_Settings(object):
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout.addWidget(self.buttonBox, 8, 0, 1, 4)
+        self.gridLayout.addWidget(self.buttonBox, 9, 0, 1, 4)
         self.groupBox = QtGui.QGroupBox(Settings)
         self.groupBox.setTitle(_fromUtf8(""))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
@@ -63,14 +63,14 @@ class Ui_Settings(object):
         self.gridLayout.addWidget(self.rubberWidth, 2, 2, 1, 1)
         self.tolerance = QtGui.QDoubleSpinBox(Settings)
         self.tolerance.setSingleStep(0.1)
-        self.tolerance.setProperty("value", 0.6)
+        self.tolerance.setProperty("value", 0.3)
         self.tolerance.setObjectName(_fromUtf8("tolerance"))
         self.gridLayout.addWidget(self.tolerance, 0, 1, 2, 1)
-        self.placeArc = QtGui.QCheckBox(Settings)
-        self.placeArc.setText(QtGui.QApplication.translate("Settings", "Place dimension arc in layer", None, QtGui.QApplication.UnicodeUTF8))
-        self.placeArc.setChecked(True)
-        self.placeArc.setObjectName(_fromUtf8("placeArc"))
-        self.gridLayout.addWidget(self.placeArc, 4, 0, 1, 2)
+        self.placeArcBox = QtGui.QCheckBox(Settings)
+        self.placeArcBox.setText(QtGui.QApplication.translate("Settings", "place dimension arc in layer", None, QtGui.QApplication.UnicodeUTF8))
+        self.placeArcBox.setChecked(True)
+        self.placeArcBox.setObjectName(_fromUtf8("placeArcBox"))
+        self.gridLayout.addWidget(self.placeArcBox, 4, 0, 1, 2)
         self.layerCombo = QtGui.QComboBox(Settings)
         self.layerCombo.setObjectName(_fromUtf8("layerCombo"))
         self.gridLayout.addWidget(self.layerCombo, 4, 2, 1, 2)
@@ -79,14 +79,21 @@ class Ui_Settings(object):
         self.line.setFrameShadow(QtGui.QFrame.Sunken)
         self.line.setObjectName(_fromUtf8("line"))
         self.gridLayout.addWidget(self.line, 3, 0, 1, 4)
-        self.placeLabel = QtGui.QCheckBox(Settings)
-        self.placeLabel.setText(QtGui.QApplication.translate("Settings", "and place observation in field", None, QtGui.QApplication.UnicodeUTF8))
-        self.placeLabel.setChecked(True)
-        self.placeLabel.setObjectName(_fromUtf8("placeLabel"))
-        self.gridLayout.addWidget(self.placeLabel, 6, 0, 1, 2)
-        self.fieldCombo = QtGui.QComboBox(Settings)
-        self.fieldCombo.setObjectName(_fromUtf8("fieldCombo"))
-        self.gridLayout.addWidget(self.fieldCombo, 6, 2, 1, 2)
+        self.dimensionFieldCombo = QtGui.QComboBox(Settings)
+        self.dimensionFieldCombo.setObjectName(_fromUtf8("dimensionFieldCombo"))
+        self.gridLayout.addWidget(self.dimensionFieldCombo, 6, 2, 1, 2)
+        self.precisionFieldCombo = QtGui.QComboBox(Settings)
+        self.precisionFieldCombo.setObjectName(_fromUtf8("precisionFieldCombo"))
+        self.gridLayout.addWidget(self.precisionFieldCombo, 7, 2, 1, 2)
+        self.placePrecisionBox = QtGui.QCheckBox(Settings)
+        self.placePrecisionBox.setText(QtGui.QApplication.translate("Settings", "place precision in field", None, QtGui.QApplication.UnicodeUTF8))
+        self.placePrecisionBox.setObjectName(_fromUtf8("placePrecisionBox"))
+        self.gridLayout.addWidget(self.placePrecisionBox, 7, 0, 1, 2)
+        self.placeDimensionBox = QtGui.QCheckBox(Settings)
+        self.placeDimensionBox.setText(QtGui.QApplication.translate("Settings", "place dimension in field", None, QtGui.QApplication.UnicodeUTF8))
+        self.placeDimensionBox.setChecked(True)
+        self.placeDimensionBox.setObjectName(_fromUtf8("placeDimensionBox"))
+        self.gridLayout.addWidget(self.placeDimensionBox, 6, 0, 1, 2)
 
         self.retranslateUi(Settings)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Settings.accept)

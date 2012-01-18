@@ -198,25 +198,34 @@ class triangulation ():
 		self.pointLayer().dataProvider().addFeatures( [f] )
 		self.pointLayer().updateExtents()
 		canvas.refresh()
-		if self.settings.value("placeArc",1).toInt()[0] == 1:
-			# check that dimension layer and field have been set
-			dimLayer                               = next(    ( layer for layer in self.iface.mapCanvas().layers()        if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ),  False )
-			if dimLayer is not False: dimFieldName = next(    ( field for field in dimLayer.dataProvider().fieldNameMap() if field      == QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0] ),  False )
-			while dimLayer is False or dimFieldName is False:
-				if dimLayer is False:
-					reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
-					if reply == QMessageBox.No:	 return
-					if self.uisettings.exec_() ==	 0: return
-				elif dimFieldName is False:
-					reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, please select a field for the label. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
-					if reply == QMessageBox.No:	 return
+		# check that dimension layer and fields have been set correctly
+		while True:
+			if self.settings.value("placeArc",1).toInt()[0] == 0: return # if we do not place any dimension, skip
+			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ), False )
+			if dimLayer is False:
+				reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+				if reply == QMessageBox.No:	        return
+				if self.uisettings.exec_() ==	 0: return
+				continue
+			if self.settings.value("placeDimension",1).toInt()[0] == 1: 
+				dimensionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0] ), False )
+				if dimensionField is False:
+					ok = False
+					reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, please select a field for the dimension. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+					if reply == QMessageBox.No:  	 return
 					if self.uisettings.exec_() == 0: return
-				dimLayer                               = next(    ( layer for layer in self.iface.mapCanvas().layers()        if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ),  False )
-				if dimLayer is not False: dimFieldName = next(    ( field for field in dimLayer.dataProvider().fieldNameMap() if field      == QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0] ),  False )
-			dlg = placeArc(self.iface,dimLayer,triangulatedPoint,xyrpi)
-			if dlg.exec_():
-				print 1
-		
+					continue
+			if self.settings.value("placePrecision",0).toInt()[0] == 1: 
+				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("Triangulation", "precision_field", "")[0] ), False )
+				if precisionField is False:
+					ok = False
+					reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, please select a field for the precision. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+					if reply == QMessageBox.No: 	 return
+					if self.uisettings.exec_() == 0: return
+					continue
+			break
+		dlg = placeArc(self.iface,triangulatedPoint,xyrpi)
+		dlg.exec_()		
 
 	def triangulationToolChanged(self, tool):
 		self.rubber.reset()
