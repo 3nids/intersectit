@@ -151,21 +151,11 @@ class arc():
 			f.addAttribute(iid,self.db_id)
 		# add feature to layer	
 		print "before",f.id()
-		self.provider.addFeatures( [f] )
-		print "after",f.id()
+		ans,f = self.provider.addFeatures( [f] )
+		self.f_id = f[0].id()
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
-		
-		bbox = f.geometry().boundingBox()
-		attr = []
-		if iid != -1: attr = [iid]
-		self.provider.select(attr,bbox)
-		f = QgsFeature()
-		while (self.provider.nextFeature(f)):
-			fieldmap=f.attributeMap()
-			if iid != -1 and fieldmap[iid] == self.db_id or iid == -1 and f.geometry() == self.geometry():
-					self.f_id = f.id()
-					break
+		print "after",ans,self.f_id
 		
 	def delete(self):
 		self.isActive = False
