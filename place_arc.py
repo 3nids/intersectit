@@ -78,7 +78,7 @@ class placeArc(QDialog, Ui_placeArc ):
 	@pyqtSignature("on_nextButton_clicked()")
 	def on_nextButton_clicked(self):
 		self.updateRubber()
-		i = max(self.currentArc()+1,len(self.arc)-1)
+		i = min(self.currentArc()+1,len(self.arc)-1)
 		self.arcCombo.setCurrentIndex(i)
 		
 	@pyqtSignature("on_reverseButton_clicked()")
