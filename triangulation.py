@@ -69,9 +69,15 @@ class triangulation ():
 		
 				
 	def unload(self):
+		self.iface.removePluginMenu("&Triangulation",self.distanceAction)
+		self.iface.removePluginMenu("&Triangulation",self.triangulAction)
+		self.iface.removePluginMenu("&Triangulation",self.uisettingsAction)
+		self.iface.removePluginMenu("&Triangulation",self.cleanerAction)
+		self.iface.removeToolBarIcon(self.distanceAction)
+		self.iface.removeToolBarIcon(self.triangulAction)	
+		self.iface.removeToolBarIcon(self.cleanerAction)	
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
-		print "TODO: instersect unload"
 		try:
 			print "Triangulation :: Removing temporary layer"
 			QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id()) 
