@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_distance.ui'
 #
-# Created: Tue Jan 10 13:53:30 2012
+# Created: Mon Jan 23 13:39:18 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -41,7 +41,8 @@ class Ui_distanceDialog(object):
         self.gridLayout.addWidget(self.label_2, 3, 1, 1, 1)
         self.precision = QtGui.QDoubleSpinBox(distanceDialog)
         self.precision.setDecimals(1)
-        self.precision.setProperty("value", 5.0)
+        self.precision.setMaximum(1000.0)
+        self.precision.setProperty("value", 25.0)
         self.precision.setObjectName(_fromUtf8("precision"))
         self.gridLayout.addWidget(self.precision, 3, 2, 1, 1)
         self.label_4 = QtGui.QLabel(distanceDialog)
