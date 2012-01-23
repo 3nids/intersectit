@@ -235,7 +235,7 @@ class triangulation ():
 					if self.uisettings.exec_() == 0: return
 					continue
 			break
-		dlg = placeArc(self.iface,triangulatedPoint,xyrpi)
+		dlg = placeArc(self.iface,triangulatedPoint,xyrpi,[self.lineLayer(),self.pointLayer()])
 		dlg.exec_()		
 
 	def triangulationToolChanged(self, tool):
@@ -266,7 +266,7 @@ class triangulation ():
 			r = fm[ir].toDouble()[0]
 			p = fm[ip].toDouble()[0]
 			xyrpi.append([QgsPoint(x,y),r,p,f.id()])
-			self.rubber.addGeometry(f.geometry(),self.lineLayer())
+			#self.rubber.addGeometry(f.geometry(),self.lineLayer())
 		return xyrpi
 		
 		

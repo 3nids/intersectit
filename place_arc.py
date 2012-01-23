@@ -21,9 +21,11 @@ except AttributeError:
 
 # create the dialog to connect layers
 class placeArc(QDialog, Ui_placeArc ):
-	def __init__(self,iface,triangulatedPoint,xyrpi):
+	def __init__(self,iface,triangulatedPoint,xyrpi,distanceLayers):
 		QDialog.__init__(self)
 		self.setupUi(self)
+		self.iface = iface
+		self.distanceLayers = distanceLayers
 		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ), False )
 		self.rubber = QgsRubberBand(iface.mapCanvas())
 		self.rubber.setWidth(2)
@@ -33,9 +35,12 @@ class placeArc(QDialog, Ui_placeArc ):
 		QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"),	self.radiusSlider, SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"),	self.radiusSpin,   SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
-
+		# load settings
 		self.settings = QSettings("Triangulation","Triangulation")
-		
+		# init state for distance layer visibility
+		self.displayLayersBox.setCheckState(Qt.PartiallyChecked)
+		QObject.connect( self.displayLayersBox , SIGNAL("stateChanged(int)") , self.toggleDistanceLayers )
+		# create the arcs
 		self.xyrpi = xyrpi
 		self.arc = []
 		self.arcCombo.clear()
@@ -49,9 +54,13 @@ class placeArc(QDialog, Ui_placeArc ):
 			precision = c[2]
 			self.arc.append(arc(iface,self.layer,triangulatedPoint,point,distance,precision,defaultRadius))
 			ii += 1
-	
 		QObject.connect(self.arcCombo, SIGNAL("currentIndexChanged(int)") , self.arcSelected) # this must be placed after the combobox population
 		self.arcSelected(0)
+		
+	def toggleDistanceLayers(self,i):
+		self.displayLayersBox.setTristate(False)
+		self.iface.legendInterface().setLayerVisible(self.distanceLayers[0],bool(i))
+		self.iface.legendInterface().setLayerVisible(self.distanceLayers[1],bool(i))
 			
 	def currentArc(self):
 		return self.arcCombo.currentIndex()
@@ -97,10 +106,6 @@ class placeArc(QDialog, Ui_placeArc ):
 		if self.createBox.isChecked():
 			geom = self.arc[self.arcCombo.currentIndex()].geometry()
 			self.rubber.addGeometry(geom,self.layer)
-
-
-
-
 
 
 class arc():
@@ -150,12 +155,10 @@ class arc():
 			self.db_id = self.provider.maximumValue(iid).toInt()[0]+1
 			f.addAttribute(iid,self.db_id)
 		# add feature to layer	
-		print "before",f.id()
 		ans,f = self.provider.addFeatures( [f] )
 		self.f_id = f[0].id()
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
-		print "after",ans,self.f_id
 		
 	def delete(self):
 		self.isActive = False
