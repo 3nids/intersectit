@@ -6,39 +6,41 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>366</width>
-    <height>284</height>
+    <width>350</width>
+    <height>423</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Triangulation :: settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" rowspan="2">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Tolerance</string>
+   <item row="1" column="0" colspan="4">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string> Place distances</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="snapBox">
+        <property name="text">
+         <string>Snap to layers to place distances</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="4">
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Selected circles</string>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="3">
-    <widget class="QPushButton" name="rubberColor">
-     <property name="toolTip">
-      <string extracomment="Color of the selected distance circles used for triangulation."/>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0" colspan="4">
+   <item row="13" column="0" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -48,109 +50,147 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="2" colspan="2">
-    <widget class="QGroupBox" name="groupBox">
+   <item row="3" column="0" colspan="4">
+    <widget class="QGroupBox" name="groupBox_3">
      <property name="title">
-      <string/>
+      <string>Triangulation</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <widget class="QRadioButton" name="mapUnits">
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="1" column="0">
+       <widget class="QLabel" name="label">
         <property name="text">
-         <string>map units</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
+         <string>Tolerance</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QRadioButton" name="pixels">
+      <item row="1" column="2">
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string/>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_2">
+         <item row="2" column="0">
+          <widget class="QRadioButton" name="pixels">
+           <property name="text">
+            <string>pixels</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QRadioButton" name="mapUnits">
+           <property name="text">
+            <string>map units</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QDoubleSpinBox" name="tolerance">
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+        <property name="value">
+         <double>0.300000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>pixels</string>
+         <string>Selected circles</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QDoubleSpinBox" name="rubberWidth">
+        <property name="toolTip">
+         <string extracomment="Width of the selected distance circles used for triangulation."/>
+        </property>
+        <property name="decimals">
+         <number>1</number>
+        </property>
+        <property name="singleStep">
+         <double>1.000000000000000</double>
+        </property>
+        <property name="value">
+         <double>2.000000000000000</double>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="rubberColor">
+        <property name="toolTip">
+         <string extracomment="Color of the selected distance circles used for triangulation."/>
+        </property>
+        <property name="text">
+         <string/>
         </property>
        </widget>
       </item>
      </layout>
     </widget>
    </item>
-   <item row="2" column="2">
-    <widget class="QDoubleSpinBox" name="rubberWidth">
-     <property name="toolTip">
-      <string extracomment="Width of the selected distance circles used for triangulation."/>
-     </property>
-     <property name="decimals">
-      <number>1</number>
-     </property>
-     <property name="singleStep">
-      <double>1.000000000000000</double>
-     </property>
-     <property name="value">
-      <double>2.000000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1" rowspan="2">
-    <widget class="QDoubleSpinBox" name="tolerance">
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value">
-      <double>0.300000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QCheckBox" name="placeArcBox">
-     <property name="text">
-      <string>place dimension arc in layer</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2" colspan="2">
-    <widget class="QComboBox" name="layerCombo"/>
-   </item>
-   <item row="3" column="0" colspan="4">
-    <widget class="Line" name="line">
+   <item row="2" column="0" colspan="4">
+    <widget class="Line" name="line_2">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
    </item>
-   <item row="6" column="2" colspan="2">
-    <widget class="QComboBox" name="dimensionFieldCombo"/>
-   </item>
-   <item row="7" column="2" colspan="2">
-    <widget class="QComboBox" name="precisionFieldCombo"/>
-   </item>
-   <item row="7" column="0" colspan="2">
-    <widget class="QCheckBox" name="placePrecisionBox">
-     <property name="text">
-      <string>place precision in field</string>
+   <item row="7" column="0" colspan="4">
+    <widget class="QGroupBox" name="groupBox_4">
+     <property name="title">
+      <string>Dimensions</string>
      </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QCheckBox" name="placeDimensionBox">
-     <property name="text">
-      <string>place dimension in field</string>
-     </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
+     <layout class="QGridLayout" name="gridLayout_5">
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="placeArcBox">
+        <property name="text">
+         <string>place dimension arc in layer</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="layerCombo"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="placeDimensionBox">
+        <property name="text">
+         <string>place dimension in field</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="dimensionFieldCombo"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QCheckBox" name="placePrecisionBox">
+        <property name="text">
+         <string>place precision in field</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="precisionFieldCombo"/>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
  </widget>
  <tabstops>
-  <tabstop>tolerance</tabstop>
-  <tabstop>mapUnits</tabstop>
   <tabstop>pixels</tabstop>
-  <tabstop>rubberWidth</tabstop>
-  <tabstop>rubberColor</tabstop>
   <tabstop>buttonBox</tabstop>
  </tabstops>
  <resources/>

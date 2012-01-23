@@ -146,17 +146,22 @@ class triangulation ():
 		canvas.setMapTool(self.getDistancePoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 		
-	def distanceOnCanvasClicked(self, point, button, modifiers):
+	def distanceOnCanvasClicked(self, point, pixpoint, button, modifiers):
 		if button != Qt.LeftButton:
 			return
 		canvas = self.iface.mapCanvas()
+		#snap to layers
+		if self.settings.value( "snapping" , 1).toInt()[0] == 1:
+			result,snappingResults = QgsMapCanvasSnapper(canvas).snapToBackgroundLayers(pixpoint,[])
+			if result == 0:
+				point = QgsPoint(snappingResults[0].snappedVertex)
 		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
+		# creates ditance with dialog
 		dlg = distance(point)
 		if dlg.exec_():
 			radius    = dlg.distance.value()
-			if radius==0:
-				return
 			precision = dlg.precision.value()
+			if radius==0: return
 			f = QgsFeature()
 			f.setGeometry(QgsGeometry.fromPolyline( [QgsPoint(point.x()+radius*math.cos(math.pi/180*a),point.y()+radius*math.sin(math.pi/180*a)) for a in range(0,361,3)] ))
 			f.setAttributeMap( {0: QVariant(point.x()),
@@ -187,7 +192,7 @@ class triangulation ():
 		canvas.setMapTool(self.getInitialTriangulationPoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
 
-	def triangulationOnCanvasClicked(self, point, button, modifiers):
+	def triangulationOnCanvasClicked(self, point, pixpoint, button, modifiers):
 		if button != Qt.LeftButton:
 			return
 		canvas = self.iface.mapCanvas()
@@ -264,15 +269,12 @@ class triangulation ():
 			self.rubber.addGeometry(f.geometry(),self.lineLayer())
 		return xyrpi
 		
+		
 class getPoint(QgsMapToolEmitPoint):
 	def __init__(self, canvas):
 		QgsMapToolEmitPoint.__init__(self, canvas)
 
 	def canvasPressEvent(self, mouseEvent):
-		point = self.toMapCoordinates( mouseEvent.pos() )
-		self.emit( SIGNAL( "canvasClickedWithModifiers" ), point, mouseEvent.button(), mouseEvent.modifiers() )	
-		
-		
-	
-		
-
+		pixpoint = mouseEvent.pos()
+		mappoint = self.toMapCoordinates( mouseEvent.pos() )
+		self.emit( SIGNAL( "canvasClickedWithModifiers" ), mappoint, pixpoint , mouseEvent.button(), mouseEvent.modifiers() )	

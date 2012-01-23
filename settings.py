@@ -28,6 +28,7 @@ class settings(QDialog, Ui_Settings ):
 		# load settings
 		self.settings = QSettings("Triangulation","Triangulation")
 		
+		self.snapBox.setChecked( self.settings.value( "snapping" , 1).toInt()[0] ) 
 		self.tolerance.setValue(self.settings.value("tolerance",0.3).toDouble()[0])
 		if self.settings.value( "units" , "map").toString() == "map":
 			self.mapUnits.setChecked(True)
@@ -131,6 +132,7 @@ class settings(QDialog, Ui_Settings ):
 			l += 1
 
 	def applySettings(self):
+		self.settings.setValue( "snapping " , int(self.snapBox.isChecked()) )
 		self.settings.setValue( "tolerance" , self.tolerance.value() )
 		if self.mapUnits.isChecked():
 			self.settings.setValue( "units" , "map")
