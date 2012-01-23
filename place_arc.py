@@ -165,13 +165,13 @@ class arc():
 		
 	def draw(self):
 		if self.isActive:
-			#self.layer.startEditing()
-			#self.layer.changeGeometry( self.f_id , self.geometry() )
-			#self.layer.commitChanges()
-			#self.layer.rollBack()
-			##self.layer.updateExtents()
-			#self.iface.mapCanvas().refresh()
-			self.provider.changeGeometryValues( { self.f_id : self.geometry() }) #not working as it expects a QMap. Asked to developer list. Waiting.
+			self.layer.startEditing()
+			self.layer.changeGeometry( self.f_id , self.geometry() )
+			self.layer.commitChanges()
+			self.layer.rollBack()
+			#self.layer.updateExtents()
+			self.iface.mapCanvas().refresh()
+			#self.provider.changeGeometryValues( { self.f_id : self.geometry() }) #not working as it expects a QMap. Asked to developer list. Waiting.
 			
 	def geometry(self):
 		# http://www.vb-helper.com/howto_find_quadratic_curve.html
