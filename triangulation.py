@@ -153,7 +153,7 @@ class triangulation ():
 		#snap to layers
 		if self.settings.value( "snapping" , 1).toInt()[0] == 1:
 			result,snappingResults = QgsMapCanvasSnapper(canvas).snapToBackgroundLayers(pixpoint,[])
-			if result == 0:
+			if result == 0 and len(snappingResults)>0:
 				point = QgsPoint(snappingResults[0].snappedVertex)
 		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
 		# creates ditance with dialog
