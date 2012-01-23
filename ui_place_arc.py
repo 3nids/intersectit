@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_arc.ui'
 #
-# Created: Mon Jan 23 11:44:12 2012
+# Created: Mon Jan 23 13:38:00 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_placeArc(object):
     def setupUi(self, placeArc):
         placeArc.setObjectName(_fromUtf8("placeArc"))
-        placeArc.resize(379, 174)
+        placeArc.resize(380, 211)
         placeArc.setWindowTitle(QtGui.QApplication.translate("placeArc", "Triangulation :: place arc", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(placeArc)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
