@@ -93,6 +93,7 @@ class placeArc(QDialog, Ui_placeArc ):
 	@pyqtSignature("on_reverseButton_clicked()")
 	def on_reverseButton_clicked(self):
 		self.arc[self.currentArc()].reverse().draw()
+		self.updateRubber()
 		
 	@pyqtSignature("on_createBox_stateChanged(int)")
 	def on_createBox_stateChanged(self,i):
