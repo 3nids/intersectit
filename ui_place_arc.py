@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_arc.ui'
 #
-# Created: Mon Jan 23 13:38:00 2012
+# Created: Tue Jan 24 14:33:30 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -74,7 +74,7 @@ class Ui_placeArc(object):
         self.displayLayersBox = QtGui.QCheckBox(placeArc)
         self.displayLayersBox.setText(QtGui.QApplication.translate("placeArc", "Display distances", None, QtGui.QApplication.UnicodeUTF8))
         self.displayLayersBox.setChecked(True)
-        self.displayLayersBox.setTristate(True)
+        self.displayLayersBox.setTristate(False)
         self.displayLayersBox.setObjectName(_fromUtf8("displayLayersBox"))
         self.gridLayout.addWidget(self.displayLayersBox, 0, 1, 1, 1)
 

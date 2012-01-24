@@ -38,7 +38,6 @@ class placeArc(QDialog, Ui_placeArc ):
 		# load settings
 		self.settings = QSettings("Triangulation","Triangulation")
 		# init state for distance layer visibility
-		self.displayLayersBox.setCheckState(Qt.PartiallyChecked)
 		QObject.connect( self.displayLayersBox , SIGNAL("stateChanged(int)") , self.toggleDistanceLayers )
 		# create the arcs
 		self.xyrpi = xyrpi
