@@ -26,5 +26,4 @@ class distance(QDialog, Ui_distanceDialog ):
 		self.x.setText("%.3f" % point.x())
 		self.y.setText("%.3f" % point.y())
 		
-		
-			
+		self.distance.selectAll()
