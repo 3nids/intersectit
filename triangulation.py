@@ -15,7 +15,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from distance import distance
+from place_distance import place_distance
 from settings import settings
 from place_arc import placeArc
 from triangulation_process import triangulationProcess
@@ -158,7 +158,7 @@ class triangulation ():
 				point = QgsPoint(snappingResults[0].snappedVertex)
 		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
 		# creates ditance with dialog
-		dlg = distance(point)
+		dlg = place_distance(point)
 		if dlg.exec_():
 			radius    = dlg.distance.value()
 			precision = dlg.precision.value()
