@@ -205,11 +205,13 @@ class triangulation ():
 		except NameError as detail:
 				QMessageBox.warning( self.iface.mainWindow() , "Triangulation", "%s" % detail )
 				return
-		f = QgsFeature()
-		f.setGeometry(QgsGeometry.fromPoint(triangulatedPoint))
-		self.pointLayer().dataProvider().addFeatures( [f] )
-		self.pointLayer().updateExtents()
-		canvas.refresh()
+		# if we do not place any dimension, place the triangulated point in layer
+		if self.settings.value("placeArc",1).toInt()[0] == 0:
+			f = QgsFeature()
+			f.setGeometry(QgsGeometry.fromPoint(triangulatedPoint))
+			self.pointLayer().dataProvider().addFeatures( [f] )
+			self.pointLayer().updateExtents()
+			canvas.refresh()
 		# check that dimension layer and fields have been set correctly
 		while True:
 			if self.settings.value("placeArc",1).toInt()[0] == 0: return # if we do not place any dimension, skip
