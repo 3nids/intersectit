@@ -148,13 +148,6 @@ class arc():
 			preFieldName = QgsProject.instance().readEntry("Triangulation", "precision_field", "")[0]
 			ilbl = self.provider.fieldNameIndex(preFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.precision))
-		# look for primary key
-		iid = self.provider.fieldNameIndex('id')
-		#iid = -1
-		if iid != -1:
-			self.db_id = self.provider.maximumValue(iid).toInt()[0]+1
-			f.addAttribute(iid,self.db_id)
-		# add feature to layer	
 		ans,f = self.provider.addFeatures( [f] )
 		self.f_id = f[0].id()
 		self.layer.updateExtents()
