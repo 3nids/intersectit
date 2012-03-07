@@ -62,6 +62,7 @@ class settings(QDialog, Ui_Settings ):
 			
 	@pyqtSignature("on_placeArcBox_toggled(bool)")
 	def on_placeArcBox_toggled(self,b):
+		self.layerCombo.setEnabled(b)
 		self.placeDimensionBox.setEnabled(b)
 		self.dimensionFieldCombo.setEnabled(b)
 		self.placePrecisionBox.setEnabled(b)
