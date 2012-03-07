@@ -142,7 +142,7 @@ class triangulation ():
 			return
 		self.distanceAction.setChecked( True )
 		snapping = self.settings.value( "snapping" , 1).toInt()[0]
-		self.getDistancePoint = getPoint(canvas,self.iface,self.pointLayer,snapping)
+		self.getDistancePoint = getPoint(canvas,self.iface,snapping)
 		QObject.connect(self.getDistancePoint , SIGNAL("canvasClickedWithModifiers") , self.distanceOnCanvasClicked ) 
 		canvas.setMapTool(self.getDistancePoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
@@ -188,7 +188,7 @@ class triangulation ():
 			canvas.unsetMapTool(self.getInitialTriangulationPoint)
 			return
 		self.triangulAction.setChecked( True )
-		self.getInitialTriangulationPoint = getPoint(canvas,self.iface,self.pointLayer)
+		self.getInitialTriangulationPoint = getPoint(canvas,self.iface)
 		QObject.connect(self.getInitialTriangulationPoint , SIGNAL("canvasClickedWithModifiers") , self.triangulationOnCanvasClicked ) 
 		canvas.setMapTool(self.getInitialTriangulationPoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
@@ -272,27 +272,26 @@ class triangulation ():
 
 
 class getPoint(QgsMapToolEmitPoint):
-	def __init__(self, canvas, iface, pointLayer, snapping=0):
+	def __init__(self, canvas, iface, snapping=0):
 		self.canvas = canvas
 		self.iface = iface
 		self.snapping = snapping
 		self.transform = self.canvas.getCoordinateTransform()
 		self.rubber = QgsRubberBand(canvas)
-		self.pointLayer = pointLayer
 		QgsMapToolEmitPoint.__init__(self, canvas)
-		print snapping
 
 	def canvasMoveEvent(self, mouseEvent):
 		#snap to layers	
+		self.rubber.reset()
 		if self.snapping == 1:
 			pixPoint = mouseEvent.pos()
 			result,snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint,[])
 			if result == 0 and len(snappingResults)>0:
-				snappedPoint = QgsPoint(snappingResults[0].snappedVertex)	
-				self.rubber.reset()
-				self.rubber.addGeometry(QgsGeometry.fromPoint(snappedPoint),self.pointLayer())
-
+				snappedPoint = QgsPoint(snappingResults[0].snappedVertex)
+				self.rubber.addGeometry(QgsGeometry.fromPoint(snappedPoint),None)
+			
 	def canvasPressEvent(self, mouseEvent):
+		self.rubber.reset()
 		pixpoint = mouseEvent.pos()
 		mappoint = self.toMapCoordinates( mouseEvent.pos() )
 		self.emit( SIGNAL( "canvasClickedWithModifiers" ), mappoint, pixpoint , mouseEvent.button(), mouseEvent.modifiers() )	
