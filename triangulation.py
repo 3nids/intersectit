@@ -16,6 +16,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from place_distance import place_distance
+from distance import distance
 from settings import settings
 from place_arc import placeArc
 from triangulation_process import triangulationProcess
@@ -38,6 +39,8 @@ class triangulation ():
 		self.rubber = QgsRubberBand(self.iface.mapCanvas())
 		# settings
 		self.settings = QSettings("Triangulation","Triangulation")
+		
+		self.observations = []
 
 	def initGui(self):
 		self.toolBar = self.iface.addToolBar("Triangulation")
@@ -163,19 +166,7 @@ class triangulation ():
 			radius    = dlg.distance.value()
 			precision = dlg.precision.value()
 			if radius==0: return
-			f = QgsFeature()
-			f.setGeometry(QgsGeometry.fromPolyline( [QgsPoint(point.x()+radius*math.cos(math.pi/180*a),point.y()+radius*math.sin(math.pi/180*a)) for a in range(0,361,3)] ))
-			f.setAttributeMap( {0: QVariant(point.x()),
-								1: QVariant(point.y()),
-								2: QVariant(radius),
-								3: QVariant(precision)} )
-			self.lineLayer().dataProvider().addFeatures( [f] )
-			self.lineLayer().updateExtents()
-			f = QgsFeature()
-			f.setGeometry(QgsGeometry.fromPoint(point))
-			self.pointLayer().dataProvider().addFeatures( [f] )
-			self.pointLayer().updateExtents()
-			canvas.refresh()
+			self.observations.append( distance( self.canvas,point,radius,precision ) )
 
 	def distanceToolChanged(self, tool):
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)

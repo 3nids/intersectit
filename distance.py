@@ -18,12 +18,18 @@ except AttributeError:
 
 # create the dialog to connect layers
 class distance(QDialog, Ui_distanceDialog ):
-	def __init__(self,point):
-		QDialog.__init__(self)
-		# Set up the user interface from Designer.
-		self.setupUi(self)
+	def __init__(self,canvas,center,radius,precision):
+		self.type = "distance"
+		self.center = center
+		self.radius = radius
+		self.precision = precision
+		self.rubber = QgsRubberBand(canvas)
 		
-		self.x.setText("%.3f" % point.x())
-		self.y.setText("%.3f" % point.y())
+	def drawCircle(self):
+		self.rubber.addGeometry( QgsGeometry.fromPolyline( [QgsPoint(self.center.x()+self.radius*math.cos(math.pi/180*a),self.center.y()+self.radius*math.sin(math.pi/180*a)) for a in range(0,361,3)] ) )
+		self.rubber.addGeometry( QgsGeometry.fromPoint( self.center ) )
 		
-		self.distance.selectAll()
+	def delete(self):
+		self.rubber.reset()
+		
+		
