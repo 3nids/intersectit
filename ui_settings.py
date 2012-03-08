@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Mon Jan 23 10:22:16 2012
+# Created: Thu Mar  8 13:47:35 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,12 +17,12 @@ except AttributeError:
 class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
-        Settings.resize(350, 423)
-        Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "Triangulation :: settings", None, QtGui.QApplication.UnicodeUTF8))
+        Settings.resize(393, 423)
+        Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "IntersectIt :: settings", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.groupBox_2 = QtGui.QGroupBox(Settings)
-        self.groupBox_2.setTitle(QtGui.QApplication.translate("Settings", " Place distances", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_2.setTitle(QtGui.QApplication.translate("Settings", "Observations", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setObjectName(_fromUtf8("groupBox_2"))
         self.gridLayout_4 = QtGui.QGridLayout(self.groupBox_2)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
@@ -43,7 +43,7 @@ class Ui_Settings(object):
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout.addWidget(self.buttonBox, 13, 0, 1, 4)
         self.groupBox_3 = QtGui.QGroupBox(Settings)
-        self.groupBox_3.setTitle(QtGui.QApplication.translate("Settings", "Triangulation", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox_3.setTitle(QtGui.QApplication.translate("Settings", "Intersection", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setObjectName(_fromUtf8("groupBox_3"))
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox_3)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
@@ -72,7 +72,7 @@ class Ui_Settings(object):
         self.tolerance.setObjectName(_fromUtf8("tolerance"))
         self.gridLayout_3.addWidget(self.tolerance, 1, 1, 1, 1)
         self.label_2 = QtGui.QLabel(self.groupBox_3)
-        self.label_2.setText(QtGui.QApplication.translate("Settings", "Selected circles", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Settings", "Selected observations", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout_3.addWidget(self.label_2, 2, 0, 1, 1)
         self.rubberWidth = QtGui.QDoubleSpinBox(self.groupBox_3)
