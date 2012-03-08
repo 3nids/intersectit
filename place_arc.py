@@ -1,5 +1,5 @@
 """
-Triangulation QGIS plugin
+IntersectIt QGIS plugin
 Denis Rouzaud
 denis.rouzaud@gmail.com
 Jan. 2012
@@ -21,12 +21,12 @@ except AttributeError:
 
 # create the dialog to connect layers
 class placeArc(QDialog, Ui_placeArc ):
-	def __init__(self,iface,triangulatedPoint,xyrpi,distanceLayers):
+	def __init__(self,iface,intersectedPoint,xyrpi,distanceLayers):
 		QDialog.__init__(self)
 		self.setupUi(self)
 		self.iface = iface
 		self.distanceLayers = distanceLayers
-		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ), False )
+		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0] ), False )
 		self.rubber = QgsRubberBand(iface.mapCanvas())
 		self.rubber.setWidth(2)
 		defaultRadius = self.radiusSlider.value()
@@ -36,7 +36,7 @@ class placeArc(QDialog, Ui_placeArc ):
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"),	self.radiusSpin,   SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
 		# load settings
-		self.settings = QSettings("Triangulation","Triangulation")
+		self.settings = QSettings("IntersectIt","IntersectIt")
 		# init state for distance layer visibility
 		QObject.connect( self.displayLayersBox , SIGNAL("stateChanged(int)") , self.toggleDistanceLayers )
 		# create the arcs
@@ -51,7 +51,7 @@ class placeArc(QDialog, Ui_placeArc ):
 			point = c[0]
 			distance  = c[1] # this is the measure
 			precision = c[2]
-			self.arc.append(arc(iface,self.layer,triangulatedPoint,point,distance,precision,defaultRadius))
+			self.arc.append(arc(iface,self.layer,intersectedPoint,point,distance,precision,defaultRadius))
 			ii += 1
 		QObject.connect(self.arcCombo, SIGNAL("currentIndexChanged(int)") , self.arcSelected) # this must be placed after the combobox population
 		self.arcSelected(0)
@@ -109,21 +109,21 @@ class placeArc(QDialog, Ui_placeArc ):
 
 
 class arc():
-	def __init__(self,iface,layer,triangulatedPoint,distancePoint,distance,precision,radius):
+	def __init__(self,iface,layer,intersectedPoint,distancePoint,distance,precision,radius):
 		self.iface = iface
 		self.layer = layer
 		self.provider = layer.dataProvider()
 		self.radius    = radius	
 		self.distance  = distance
 		self.precision = precision 
-		self.length    = math.sqrt( triangulatedPoint.sqrDist(distancePoint) )
+		self.length    = math.sqrt( intersectedPoint.sqrDist(distancePoint) )
 		self.isActive  = True
-		self.triangulatedPoint = triangulatedPoint
+		self.intersectedPoint = intersectedPoint
 		self.distancePoint     = distancePoint
-		self.anchorPoint       = [  (triangulatedPoint.x()+distancePoint.x())/2 , (triangulatedPoint.y()+distancePoint.y())/2 ]
-		self.direction         = [ -(triangulatedPoint.y()-distancePoint.y())   ,  triangulatedPoint.x()-distancePoint.x()    ]
+		self.anchorPoint       = [  (intersectedPoint.x()+distancePoint.x())/2 , (intersectedPoint.y()+distancePoint.y())/2 ]
+		self.direction         = [ -(intersectedPoint.y()-distancePoint.y())   ,  intersectedPoint.x()-distancePoint.x()    ]
 		self.way = 1
-		self.settings = QSettings("Triangulation","Triangulation")
+		self.settings = QSettings("IntersectIt","IntersectIt")
 		self.createFeature()
 		
 	def setRadius(self,radius):
@@ -141,11 +141,11 @@ class arc():
 		f.setGeometry(self.geometry())
 		# look for dimension and precision fields
 		if self.settings.value("placeDimension",1).toInt()[0] == 1:
-			dimFieldName = QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]
+			dimFieldName = QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0]
 			ilbl = self.provider.fieldNameIndex(dimFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))
 		if self.settings.value("placePrecision",1).toInt()[0] == 1:
-			preFieldName = QgsProject.instance().readEntry("Triangulation", "precision_field", "")[0]
+			preFieldName = QgsProject.instance().readEntry("IntersectIt", "precision_field", "")[0]
 			ilbl = self.provider.fieldNameIndex(preFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.precision))
 		ans,f = self.provider.addFeatures( [f] )
@@ -168,6 +168,6 @@ class arc():
 	def geometry(self):
 		# http://www.vb-helper.com/howto_find_quadratic_curve.html
 		curvePoint = QgsPoint(   self.anchorPoint[0] + self.way * self.direction[0] * self.radius/100    ,   self.anchorPoint[1] + self.way * self.direction[1] * self.radius/100    )
-		return  QgsGeometry().fromMultiPoint([self.triangulatedPoint,curvePoint,self.distancePoint])  
+		return  QgsGeometry().fromMultiPoint([self.intersectedPoint,curvePoint,self.distancePoint])  
 
 	

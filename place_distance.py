@@ -1,5 +1,5 @@
 """
-Triangulation QGIS plugin
+IntersectIt QGIS plugin
 Denis Rouzaud
 denis.rouzaud@gmail.com
 Jan. 2012

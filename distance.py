@@ -4,7 +4,7 @@ Denis Rouzaud
 denis.rouzaud@gmail.com
 Jan. 2012
 
-Init dialog for distance
+Observation class for distances
 """
 
 from PyQt4.QtCore import *

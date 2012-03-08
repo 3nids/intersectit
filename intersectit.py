@@ -65,7 +65,7 @@ class intersectit ():
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)	
 		# cleaner
-		self.cleanerAction = QAction(QIcon(":/plugins/triangulation/icons/cleaner.png"), "clean points and circles", self.iface.mainWindow())
+		self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/cleaner.png"), "clean points and circles", self.iface.mainWindow())
 		QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
 		self.toolBar.addAction(self.cleanerAction)
 		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
@@ -81,7 +81,7 @@ class intersectit ():
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
 		try:
-			print "Triangulation :: Removing temporary layer"
+			print "IntersecIt :: Removing temporary layer"
 			QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id()) 
 			QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer.id()) 
 		except AttributeError:
@@ -112,30 +112,30 @@ class intersectit ():
 		self.iface.mapCanvas().refresh()
 
 	def lineLayerDeleted(self):
-		QgsProject.instance().writeEntry("Triangulation", "memory_line_layer", "")
+		QgsProject.instance().writeEntry("IntersectIt", "memory_line_layer", "")
 
 	def pointLayerDeleted(self):
-		QgsProject.instance().writeEntry("Triangulation", "memory_point_layer", "")
+		QgsProject.instance().writeEntry("IntersectIt", "memory_point_layer", "")
 
 	def lineLayer(self):
-		layerID = QgsProject.instance().readEntry("Triangulation", "memory_line_layer", "")[0]
+		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_line_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=x:double&field=y:double&field=radius:double&field=precision:double&index=yes", "Triangulation Lines", "memory") 
+			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=x:double&field=y:double&field=radius:double&field=precision:double&index=yes", "IntersectIt Lines", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
-			QgsProject.instance().writeEntry("Triangulation", "memory_line_layer", layer.id())
+			QgsProject.instance().writeEntry("IntersectIt", "memory_line_layer", layer.id())
 		else: self.iface.legendInterface().setLayerVisible (layer,True)
 		return layer			
 
 	def pointLayer(self):
-		layerID = QgsProject.instance().readEntry("Triangulation", "memory_point_layer", "")[0]
+		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_point_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("Point?crs=EPSG:21781&index=yes", "Triangulation Points", "memory") 
+			layer = QgsVectorLayer("Point?crs=EPSG:21781&index=yes", "IntersectIt Points", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
-			QgsProject.instance().writeEntry("Triangulation", "memory_point_layer", layer.id())
+			QgsProject.instance().writeEntry("IntersectIt", "memory_point_layer", layer.id())
 		else: self.iface.legendInterface().setLayerVisible (layer,True)
 		return layer			
 
@@ -193,44 +193,44 @@ class intersectit ():
 		xyrpi = self.getCircles(point)
 		self.intersectionProcess = intersection(point,xyrpi)		
 		try:
-			triangulatedPoint =  self.intersectionProcess.getSolution()
+			intersectedPoint =  self.intersectionProcess.getSolution()
 		except NameError as detail:
-				QMessageBox.warning( self.iface.mainWindow() , "Triangulation", "%s" % detail )
+				QMessageBox.warning( self.iface.mainWindow() , "IntersectIt", "%s" % detail )
 				return
-		# if we do not place any dimension, place the triangulated point in layer
+		# if we do not place any dimension, place the intersected point in layer
 		if self.settings.value("placeArc",1).toInt()[0] == 0:
 			f = QgsFeature()
-			f.setGeometry(QgsGeometry.fromPoint(triangulatedPoint))
+			f.setGeometry(QgsGeometry.fromPoint(intersectedPoint))
 			self.pointLayer().dataProvider().addFeatures( [f] )
 			self.pointLayer().updateExtents()
 			canvas.refresh()
 		# check that dimension layer and fields have been set correctly
 		while True:
 			if self.settings.value("placeArc",1).toInt()[0] == 0: return # if we do not place any dimension, skip
-			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0] ), False )
+			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0] ), False )
 			if dimLayer is False:
-				reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
 			if self.settings.value("placeDimension",1).toInt()[0] == 1: 
-				dimensionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0] ), False )
+				dimensionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0] ), False )
 				if dimensionField is False:
 					ok = False
-					reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, please select a field for the dimension. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, please select a field for the dimension. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 					if reply == QMessageBox.No:  	 return
 					if self.uisettings.exec_() == 0: return
 					continue
 			if self.settings.value("placePrecision",0).toInt()[0] == 1: 
-				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("Triangulation", "precision_field", "")[0] ), False )
+				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("IntersectIt", "precision_field", "")[0] ), False )
 				if precisionField is False:
 					ok = False
-					reply = QMessageBox.question( self.iface.mainWindow() , "Triangulation", "To place dimension arcs, please select a field for the precision. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, please select a field for the precision. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 					if reply == QMessageBox.No: 	 return
 					if self.uisettings.exec_() == 0: return
 					continue
 			break
-		dlg = placeArc(self.iface,triangulatedPoint,xyrpi,[self.lineLayer(),self.pointLayer()])
+		dlg = placeArc(self.iface,intersectedPoint,xyrpi,[self.lineLayer(),self.pointLayer()])
 		dlg.exec_()		
 
 	def intersectionToolChanged(self, tool):

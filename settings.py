@@ -1,5 +1,5 @@
 """
-Triangulation QGIS plugin
+IntersectIt QGIS plugin
 Denis Rouzaud
 denis.rouzaud@gmail.com
 Jan. 2012
@@ -26,7 +26,7 @@ class settings(QDialog, Ui_Settings ):
 		self.setupUi(self)
 		QObject.connect(self , SIGNAL( "accepted()" ) , self.applySettings)
 		# load settings
-		self.settings = QSettings("Triangulation","Triangulation")
+		self.settings = QSettings("IntersectIt","IntersectIt")
 		
 		self.snapBox.setChecked( self.settings.value( "snapping" , 1).toInt()[0] ) 
 		self.tolerance.setValue(self.settings.value("tolerance",0.3).toDouble()[0])
@@ -48,7 +48,7 @@ class settings(QDialog, Ui_Settings ):
 		
 	def showEvent(self, e):
 		self.layers = self.iface.mapCanvas().layers()
-		dimLayerId = QgsProject.instance().readEntry("Triangulation", "dimension_layer", "")[0]
+		dimLayerId = QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0]
 		self.layerCombo.clear()
 		self.layerCombo.addItem(_fromUtf8(""))
 		l = 1
@@ -74,15 +74,15 @@ class settings(QDialog, Ui_Settings ):
 		if i > 0:
 			layer = self.layers[i-1]
 			if layer.type() != QgsMapLayer.VectorLayer:
-				error_msg = QApplication.translate("Triangulation", "The dimension layer must be a vector layer.", None, QApplication.UnicodeUTF8) 
+				error_msg = QApplication.translate("IntersectIt", "The dimension layer must be a vector layer.", None, QApplication.UnicodeUTF8) 
 			elif layer.hasGeometryType() is False:
-				error_msg = QApplication.translate("Triangulation", "The dimension layer has no geometry.", None, QApplication.UnicodeUTF8) 
+				error_msg = QApplication.translate("IntersectIt", "The dimension layer has no geometry.", None, QApplication.UnicodeUTF8) 
 			else:
 				# TODO CHECK GEOMETRY
 				print layer.dataProvider().geometryType() , layer.geometryType()
 		if error_msg != '':
 			self.layerCombo.setCurrentIndex(0)
-			QMessageBox.warning( self , "Triangulation", error_msg )
+			QMessageBox.warning( self , "IntersectIt", error_msg )
 		# update field list
 		self.updateFieldsCombo()
 		
@@ -93,7 +93,7 @@ class settings(QDialog, Ui_Settings ):
 			i = self.dimLayer().dataProvider().fieldNameIndex(field)
 			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
 			if self.dimLayer().dataProvider().fields()[i].type() != 10:
-				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The dimension field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
+				QMessageBox.warning( self , "IntersectIt" ,  QApplication.translate("IntersectIt", "The dimension field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
 				self.dimensionFieldCombo.setCurrentIndex(0)
 				
 	@pyqtSignature("on_precisionFieldCombo_currentIndexChanged(int)")
@@ -103,7 +103,7 @@ class settings(QDialog, Ui_Settings ):
 			i = self.dimLayer().dataProvider().fieldNameIndex(field)
 			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
 			if self.dimLayer().dataProvider().fields()[i].type() != 10:
-				QMessageBox.warning( self , "Triangulation" ,  QApplication.translate("Triangulation", "The precision field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
+				QMessageBox.warning( self , "IntersectIt" ,  QApplication.translate("IntersectIt", "The precision field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
 				self.precisionFieldCombo.setCurrentIndex(0)
 			
 	def dimLayer(self):
@@ -121,14 +121,14 @@ class settings(QDialog, Ui_Settings ):
 		for field in self.dimLayer().dataProvider().fieldNameMap():
 			self.dimensionFieldCombo.addItem(_fromUtf8("") )
 			self.dimensionFieldCombo.setItemText( l, field )
-			if field == QgsProject.instance().readEntry("Triangulation", "dimension_field", "")[0]:
+			if field == QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0]:
 				self.dimensionFieldCombo.setCurrentIndex(l)	
 			l += 1
 		l = 1
 		for field in self.dimLayer().dataProvider().fieldNameMap():
 			self.precisionFieldCombo.addItem(_fromUtf8("") )
 			self.precisionFieldCombo.setItemText( l, field )
-			if field == QgsProject.instance().readEntry("Triangulation", "precision_field", "")[0]:
+			if field == QgsProject.instance().readEntry("IntersectIt", "precision_field", "")[0]:
 				self.precisionFieldCombo.setCurrentIndex(l)	
 			l += 1
 
@@ -148,9 +148,9 @@ class settings(QDialog, Ui_Settings ):
 		self.settings.setValue( "placeDimension" , int(self.placeDimensionBox.isChecked()) )
 		if self.dimLayer() is False: dimLayerId = ''
 		else: dimLayerId = self.dimLayer().id()		
-		QgsProject.instance().writeEntry("Triangulation", "dimension_layer", dimLayerId)
-		QgsProject.instance().writeEntry("Triangulation", "dimension_field", self.dimensionFieldCombo.currentText() )
-		QgsProject.instance().writeEntry("Triangulation", "precision_field", self.precisionFieldCombo.currentText() )
+		QgsProject.instance().writeEntry("IntersectIt", "dimension_layer", dimLayerId)
+		QgsProject.instance().writeEntry("IntersectIt", "dimension_field", self.dimensionFieldCombo.currentText() )
+		QgsProject.instance().writeEntry("IntersectIt", "precision_field", self.precisionFieldCombo.currentText() )
 
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):
