@@ -30,7 +30,6 @@ class placeMeasureOnMap(QgsMapToolEmitPoint):
 				snappedPoint = QgsPoint(snappingResults[0].snappedVertex)
 				self.rubber.addGeometry(QgsGeometry.fromPoint(snappedPoint),None)
 		
-			
 	def canvasPressEvent(self, mouseEvent):
 		self.rubber.reset()
 		pixpoint = mouseEvent.pos()
@@ -39,14 +38,26 @@ class placeMeasureOnMap(QgsMapToolEmitPoint):
 		
 		
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
-	def __init__(self, canvas):
+	def __init__(self, canvas, lineLayer):
 		self.canvas = canvas
 		self.rubber = QgsRubberBand(canvas)
+		self.provider = lineLayer().dataProvider()
 		QgsMapToolEmitPoint.__init__(self, canvas)
+		self.settings = QSettings("IntersectIt","IntersectIt")
 
+		self.tolerance = self.settings.value("tolerance",0.3).toDouble()[0]
+		units = self.settings.value("units","map").toString()
+		if units == "pixels": self.tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
+		
 	def canvasMoveEvent(self, mouseEvent):
-		#snap to layers	
+		# put the observations within tolerance in the rubber band
+		point = self.toMapCoordinates( mouseEvent.pos() )
+		rect = QgsRectangle(point.x()-self.tolerance,point.y()-self.tolerance,point.x()+self.tolerance,point.y()+self.tolerance)
+		self.provider.select([], rect, True, True)
+		f = QgsFeature()
 		self.rubber.reset()
+		while (self.provider.nextFeature(f)):
+			self.rubber.addGeometry( f.geometry() , None )
 		
 	def canvasPressEvent(self, mouseEvent):
 		self.rubber.reset()

@@ -53,7 +53,7 @@ class intersectit ():
 		self.toolBar.addAction(self.distanceAction)
 		self.iface.addPluginToMenu("&Intersect It", self.distanceAction)	
 		# intersection
-		self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersect.png"), "intersection", self.iface.mainWindow())
+		self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersection.png"), "intersection", self.iface.mainWindow())
 		self.intersectAction.setCheckable(True)
 		QObject.connect(self.intersectAction, SIGNAL("triggered()"), self.intersectionStart)
 		self.toolBar.addAction(self.intersectAction)
@@ -180,7 +180,7 @@ class intersectit ():
 			canvas.unsetMapTool(self.placeInitialIntersectionPoint)
 			return
 		self.intersectAction.setChecked( True )
-		self.placeInitialIntersectionPoint = placeIntersectionOnMap(canvas)
+		self.placeInitialIntersectionPoint = placeIntersectionOnMap(canvas,self.lineLayer)
 		QObject.connect(self.placeInitialIntersectionPoint , SIGNAL("canvasClickedWithModifiers") , self.intersectionOnCanvasClicked ) 
 		canvas.setMapTool(self.placeInitialIntersectionPoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
