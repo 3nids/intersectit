@@ -37,9 +37,9 @@ class settings(QDialog, Ui_Settings ):
 			self.mapUnits.setChecked(False)
 			self.pixels.setChecked(True)
 		self.rubberWidth.setValue(self.settings.value("rubber_width",2).toDouble()[0])
-		self.colorR = self.settings.value("rubber_colorR",255).toInt()[0]
-		self.colorG = self.settings.value("rubber_colorG",0  ).toInt()[0]
-		self.colorB = self.settings.value("rubber_colorB",0  ).toInt()[0]
+		self.colorR = self.settings.value("rubber_colorR",0  ).toInt()[0]
+		self.colorB = self.settings.value("rubber_colorG",0  ).toInt()[0]
+		self.colorG = self.settings.value("rubber_colorB",255).toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
 		self.placeArcBox.setChecked(       self.settings.value( "placeArc"       , 1).toInt()[0] ) 

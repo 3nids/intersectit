@@ -38,9 +38,9 @@ class placeMeasureOnMap(QgsMapToolEmitPoint):
 		
 		
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
-	def __init__(self, canvas, lineLayer):
+	def __init__(self, canvas, lineLayer, rubber):
 		self.canvas = canvas
-		self.rubber = QgsRubberBand(canvas)
+		self.rubber = rubber
 		self.provider = lineLayer().dataProvider()
 		QgsMapToolEmitPoint.__init__(self, canvas)
 		self.settings = QSettings("IntersectIt","IntersectIt")

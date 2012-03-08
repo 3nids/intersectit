@@ -89,9 +89,9 @@ class intersectit ():
 
 	def applySettings(self):
 		self.rubber.setWidth( self.settings.value("rubber_width",2).toDouble()[0] )
-		R = self.settings.value("rubber_colorR",255).toInt()[0]
+		R = self.settings.value("rubber_colorR",0  ).toInt()[0]
 		G = self.settings.value("rubber_colorG",0  ).toInt()[0]
-		B = self.settings.value("rubber_colorB",0  ).toInt()[0]
+		B = self.settings.value("rubber_colorB",255).toInt()[0]
 		self.rubber.setColor(QColor(R,G,B,255))		
 
 	def cleanMemoryLayers(self):
@@ -180,7 +180,7 @@ class intersectit ():
 			canvas.unsetMapTool(self.placeInitialIntersectionPoint)
 			return
 		self.intersectAction.setChecked( True )
-		self.placeInitialIntersectionPoint = placeIntersectionOnMap(canvas,self.lineLayer)
+		self.placeInitialIntersectionPoint = placeIntersectionOnMap(canvas,self.lineLayer,self.rubber)
 		QObject.connect(self.placeInitialIntersectionPoint , SIGNAL("canvasClickedWithModifiers") , self.intersectionOnCanvasClicked ) 
 		canvas.setMapTool(self.placeInitialIntersectionPoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
