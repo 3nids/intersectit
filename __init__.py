@@ -5,9 +5,9 @@ denis.rouzaud@gmail.com
 Jan. 2012
 """
 def name():
-    return "Triangulation"
+    return "Intersect It"
 def description():
-    return "Allows determination of a position based on distance to points. If the problem is over-determined, a weighted least-squares solution is returned."
+    return "Place measures with their corresponding precision, intersect the measures using a least-squares solution and place dimensions in layers to keep the measures available on maps."
 def version():
     return "Version 0.1"
 def icon():
@@ -15,8 +15,8 @@ def icon():
 def qgisMinimumVersion():
     return "1.7"
 def classFactory(iface):
-    from triangulation import triangulation
-    return triangulation(iface)
+    from intersectit import intersectit
+    return intersectit(iface)
     
 
 
