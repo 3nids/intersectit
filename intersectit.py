@@ -17,7 +17,7 @@ from qgis.gui import *
 
 from maptools import placeMeasureOnMap, placeIntersectionOnMap
 from place_distance import place_distance
-from distance import distance
+from observation import observation
 from settings import settings
 from place_arc import placeArc
 from intersection import intersection
@@ -40,8 +40,7 @@ class intersectit ():
 		self.rubber = QgsRubberBand(self.iface.mapCanvas())
 		# settings
 		self.settings = QSettings("IntersectIt","IntersectIt")
-		
-		self.observations = []
+
 
 	def initGui(self):
 		self.toolBar = self.iface.addToolBar("IntersectIt")
@@ -69,6 +68,8 @@ class intersectit ():
 		QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
 		self.toolBar.addAction(self.cleanerAction)
 		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
+		# apply settings at first launch
+		self.applySettings()
 
 	def unload(self):
 		self.iface.removePluginMenu("&Intersect It",self.distanceAction)
@@ -121,7 +122,7 @@ class intersectit ():
 		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_line_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=x:double&field=y:double&field=radius:double&field=precision:double&index=yes", "IntersectIt Lines", "memory") 
+			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=id:string&field=type:string&field=x:double&field=y:double&field=observation:double&field=precision:double&index=yes", "IntersectIt Lines", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
 			QgsProject.instance().writeEntry("IntersectIt", "memory_line_layer", layer.id())
@@ -132,7 +133,7 @@ class intersectit ():
 		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_point_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("Point?crs=EPSG:21781&index=yes", "IntersectIt Points", "memory") 
+			layer = QgsVectorLayer("Point?crs=EPSG:21781&field=id:string&index=yes", "IntersectIt Points", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
 			QgsProject.instance().writeEntry("IntersectIt", "memory_point_layer", layer.id())
@@ -167,7 +168,7 @@ class intersectit ():
 			radius    = dlg.distance.value()
 			precision = dlg.precision.value()
 			if radius==0: return
-			self.observations.append( distance( self.iface.mapCanvas(),self.lineLayer,self.pointLayer,point,radius,precision ) )
+			observation( canvas,self.lineLayer,self.pointLayer,"distance",point,radius,precision )
 
 	def distanceToolChanged(self, tool):
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
