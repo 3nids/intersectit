@@ -1,0 +1,6 @@
+
+- confirmation balai
+- suppression d'un lineLayer feature  => supprime le pointLayer correspondant
+- CRS dans les memory layer canvas.mapRenderer().destinationCrs()
+
+- settings: default precision
