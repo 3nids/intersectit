@@ -46,7 +46,6 @@ class observation():
 							5: QVariant(precision)} )
 		if type == "distance":
 			geom = QgsGeometry.fromPolyline( [QgsPoint(point.x()+observation*math.cos(math.pi/180*a),point.y()+observation*math.sin(math.pi/180*a)) for a in range(0,361,3)] )
-		f = QgsFeature()
 		f.setGeometry(geom)
 		lineLayer().dataProvider().addFeatures( [f] )
 		lineLayer().updateExtents()

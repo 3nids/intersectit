@@ -48,13 +48,13 @@ class intersectit ():
 		# distance
 		self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.png"), "place distance", self.iface.mainWindow())
 		self.distanceAction.setCheckable(True)
-		QObject.connect(self.distanceAction, SIGNAL("triggered()"), self.distanceStart)
+		QObject.connect(self.distanceAction, SIGNAL("triggered()"), self.distanceInitTool)
 		self.toolBar.addAction(self.distanceAction)
 		self.iface.addPluginToMenu("&Intersect It", self.distanceAction)	
 		# intersection
 		self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersection.png"), "intersection", self.iface.mainWindow())
 		self.intersectAction.setCheckable(True)
-		QObject.connect(self.intersectAction, SIGNAL("triggered()"), self.intersectionStart)
+		QObject.connect(self.intersectAction, SIGNAL("triggered()"), self.intersectionInitTool)
 		self.toolBar.addAction(self.intersectAction)
 		self.iface.addPluginToMenu("&Intersect It", self.intersectAction)	
 		# settings
@@ -140,7 +140,7 @@ class intersectit ():
 		else: self.iface.legendInterface().setLayerVisible (layer,True)
 		return layer			
 
-	def distanceStart(self):
+	def distanceInitTool(self):
 		canvas = self.iface.mapCanvas()
 		if self.distanceAction.isChecked() is False:
 			canvas.unsetMapTool(self.placeDistancePoint)
@@ -148,20 +148,17 @@ class intersectit ():
 		self.distanceAction.setChecked( True )
 		snapping = self.settings.value( "snapping" , 1).toInt()[0]
 		self.placeDistancePoint = placeMeasureOnMap(canvas,snapping)
-		QObject.connect(self.placeDistancePoint , SIGNAL("canvasClickedWithModifiers") , self.distanceOnCanvasClicked ) 
+		QObject.connect(self.placeDistancePoint , SIGNAL("distancePlaced") , self.distancePlaceIt ) 
 		canvas.setMapTool(self.placeDistancePoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 
-	def distanceOnCanvasClicked(self, point, pixpoint, button, modifiers):
-		if button != Qt.LeftButton:
-			return
+	def distancePlaceIt(self, point, pixpoint):
 		canvas = self.iface.mapCanvas()
 		#snap to layers
 		if self.settings.value( "snapping" , 1).toInt()[0] == 1:
 			result,snappingResults = QgsMapCanvasSnapper(canvas).snapToBackgroundLayers(pixpoint,[])
 			if result == 0 and len(snappingResults)>0:
 				point = QgsPoint(snappingResults[0].snappedVertex)
-		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
 		# creates ditance with dialog
 		dlg = place_distance(point)
 		if dlg.exec_():
@@ -175,22 +172,20 @@ class intersectit ():
 		self.distanceAction.setChecked( False )
 		self.iface.mapCanvas().unsetMapTool(self.placeDistancePoint)
 
-	def intersectionStart(self):
+	def intersectionInitTool(self):
 		canvas = self.iface.mapCanvas()
 		if self.intersectAction.isChecked() is False:
 			canvas.unsetMapTool(self.placeInitialIntersectionPoint)
 			return
 		self.intersectAction.setChecked( True )
 		self.placeInitialIntersectionPoint = placeIntersectionOnMap(canvas,self.lineLayer,self.rubber)
-		QObject.connect(self.placeInitialIntersectionPoint , SIGNAL("canvasClickedWithModifiers") , self.intersectionOnCanvasClicked ) 
+		QObject.connect(self.placeInitialIntersectionPoint , SIGNAL("intersectionStarted") , self.intersectionStarted ) 
 		canvas.setMapTool(self.placeInitialIntersectionPoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
 
-	def intersectionOnCanvasClicked(self, point, pixpoint, button, modifiers):
-		if button != Qt.LeftButton:
-			return
+	def intersectionStarted(self, point, observations):
 		canvas = self.iface.mapCanvas()
-		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
+		
 		xyrpi = self.getCircles(point)
 		self.intersectionProcess = intersection(point,xyrpi)		
 		try:

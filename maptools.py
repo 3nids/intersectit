@@ -12,7 +12,6 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-
 class placeMeasureOnMap(QgsMapToolEmitPoint):
 	def __init__(self, canvas, snapping=0):
 		self.canvas = canvas
@@ -29,14 +28,14 @@ class placeMeasureOnMap(QgsMapToolEmitPoint):
 			if result == 0 and len(snappingResults)>0:
 				snappedPoint = QgsPoint(snappingResults[0].snappedVertex)
 				self.rubber.addGeometry(QgsGeometry.fromPoint(snappedPoint),None)
-		
+
 	def canvasPressEvent(self, mouseEvent):
+		if mouseEvent.button() != Qt.LeftButton: return
 		self.rubber.reset()
 		pixpoint = mouseEvent.pos()
 		mappoint = self.toMapCoordinates( mouseEvent.pos() )
-		self.emit( SIGNAL( "canvasClickedWithModifiers" ), mappoint, pixpoint , mouseEvent.button(), mouseEvent.modifiers() )
-		
-		
+		self.emit( SIGNAL( "distancePlaced" ), mappoint, pixpoint )
+
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
 	def __init__(self, canvas, lineLayer, rubber):
 		self.canvas = canvas
@@ -48,19 +47,36 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		self.tolerance = self.settings.value("tolerance",0.3).toDouble()[0]
 		units = self.settings.value("units","map").toString()
 		if units == "pixels": self.tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
-		
+
 	def canvasMoveEvent(self, mouseEvent):
 		# put the observations within tolerance in the rubber band
-		point = self.toMapCoordinates( mouseEvent.pos() )
-		rect = QgsRectangle(point.x()-self.tolerance,point.y()-self.tolerance,point.x()+self.tolerance,point.y()+self.tolerance)
-		self.provider.select([], rect, True, True)
-		f = QgsFeature()
 		self.rubber.reset()
+		point = self.toMapCoordinates( mouseEvent.pos() )
+		self.provider.select([], self.getBox(point) , True, True)
+		f = QgsFeature()
 		while (self.provider.nextFeature(f)):
 			self.rubber.addGeometry( f.geometry() , None )
-		
+
 	def canvasPressEvent(self, mouseEvent):
 		self.rubber.reset()
-		pixpoint = mouseEvent.pos()
-		mappoint = self.toMapCoordinates( mouseEvent.pos() )
-		self.emit( SIGNAL( "canvasClickedWithModifiers" ), mappoint, pixpoint , mouseEvent.button(), mouseEvent.modifiers() )	
+		observations = []
+		point = self.toMapCoordinates( mouseEvent.pos() )
+		it = self.provider.fieldNameIndex('type')
+		ix = self.provider.fieldNameIndex('x')
+		iy = self.provider.fieldNameIndex('y')
+		io = self.provider.fieldNameIndex('observation')
+		ip = self.provider.fieldNameIndex('precision')
+		self.provider.select([it,ix,iy,io,ip], self.getBox(point) , True, True)
+		f = QgsFeature()
+		while (self.provider.nextFeature(f)):
+			fm = f.attributeMap()
+			print fm,fm[it].toString()
+			observations.append({	"type": fm[it].toString(),
+									"x": fm[ix].toDouble()[0],
+									"y": fm[iy].toDouble()[0],
+									"observation": fm[io].toDouble()[0],
+									"precision": fm[ip].toDouble()[0] })
+		self.emit( SIGNAL( "intersectionStarted" ), point, observations )
+
+	def getBox(self,point):
+		return QgsRectangle(point.x()-self.tolerance,point.y()-self.tolerance,point.x()+self.tolerance,point.y()+self.tolerance)
