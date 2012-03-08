@@ -17,7 +17,7 @@ from numpy import linalg as la
 
 
 
-class triangulationProcess:
+class intersection:
 	def __init__(self,initPoint,xyrpi):
 		self.initPoint = initPoint
 		self.xyrpi = xyrpi

@@ -1,5 +1,5 @@
 """
-Triangulation QGIS plugin
+Intersect It QGIS plugin
 Denis Rouzaud
 denis.rouzaud@gmail.com
 Jan. 2012
@@ -20,7 +20,7 @@ from place_distance import place_distance
 from distance import distance
 from settings import settings
 from place_arc import placeArc
-from triangulation_process import triangulationProcess
+from intersection import intersection
 
 # Initialize Qt resources from file resources.py
 import resources
@@ -32,54 +32,54 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 
-class triangulation ():
+class intersectit ():
 	def __init__(self, iface):
 		# Save reference to the QGIS interface
 		self.iface = iface
 		# create rubber band to emphasis selected circles
 		self.rubber = QgsRubberBand(self.iface.mapCanvas())
 		# settings
-		self.settings = QSettings("Triangulation","Triangulation")
+		self.settings = QSettings("IntersectIt","IntersectIt")
 		
 		self.observations = []
 
 	def initGui(self):
-		self.toolBar = self.iface.addToolBar("Triangulation")
-		self.toolBar.setObjectName("Triangulation")
+		self.toolBar = self.iface.addToolBar("IntersectIt")
+		self.toolBar.setObjectName("IntersectIt")
 		# distance
-		self.distanceAction = QAction(QIcon(":/plugins/triangulation/icons/distance.png"), "insert distance", self.iface.mainWindow())
+		self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.png"), "place distance", self.iface.mainWindow())
 		self.distanceAction.setCheckable(True)
 		QObject.connect(self.distanceAction, SIGNAL("triggered()"), self.distanceStart)
 		self.toolBar.addAction(self.distanceAction)
-		self.iface.addPluginToMenu("&Triangulation", self.distanceAction)	
-		# triangulation
-		self.triangulAction = QAction(QIcon(":/plugins/triangulation/icons/triangulate.png"), "triangulate", self.iface.mainWindow())
-		self.triangulAction.setCheckable(True)
-		QObject.connect(self.triangulAction, SIGNAL("triggered()"), self.triangulationStart)
-		self.toolBar.addAction(self.triangulAction)
-		self.iface.addPluginToMenu("&Triangulation", self.triangulAction)	
+		self.iface.addPluginToMenu("&Intersect It", self.distanceAction)	
+		# intersection
+		self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersect.png"), "intersection", self.iface.mainWindow())
+		self.intersectAction.setCheckable(True)
+		QObject.connect(self.intersectAction, SIGNAL("triggered()"), self.intersectionStart)
+		self.toolBar.addAction(self.intersectAction)
+		self.iface.addPluginToMenu("&Intersect It", self.intersectAction)	
 		# settings
 		self.uisettings = settings(self.iface)
 		QObject.connect(self.uisettings , SIGNAL( "accepted()" ) , self.applySettings)
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
-		self.iface.addPluginToMenu("&Triangulation", self.uisettingsAction)	
+		self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)	
 		# cleaner
 		self.cleanerAction = QAction(QIcon(":/plugins/triangulation/icons/cleaner.png"), "clean points and circles", self.iface.mainWindow())
 		QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
 		self.toolBar.addAction(self.cleanerAction)
-		self.iface.addPluginToMenu("&Triangulation", self.cleanerAction)	
+		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
 
 	def unload(self):
-		self.iface.removePluginMenu("&Triangulation",self.distanceAction)
-		self.iface.removePluginMenu("&Triangulation",self.triangulAction)
-		self.iface.removePluginMenu("&Triangulation",self.uisettingsAction)
-		self.iface.removePluginMenu("&Triangulation",self.cleanerAction)
+		self.iface.removePluginMenu("&Intersect It",self.distanceAction)
+		self.iface.removePluginMenu("&Intersect It",self.intersectAction)
+		self.iface.removePluginMenu("&Intersect It",self.uisettingsAction)
+		self.iface.removePluginMenu("&Intersect It",self.cleanerAction)
 		self.iface.removeToolBarIcon(self.distanceAction)
-		self.iface.removeToolBarIcon(self.triangulAction)	
+		self.iface.removeToolBarIcon(self.intersectAction)	
 		self.iface.removeToolBarIcon(self.cleanerAction)	
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
-		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
+		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
 		try:
 			print "Triangulation :: Removing temporary layer"
 			QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id()) 
@@ -174,26 +174,26 @@ class triangulation ():
 		self.distanceAction.setChecked( False )
 		self.iface.mapCanvas().unsetMapTool(self.placeDistancePoint)
 
-	def triangulationStart(self):
+	def intersectionStart(self):
 		canvas = self.iface.mapCanvas()
-		if self.triangulAction.isChecked() is False:
-			canvas.unsetMapTool(self.placeInitialTriangulationPoint)
+		if self.intersectAction.isChecked() is False:
+			canvas.unsetMapTool(self.placeInitialIntersectionPoint)
 			return
-		self.triangulAction.setChecked( True )
-		self.placeInitialTriangulationPoint = placeIntersectionOnMap(canvas)
-		QObject.connect(self.placeInitialTriangulationPoint , SIGNAL("canvasClickedWithModifiers") , self.triangulationOnCanvasClicked ) 
-		canvas.setMapTool(self.placeInitialTriangulationPoint)
-		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
+		self.intersectAction.setChecked( True )
+		self.placeInitialIntersectionPoint = placeIntersectionOnMap(canvas)
+		QObject.connect(self.placeInitialIntersectionPoint , SIGNAL("canvasClickedWithModifiers") , self.intersectionOnCanvasClicked ) 
+		canvas.setMapTool(self.placeInitialIntersectionPoint)
+		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
 
-	def triangulationOnCanvasClicked(self, point, pixpoint, button, modifiers):
+	def intersectionOnCanvasClicked(self, point, pixpoint, button, modifiers):
 		if button != Qt.LeftButton:
 			return
 		canvas = self.iface.mapCanvas()
 		point = canvas.mapRenderer().mapToLayerCoordinates(self.lineLayer(), point)
 		xyrpi = self.getCircles(point)
-		self.triangulationProcess = triangulationProcess(point,xyrpi)		
+		self.intersectionProcess = intersection(point,xyrpi)		
 		try:
-			triangulatedPoint =  self.triangulationProcess.getSolution()
+			triangulatedPoint =  self.intersectionProcess.getSolution()
 		except NameError as detail:
 				QMessageBox.warning( self.iface.mainWindow() , "Triangulation", "%s" % detail )
 				return
@@ -233,11 +233,11 @@ class triangulation ():
 		dlg = placeArc(self.iface,triangulatedPoint,xyrpi,[self.lineLayer(),self.pointLayer()])
 		dlg.exec_()		
 
-	def triangulationToolChanged(self, tool):
+	def intersectionToolChanged(self, tool):
 		self.rubber.reset()
-		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.triangulationToolChanged)
-		self.triangulAction.setChecked( False )
-		self.iface.mapCanvas().unsetMapTool(self.placeInitialTriangulationPoint)
+		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
+		self.intersectAction.setChecked( False )
+		self.iface.mapCanvas().unsetMapTool(self.placeInitialIntersectionPoint)
 
 	def getCircles(self,point):
 		tolerance = self.settings.value("tolerance",0.3).toDouble()[0]

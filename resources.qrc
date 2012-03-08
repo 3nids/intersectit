@@ -1,11 +1,11 @@
 <RCC>
-    <qresource prefix="/plugins/triangulation" >
+    <qresource prefix="/plugins/intersectit" >
         <file>icons/distance.png</file>
     </qresource>    
-    <qresource prefix="/plugins/triangulation" >
-        <file>icons/triangulate.png</file>
+    <qresource prefix="/plugins/intersectit" >
+        <file>icons/intersection.png</file>
     </qresource>
-    <qresource prefix="/plugins/triangulation" >
+    <qresource prefix="/plugins/intersectit" >
         <file>icons/cleaner.png</file>
     </qresource>
 </RCC>
