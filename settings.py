@@ -84,6 +84,7 @@ class settingsDialog(QDialog, Ui_Settings):
 		dimLayerId = QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0]
 		intLayerId = QgsProject.instance().readEntry("IntersectIt", "intersection_layer", "")[0]
 		self.dimensionLayerCombo.clear()
+		self.intersectionLayerCombo.clear()
 		self.dimensionLayerCombo.addItem(_fromUtf8(""))
 		self.intersectionLayerCombo.addItem(_fromUtf8(""))
 		for i,layer in enumerate(self.layers):
@@ -97,7 +98,7 @@ class settingsDialog(QDialog, Ui_Settings):
 	def on_placeDimensionBox_toggled(self,b):
 		self.dimensionLayerCombo.setEnabled(b)
 		self.placeMeasureBox.setEnabled(b)
-		self.dimensionFieldCombo.setEnabled(b)
+		self.measureFieldCombo.setEnabled(b)
 		self.placePrecisionBox.setEnabled(b)
 		self.precisionFieldCombo.setEnabled(b)
 			
@@ -119,15 +120,15 @@ class settingsDialog(QDialog, Ui_Settings):
 		# update field list
 		self.updateFieldsCombo()
 		
-	@pyqtSignature("on_dimensionFieldCombo_currentIndexChanged(int)")
-	def on_dimensionFieldCombo_currentIndexChanged(self,i):
+	@pyqtSignature("on_measureFieldCombo_currentIndexChanged(int)")
+	def on_measureFieldCombo_currentIndexChanged(self,i):
 		if self.dimensionLayer() is not False and i > 0:
-			field = self.dimensionFieldCombo.currentText()
+			field = self.measureFieldCombo.currentText()
 			i = self.dimensionLayer().dataProvider().fieldNameIndex(field)
 			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
 			if self.dimensionLayer().dataProvider().fields()[i].type() != 10:
 				QMessageBox.warning( self , "IntersectIt" ,  QApplication.translate("IntersectIt", "The dimension field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
-				self.dimensionFieldCombo.setCurrentIndex(0)
+				self.measureFieldCombo.setCurrentIndex(0)
 				
 	@pyqtSignature("on_precisionFieldCombo_currentIndexChanged(int)")
 	def on_precisionFieldCombo_currentIndexChanged(self,i):
@@ -145,17 +146,17 @@ class settingsDialog(QDialog, Ui_Settings):
 		else: return self.layers[i-1]
 				
 	def updateFieldsCombo(self):
-		self.dimensionFieldCombo.clear()
+		self.measureFieldCombo.clear()
 		self.precisionFieldCombo.clear()
-		self.dimensionFieldCombo.addItem(_fromUtf8(""))
+		self.measureFieldCombo.addItem(_fromUtf8(""))
 		self.precisionFieldCombo.addItem(_fromUtf8(""))
 		if self.dimensionLayer() is False: return
 		l = 1
 		for field in self.dimensionLayer().dataProvider().fieldNameMap():
-			self.dimensionFieldCombo.addItem(_fromUtf8("") )
-			self.dimensionFieldCombo.setItemText( l, field )
+			self.measureFieldCombo.addItem(_fromUtf8("") )
+			self.measureFieldCombo.setItemText( l, field )
 			if field == QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0]:
-				self.dimensionFieldCombo.setCurrentIndex(l)	
+				self.measureFieldCombo.setCurrentIndex(l)	
 			l += 1
 		l = 1
 		for field in self.dimensionLayer().dataProvider().fieldNameMap():
@@ -184,7 +185,7 @@ class settingsDialog(QDialog, Ui_Settings):
 		if self.dimensionLayer() is False: dimLayerId = ''
 		else: dimLayerId = self.dimensionLayer().id()		
 		QgsProject.instance().writeEntry("IntersectIt", "dimension_layer", dimLayerId)
-		QgsProject.instance().writeEntry("IntersectIt", "dimension_field", self.dimensionFieldCombo.currentText() )
+		QgsProject.instance().writeEntry("IntersectIt", "dimension_field", self.measureFieldCombo.currentText() )
 		QgsProject.instance().writeEntry("IntersectIt", "precision_field", self.precisionFieldCombo.currentText() )
 
 	@pyqtSignature("on_rubberColor_clicked()")
