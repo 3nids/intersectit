@@ -44,8 +44,8 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		QgsMapToolEmitPoint.__init__(self, canvas)
 		self.settings = QSettings("IntersectIt","IntersectIt")
 
-		self.tolerance = self.settings.value("tolerance",0.3).toDouble()[0]
-		units = self.settings.value("units","map").toString()
+		self.tolerance = self.settings.value("tolerance").toDouble()[0]
+		units = self.settings.value("units").toString()
 		if units == "pixels": self.tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
 
 	def canvasMoveEvent(self, mouseEvent):

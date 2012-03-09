@@ -16,9 +16,38 @@ try:
     _fromUtf8 = QString.fromUtf8
 except AttributeError:
     _fromUtf8 = lambda s: s
+    
+class IntersectItSettings():
+	def __init__(self):
+		# load settings
+		self.settings = QSettings("IntersectIt","IntersectIt")
+		
+		self.defaultValue = {	"rubber_colorR" : 0,
+								"rubber_colorG" : 0,
+								"rubber_colorB" : 255,
+								"rubber_width"  : 2,
+								"placeArc"      : 1,
+								"placeDimension": 1,
+								"placePrecision": 0,
+								"snapping"      : 1,
+								"tolerance"     : 1,
+								"units"         : "map"
+							}
+	
+	def value(self,setting):
+		if setting not in self.defaultValue:
+			raise NameError('IntersectIt has no setting %s' % setting)
+		return self.settings.value(setting,self.defaultValue.get(setting))
+		
+	def setValue(self,setting,value):
+		if setting not in self.defaultValue:
+			raise NameError('IntersectIt has no setting %s' % setting)
+		self.settings.setValue(setting,value)
+		
+		
 
 # create the dialog to connect layers
-class settings(QDialog, Ui_Settings ):
+class settingsDialog(QDialog, Ui_Settings):
 	def __init__(self,iface):
 		self.iface = iface
 		QDialog.__init__(self)
@@ -26,25 +55,25 @@ class settings(QDialog, Ui_Settings ):
 		self.setupUi(self)
 		QObject.connect(self , SIGNAL( "accepted()" ) , self.applySettings)
 		# load settings
-		self.settings = QSettings("IntersectIt","IntersectIt")
+		self.settings = IntersectItSettings()
 		
-		self.snapBox.setChecked( self.settings.value( "snapping" , 1).toInt()[0] ) 
-		self.tolerance.setValue(self.settings.value("tolerance",0.3).toDouble()[0])
-		if self.settings.value( "units" , "map").toString() == "map":
+		self.snapBox.setChecked( self.settings.value( "snapping").toInt()[0] ) 
+		self.tolerance.setValue(self.settings.value("tolerance").toDouble()[0])
+		if self.settings.value( "units" ).toString() == "map":
 			self.mapUnits.setChecked(True)
 			self.pixels.setChecked(False)
 		else:
 			self.mapUnits.setChecked(False)
 			self.pixels.setChecked(True)
-		self.rubberWidth.setValue(self.settings.value("rubber_width",2).toDouble()[0])
-		self.colorR = self.settings.value("rubber_colorR",0  ).toInt()[0]
-		self.colorB = self.settings.value("rubber_colorG",0  ).toInt()[0]
-		self.colorG = self.settings.value("rubber_colorB",255).toInt()[0]
+		self.rubberWidth.setValue(self.settings.value("rubber_width").toDouble()[0])
+		self.colorR = self.settings.value("rubber_colorR").toInt()[0]
+		self.colorB = self.settings.value("rubber_colorG").toInt()[0]
+		self.colorG = self.settings.value("rubber_colorB").toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
-		self.placeArcBox.setChecked(       self.settings.value( "placeArc"       , 1).toInt()[0] ) 
-		self.placeDimensionBox.setChecked( self.settings.value( "placeDimension" , 1).toInt()[0] ) 
-		self.placePrecisionBox.setChecked( self.settings.value( "placePrecision" , 0).toInt()[0] ) 
+		self.placeArcBox.setChecked(       self.settings.value( "placeArc"       ).toInt()[0] ) 
+		self.placeDimensionBox.setChecked( self.settings.value( "placeDimension" ).toInt()[0] ) 
+		self.placePrecisionBox.setChecked( self.settings.value( "placePrecision" ).toInt()[0] ) 
 		
 	def showEvent(self, e):
 		self.layers = self.iface.mapCanvas().layers()

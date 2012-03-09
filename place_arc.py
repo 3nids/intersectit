@@ -140,11 +140,11 @@ class arc():
 		f = QgsFeature()
 		f.setGeometry(self.geometry())
 		# look for dimension and precision fields
-		if self.settings.value("placeDimension",1).toInt()[0] == 1:
+		if self.settings.value("placeDimension").toInt()[0] == 1:
 			dimFieldName = QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0]
 			ilbl = self.provider.fieldNameIndex(dimFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))
-		if self.settings.value("placePrecision",1).toInt()[0] == 1:
+		if self.settings.value("placePrecision").toInt()[0] == 1:
 			preFieldName = QgsProject.instance().readEntry("IntersectIt", "precision_field", "")[0]
 			ilbl = self.provider.fieldNameIndex(preFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.precision))
