@@ -1,14 +1,19 @@
 
-- confirmation balai
-- suppression d'un lineLayer feature  => supprime le pointLayer correspondant
-- CRS dans les memory layer canvas.mapRenderer().destinationCrs()
+en cours: renommer quelques settings
+          validation settings: gérer layer/fields pour place LS reporting
+          
+          
 
-- settings: default precision
+- confirmation balai
+
+- suppression d'un lineLayer feature  => supprime le pointLayer correspondant
+
+
 - quand on demande pour un layer pour place la cote, si on décoche place dimension, le point est pas placé
 
-- report result from least squares
+- report result from least squares, with option in settings
 
 - ajouter les observations "orientation"
 
+- renommer place_arc en place_dimension
 
-list all settins with thier default value in master class
