@@ -64,17 +64,16 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		it = self.provider.fieldNameIndex('type')
 		ix = self.provider.fieldNameIndex('x')
 		iy = self.provider.fieldNameIndex('y')
-		io = self.provider.fieldNameIndex('observation')
+		io = self.provider.fieldNameIndex('measure')
 		ip = self.provider.fieldNameIndex('precision')
 		self.provider.select([it,ix,iy,io,ip], self.getBox(point) , True, True)
 		f = QgsFeature()
 		while (self.provider.nextFeature(f)):
 			fm = f.attributeMap()
-			print fm,fm[it].toString()
 			observations.append({	"type": fm[it].toString(),
 									"x": fm[ix].toDouble()[0],
 									"y": fm[iy].toDouble()[0],
-									"observation": fm[io].toDouble()[0],
+									"measure": fm[io].toDouble()[0],
 									"precision": fm[ip].toDouble()[0] })
 		self.emit( SIGNAL( "intersectionStarted" ), point, observations )
 

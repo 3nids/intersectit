@@ -122,7 +122,7 @@ class intersectit ():
 		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_line_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=id:string&field=type:string&field=x:double&field=y:double&field=observation:double&field=precision:double&index=yes", "IntersectIt Lines", "memory") 
+			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=id:string&field=type:string&field=x:double&field=y:double&field=measure:double&field=precision:double&index=yes", "IntersectIt Lines", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
 			QgsProject.instance().writeEntry("IntersectIt", "memory_line_layer", layer.id())
@@ -185,9 +185,8 @@ class intersectit ():
 
 	def intersectionStarted(self, point, observations):
 		canvas = self.iface.mapCanvas()
-		
-		xyrpi = self.getCircles(point)
-		self.intersectionProcess = intersection(point,xyrpi)		
+	
+		self.intersectionProcess = intersection(point,observations)		
 		try:
 			intersectedPoint =  self.intersectionProcess.getSolution()
 		except NameError as detail:
@@ -234,28 +233,3 @@ class intersectit ():
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
 		self.intersectAction.setChecked( False )
 		self.iface.mapCanvas().unsetMapTool(self.placeInitialIntersectionPoint)
-
-	def getCircles(self,point):
-		tolerance = self.settings.value("tolerance",0.3).toDouble()[0]
-		units = self.settings.value("units","map").toString()
-		if units == "pixels":
-			tolerance *= self.iface.mapCanvas().mapUnitsPerPixel()
-		rect = QgsRectangle(point.x()-tolerance,point.y()-tolerance,point.x()+tolerance,point.y()+tolerance)
-		provider = self.lineLayer().dataProvider()
-		ix = provider.fieldNameIndex('x')
-		iy = provider.fieldNameIndex('y')
-		ir = provider.fieldNameIndex('radius')
-		ip = provider.fieldNameIndex('precision')
-		provider.select([ix,iy,ir,ip], rect, True, True)
-		xyrpi = []
-		f = QgsFeature()
-		self.rubber.reset()
-		while (provider.nextFeature(f)):
-			fm = f.attributeMap()
-			x = fm[ix].toDouble()[0]
-			y = fm[iy].toDouble()[0]
-			r = fm[ir].toDouble()[0]
-			p = fm[ip].toDouble()[0]
-			xyrpi.append([QgsPoint(x,y),r,p,f.id()])
-			#self.rubber.addGeometry(f.geometry(),self.lineLayer())
-		return xyrpi

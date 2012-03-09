@@ -1,5 +1,5 @@
 """
-Triangulation QGIS plugin
+IntersectIt QGIS plugin
 Denis Rouzaud
 denis.rouzaud@gmail.com
 Jan. 2012
@@ -18,20 +18,18 @@ from numpy import linalg as la
 
 
 class intersection:
-	def __init__(self,initPoint,xyrpi):
+	def __init__(self,initPoint,observations):
 		self.initPoint = initPoint
-		self.xyrpi = xyrpi
-		self.nc = len(xyrpi)
+		self.observations = observations
+		self.nc = len(observations)
 		
 	def getSolution(self):
 		if self.nc<2:
-			raise NameError(QApplication.translate("Triangulation", "Less than 2 circles were find within threshold.", None, QApplication.UnicodeUTF8))
+			raise NameError(QApplication.translate("IntersectIt", "Less than 2 observations were found within threshold.", None, QApplication.UnicodeUTF8))
 		elif self.nc==2:
 			pts = self.twoCirclesIntersect()
 			d1 = pts[0].sqrDist(self.initPoint)
 			d2 = pts[1].sqrDist(self.initPoint)
-			print d1
-			print d2
 			if d1<d2:
 				return pts[0]
 			else:
@@ -40,22 +38,38 @@ class intersection:
 			return self.leastSquares()
 			
 	def leastSquares(self):
+		# distance equation: (x - xc)^2 + (y-yc)^2 - l^2 = 0 (obs: r, param: xc,yc, fixed: x,y)
 		threshold = .0005 # in meters
 		# initial parameters
 		x0  = np.array( [ self.initPoint.x() , self.initPoint.y() ] )
 		print "Initial: %f,%f" % (x0[0],x0[1])
 		dx = [2*threshold,2*threshold]
-		while min(dx)>threshold:
-			# jacobian for parameters
-			A   = np.array( [ [2*self.initPoint.x()-2*c[0].x(),2*self.initPoint.y()-2*c[0].y()] for c in self.xyrpi ] )
-			# jacobian for observations
-			B   = np.diag( [ -2*c[1] for c in self.xyrpi ] )
-			# stochastic model
-			Qll = np.diag([math.pow(c[2],2)   for c in self.xyrpi ])
+		while max(np.abs(dx))>threshold:
+			# init matrices
+			A   = []
+			B   = []
+			Qll = []
+			w   = []
+			for i,obs in enumerate(self.observations):
+				if obs.get("type") == "distance":
+					# jacobian for parameters
+					A.append( [2*x0[0]-2*obs.get("x") , 2*x0[1]-2*obs.get("y")] )
+					# jacobian for observations
+					B.append(-2*obs.get("measure"))
+					# stochastic model
+					Qll.append( math.pow(obs.get("precision"),2))
+					# misclosure
+					w.append( math.pow(x0[0]-obs.get("x"),2) + math.pow(x0[1]-obs.get("y"),2) - math.pow(obs.get("measure"),2) )
+					
+			# generate matrices
+			A   = np.array( A   )
+			B   = np.diag(  B   )
+			Qll = np.diag(  Qll )
+			w   = np.array(  w   )
+			
+			# weight matrix
 			Pm  = np.dot( B , np.dot(Qll,B.T) )
 			P   = la.inv( Pm )
-			# misclosure
-			w   = np.array([ math.pow(x0[0]-c[0].x(),2) + math.pow(x0[1]-c[0].y(),2) - math.pow(c[1],2) for c in self.xyrpi ])
 			# normal matrix
 			N = np.dot( A.T , np.dot(P,A) )
 			u = np.dot( A.T , np.dot(P,w) )
@@ -74,18 +88,19 @@ class intersection:
 						
 	def twoCirclesIntersect(self):
 		# see http://www.mathpages.com/home/kmath396/kmath396.htm
-		[pt1,r1,p1,i1] = self.xyrpi[0]
-		[pt2,r2,p2,i2] = self.xyrpi[1]
-		x1 = pt1.x()
-		y1 = pt1.y()
-		x2 = pt2.x()
-		y2 = pt2.y()
-		d = math.sqrt( pt1.sqrDist(pt2) )
+		x1 = self.observations[0].get("x")
+		y1 = self.observations[0].get("y")
+		r1 = self.observations[0].get("measure")
+		x2 = self.observations[1].get("x")
+		y2 = self.observations[1].get("y")
+		r2 = self.observations[1].get("measure")
+		
+		d = math.sqrt( math.pow(x1-x2,2) + math.pow(y1-y2,2) )
 		if d<math.fabs(r1-r2):
 			# circle is within the other
 			return
 		if d>r1+r2:
-			print "Triangulation :: circles are separate, scaling radius to get intersection"
+			print "IntersectIt :: circles are separate, scaling radius to get intersection"
 			s = d/(r1+r2)
 			r1*=s
 			r2*=s
