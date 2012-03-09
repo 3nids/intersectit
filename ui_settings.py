@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Thu Mar  8 13:47:35 2012
+# Created: Fri Mar  9 13:23:16 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
-        Settings.resize(393, 423)
+        Settings.resize(421, 489)
         Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "IntersectIt :: settings", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -27,10 +27,32 @@ class Ui_Settings(object):
         self.gridLayout_4 = QtGui.QGridLayout(self.groupBox_2)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
         self.snapBox = QtGui.QCheckBox(self.groupBox_2)
-        self.snapBox.setText(QtGui.QApplication.translate("Settings", "Snap to layers to place distances", None, QtGui.QApplication.UnicodeUTF8))
+        self.snapBox.setText(QtGui.QApplication.translate("Settings", "Snap to layers to place observations", None, QtGui.QApplication.UnicodeUTF8))
         self.snapBox.setChecked(True)
         self.snapBox.setObjectName(_fromUtf8("snapBox"))
-        self.gridLayout_4.addWidget(self.snapBox, 0, 0, 1, 1)
+        self.gridLayout_4.addWidget(self.snapBox, 0, 0, 1, 2)
+        self.label_3 = QtGui.QLabel(self.groupBox_2)
+        self.label_3.setText(QtGui.QApplication.translate("Settings", "Default precision for distances [mm]", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.gridLayout_4.addWidget(self.label_3, 1, 0, 1, 1)
+        self.label_4 = QtGui.QLabel(self.groupBox_2)
+        self.label_4.setEnabled(False)
+        self.label_4.setText(QtGui.QApplication.translate("Settings", "Default precision for orientations [°]", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.gridLayout_4.addWidget(self.label_4, 2, 0, 1, 1)
+        self.defaultPrecisionDistanceBox = QtGui.QDoubleSpinBox(self.groupBox_2)
+        self.defaultPrecisionDistanceBox.setDecimals(1)
+        self.defaultPrecisionDistanceBox.setMaximum(1000.0)
+        self.defaultPrecisionDistanceBox.setProperty("value", 25.0)
+        self.defaultPrecisionDistanceBox.setObjectName(_fromUtf8("defaultPrecisionDistanceBox"))
+        self.gridLayout_4.addWidget(self.defaultPrecisionDistanceBox, 1, 1, 1, 1)
+        self.defaultPrecisionOrientationBox = QtGui.QDoubleSpinBox(self.groupBox_2)
+        self.defaultPrecisionOrientationBox.setEnabled(False)
+        self.defaultPrecisionOrientationBox.setMaximum(2.0)
+        self.defaultPrecisionOrientationBox.setSingleStep(0.1)
+        self.defaultPrecisionOrientationBox.setProperty("value", 0.5)
+        self.defaultPrecisionOrientationBox.setObjectName(_fromUtf8("defaultPrecisionOrientationBox"))
+        self.gridLayout_4.addWidget(self.defaultPrecisionOrientationBox, 2, 1, 1, 1)
         self.gridLayout.addWidget(self.groupBox_2, 1, 0, 1, 4)
         self.line = QtGui.QFrame(Settings)
         self.line.setFrameShape(QtGui.QFrame.HLine)
@@ -48,10 +70,15 @@ class Ui_Settings(object):
         self.gridLayout_3 = QtGui.QGridLayout(self.groupBox_3)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
         self.label = QtGui.QLabel(self.groupBox_3)
-        self.label.setText(QtGui.QApplication.translate("Settings", "Tolerance", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Settings", "Select observations within", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout_3.addWidget(self.label, 1, 0, 1, 1)
         self.groupBox = QtGui.QGroupBox(self.groupBox_3)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.groupBox.sizePolicy().hasHeightForWidth())
+        self.groupBox.setSizePolicy(sizePolicy)
         self.groupBox.setTitle(_fromUtf8(""))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.gridLayout_2 = QtGui.QGridLayout(self.groupBox)
@@ -72,7 +99,7 @@ class Ui_Settings(object):
         self.tolerance.setObjectName(_fromUtf8("tolerance"))
         self.gridLayout_3.addWidget(self.tolerance, 1, 1, 1, 1)
         self.label_2 = QtGui.QLabel(self.groupBox_3)
-        self.label_2.setText(QtGui.QApplication.translate("Settings", "Selected observations", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Settings", "Highlighting", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout_3.addWidget(self.label_2, 2, 0, 1, 1)
         self.rubberWidth = QtGui.QDoubleSpinBox(self.groupBox_3)

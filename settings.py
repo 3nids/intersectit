@@ -31,7 +31,9 @@ class IntersectItSettings():
 								"placePrecision": 0,
 								"snapping"      : 1,
 								"tolerance"     : 1,
-								"units"         : "map"
+								"units"         : "map",
+								"defaultPrecisionDistance"    : 25,
+								"defaultPrecisionOrientation" : .01
 							}
 	
 	def value(self,setting):
@@ -67,13 +69,15 @@ class settingsDialog(QDialog, Ui_Settings):
 			self.pixels.setChecked(True)
 		self.rubberWidth.setValue(self.settings.value("rubber_width").toDouble()[0])
 		self.colorR = self.settings.value("rubber_colorR").toInt()[0]
-		self.colorB = self.settings.value("rubber_colorG").toInt()[0]
-		self.colorG = self.settings.value("rubber_colorB").toInt()[0]
+		self.colorG = self.settings.value("rubber_colorG").toInt()[0]
+		self.colorB = self.settings.value("rubber_colorB").toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
 		self.placeArcBox.setChecked(       self.settings.value( "placeArc"       ).toInt()[0] ) 
 		self.placeDimensionBox.setChecked( self.settings.value( "placeDimension" ).toInt()[0] ) 
 		self.placePrecisionBox.setChecked( self.settings.value( "placePrecision" ).toInt()[0] ) 
+		self.defaultPrecisionDistanceBox.setValue( self.settings.value( "defaultPrecisionDistance" ).toDouble()[0] ) 
+		self.defaultPrecisionOrientationBox.setValue( self.settings.value( "defaultPrecisionOrientation" ).toDouble()[0] ) 
 		
 	def showEvent(self, e):
 		self.layers = self.iface.mapCanvas().layers()
@@ -162,7 +166,9 @@ class settingsDialog(QDialog, Ui_Settings):
 			l += 1
 
 	def applySettings(self):
-		self.settings.setValue( "snapping " , int(self.snapBox.isChecked()) )
+		self.settings.setValue( "snapping" , int(self.snapBox.isChecked()) )
+		self.settings.setValue( "defaultPrecisionOrientation" , self.defaultPrecisionOrientationBox.value()) 
+		self.settings.setValue( "defaultPrecisionDistance"    , self.defaultPrecisionDistanceBox.value()) 
 		self.settings.setValue( "tolerance" , self.tolerance.value() )
 		if self.mapUnits.isChecked():
 			self.settings.setValue( "units" , "map")
