@@ -122,7 +122,8 @@ class intersectit ():
 		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_line_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("LineString?crs=EPSG:21781&field=id:string&field=type:string&field=x:double&field=y:double&field=measure:double&field=precision:double&index=yes", "IntersectIt Lines", "memory") 
+			epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
+			layer = QgsVectorLayer("LineString?crs=%s&field=id:string&field=type:string&field=x:double&field=y:double&field=measure:double&field=precision:double&index=yes" % epsg, "IntersectIt Lines", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
 			QgsProject.instance().writeEntry("IntersectIt", "memory_line_layer", layer.id())
@@ -133,7 +134,8 @@ class intersectit ():
 		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_point_layer", "")[0]
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
-			layer = QgsVectorLayer("Point?crs=EPSG:21781&field=id:string&index=yes", "IntersectIt Points", "memory") 
+			epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
+			layer = QgsVectorLayer("Point?crs=%s&field=id:string&index=yes" % epsg, "IntersectIt Points", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
 			QgsProject.instance().writeEntry("IntersectIt", "memory_point_layer", layer.id())
