@@ -4,3 +4,11 @@
 - CRS dans les memory layer canvas.mapRenderer().destinationCrs()
 
 - settings: default precision
+- quand on demande pour un layer pour place la cote, si on décoche place dimension, le point est pas placé
+
+- report result from least squares
+
+- ajouter les observations "orientation"
+
+
+list all settins with thier default value in master class
