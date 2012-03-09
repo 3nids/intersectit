@@ -12,7 +12,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 import math
-from ui_place_arc import Ui_placeArc
+from ui_place_dimension import Ui_placeDimension
 
 try:
     _fromUtf8 = QString.fromUtf8
@@ -20,7 +20,7 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 # create the dialog to connect layers
-class placeArc(QDialog, Ui_placeArc ):
+class placeDimension(QDialog, Ui_placeDimension ):
 	def __init__(self,iface,intersectedPoint,xyrpi,distanceLayers):
 		QDialog.__init__(self)
 		self.setupUi(self)
@@ -39,9 +39,9 @@ class placeArc(QDialog, Ui_placeArc ):
 		self.settings = QSettings("IntersectIt","IntersectIt")
 		# init state for distance layer visibility
 		QObject.connect( self.displayLayersBox , SIGNAL("stateChanged(int)") , self.toggleDistanceLayers )
-		# create the arcs
+		# create the dimensions
 		self.xyrpi = xyrpi
-		self.arc = []
+		self.dimension = []
 		self.arcCombo.clear()
 		ii = 0
 		nn = len(xyrpi)
@@ -140,7 +140,7 @@ class arc():
 		f = QgsFeature()
 		f.setGeometry(self.geometry())
 		# look for dimension and precision fields
-		if self.settings.value("placeDimension").toInt()[0] == 1:
+		if self.settings.value("placeMeasure").toInt()[0] == 1:
 			dimFieldName = QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0]
 			ilbl = self.provider.fieldNameIndex(dimFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))

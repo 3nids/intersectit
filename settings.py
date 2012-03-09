@@ -26,8 +26,8 @@ class IntersectItSettings():
 								"rubber_colorG" : 0,
 								"rubber_colorB" : 255,
 								"rubber_width"  : 2,
-								"placeArc"      : 1,
-								"placeDimension": 1,
+								"placeDimension"      : 1,
+								"placeMeasure": 1,
 								"placePrecision": 0,
 								"snapping"      : 1,
 								"tolerance"     : 1,
@@ -73,8 +73,8 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.colorB = self.settings.value("rubber_colorB").toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
-		self.placeArcBox.setChecked(       self.settings.value( "placeArc"       ).toInt()[0] ) 
-		self.placeDimensionBox.setChecked( self.settings.value( "placeDimension" ).toInt()[0] ) 
+		self.placeDimensionBox.setChecked(       self.settings.value( "placeDimension"       ).toInt()[0] ) 
+		self.placeMeasureBox.setChecked( self.settings.value( "placeMeasure" ).toInt()[0] ) 
 		self.placePrecisionBox.setChecked( self.settings.value( "placePrecision" ).toInt()[0] ) 
 		self.defaultPrecisionDistanceBox.setValue( self.settings.value( "defaultPrecisionDistance" ).toDouble()[0] ) 
 		self.defaultPrecisionOrientationBox.setValue( self.settings.value( "defaultPrecisionOrientation" ).toDouble()[0] ) 
@@ -82,21 +82,21 @@ class settingsDialog(QDialog, Ui_Settings):
 	def showEvent(self, e):
 		self.layers = self.iface.mapCanvas().layers()
 		dimLayerId = QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0]
-		self.layerCombo.clear()
-		self.layerCombo.addItem(_fromUtf8(""))
-		l = 1
-		for layer in self.layers:
-			self.layerCombo.addItem(_fromUtf8("") )
-			self.layerCombo.setItemText(l, layer.name())
-			if layer.id() == dimLayerId:
-				self.layerCombo.setCurrentIndex(l)
-			l+=1
+		intLayerId = QgsProject.instance().readEntry("IntersectIt", "intersection_layer", "")[0]
+		self.dimensionLayerCombo.clear()
+		self.dimensionLayerCombo.addItem(_fromUtf8(""))
+		self.intersectionLayerCombo.addItem(_fromUtf8(""))
+		for i,layer in enumerate(self.layers):
+			self.dimensionLayerCombo.addItem(layer.name())
+			self.intersectionLayerCombo.addItem(layer.name())
+			if layer.id() == dimLayerId: self.dimensionLayerCombo.setCurrentIndex(i+1)
+			if layer.id() == intLayerId: self.intersectionLayerCombo.setCurrentIndex(i+1)
 		self.updateFieldsCombo()
 			
-	@pyqtSignature("on_placeArcBox_toggled(bool)")
-	def on_placeArcBox_toggled(self,b):
-		self.layerCombo.setEnabled(b)
-		self.placeDimensionBox.setEnabled(b)
+	@pyqtSignature("on_placeDimensionBox_toggled(bool)")
+	def on_placeDimensionBox_toggled(self,b):
+		self.dimensionLayerCombo.setEnabled(b)
+		self.placeMeasureBox.setEnabled(b)
 		self.dimensionFieldCombo.setEnabled(b)
 		self.placePrecisionBox.setEnabled(b)
 		self.precisionFieldCombo.setEnabled(b)
@@ -114,7 +114,7 @@ class settingsDialog(QDialog, Ui_Settings):
 				# TODO CHECK GEOMETRY
 				print layer.dataProvider().geometryType() , layer.geometryType()
 		if error_msg != '':
-			self.layerCombo.setCurrentIndex(0)
+			self.dimensionLayerCombo.setCurrentIndex(0)
 			QMessageBox.warning( self , "IntersectIt", error_msg )
 		# update field list
 		self.updateFieldsCombo()
@@ -140,7 +140,7 @@ class settingsDialog(QDialog, Ui_Settings):
 				self.precisionFieldCombo.setCurrentIndex(0)
 			
 	def dimLayer(self):
-		i = self.layerCombo.currentIndex()
+		i = self.dimensionLayerCombo.currentIndex()
 		if i == 0: return False
 		else: return self.layers[i-1]
 				
@@ -178,9 +178,9 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.settings.setValue( "rubber_colorR"  , self.color.red() )
 		self.settings.setValue( "rubber_colorG"  , self.color.green() )
 		self.settings.setValue( "rubber_colorB"  , self.color.blue() )
-		self.settings.setValue( "placeArc"       , int(self.placeArcBox.isChecked()) )
+		self.settings.setValue( "placeDimension"       , int(self.placeDimensionBox.isChecked()) )
 		self.settings.setValue( "placePrecision" , int(self.placePrecisionBox.isChecked()) )
-		self.settings.setValue( "placeDimension" , int(self.placeDimensionBox.isChecked()) )
+		self.settings.setValue( "placeMeasure" , int(self.placeMeasureBox.isChecked()) )
 		if self.dimLayer() is False: dimLayerId = ''
 		else: dimLayerId = self.dimLayer().id()		
 		QgsProject.instance().writeEntry("IntersectIt", "dimension_layer", dimLayerId)

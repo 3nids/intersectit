@@ -17,7 +17,7 @@ from maptools import placeMeasureOnMap, placeIntersectionOnMap
 from place_distance import place_distance
 from observation import observation
 from settings import settingsDialog, IntersectItSettings
-from place_arc import placeArc
+from place_arc import placeDimension
 from intersection import intersection
 from memory_layers import memoryLayers
 
@@ -166,7 +166,7 @@ class intersectit ():
 				QMessageBox.warning( self.iface.mainWindow() , "IntersectIt", "%s" % detail )
 				return
 		# if we do not place any dimension, place the intersected point in layer
-		if self.settings.value("placeArc").toInt()[0] == 0:
+		if self.settings.value("placeDimension").toInt()[0] == 0:
 			f = QgsFeature()
 			f.setGeometry(QgsGeometry.fromPoint(intersectedPoint))
 			self.pointLayer().dataProvider().addFeatures( [f] )
@@ -174,14 +174,14 @@ class intersectit ():
 			canvas.refresh()
 		# check that dimension layer and fields have been set correctly
 		while True:
-			if self.settings.value("placeArc").toInt()[0] == 0: return # if we do not place any dimension, skip
+			if self.settings.value("placeDimension").toInt()[0] == 0: return # if we do not place any dimension, skip
 			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0] ), False )
 			if dimLayer is False:
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
-			if self.settings.value("placeDimension").toInt()[0] == 1: 
+			if self.settings.value("placeMeasure").toInt()[0] == 1: 
 				dimensionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0] ), False )
 				if dimensionField is False:
 					ok = False
@@ -198,7 +198,7 @@ class intersectit ():
 					if self.uisettings.exec_() == 0: return
 					continue
 			break
-		dlg = placeArc(self.iface,intersectedPoint,xyrpi,[self.lineLayer(),self.pointLayer()])
+		dlg = placeDimension(self.iface,intersectedPoint,xyrpi,[self.lineLayer(),self.pointLayer()])
 		dlg.exec_()		
 
 	def intersectionToolChanged(self, tool):
