@@ -6,87 +6,290 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>421</width>
-    <height>489</height>
+    <width>449</width>
+    <height>397</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>IntersectIt :: settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="0" colspan="4">
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Observations</string>
+   <item row="0" column="0">
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>1</number>
      </property>
-     <layout class="QGridLayout" name="gridLayout_4">
-      <item row="0" column="0" colspan="2">
-       <widget class="QCheckBox" name="snapBox">
-        <property name="text">
-         <string>Snap to layers to place observations</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Default precision for distances [mm]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="text">
-         <string>Default precision for orientations [°]</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="defaultPrecisionDistanceBox">
-        <property name="decimals">
-         <number>1</number>
-        </property>
-        <property name="maximum">
-         <double>1000.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>25.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QDoubleSpinBox" name="defaultPrecisionOrientationBox">
-        <property name="enabled">
-         <bool>false</bool>
-        </property>
-        <property name="maximum">
-         <double>2.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.500000000000000</double>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QWidget" name="observationTab">
+      <attribute name="title">
+       <string>Observations</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_2">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="snapBox">
+         <property name="text">
+          <string>Snap to layers to place observations</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="text">
+          <string>Default precision for distances [mm]</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="defaultPrecisionDistanceBox">
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <double>1000.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>25.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_4">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="text">
+          <string>Default precision for orientations [°]</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="defaultPrecisionOrientationBox">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+         <property name="maximum">
+          <double>2.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>0.100000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.500000000000000</double>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="intersectionTab">
+      <attribute name="title">
+       <string>Intersection</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_4">
+       <item row="0" column="0">
+        <widget class="QGroupBox" name="selectGroup">
+         <property name="title">
+          <string>Selection of observations</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="2" column="2">
+           <widget class="QPushButton" name="rubberColor">
+            <property name="toolTip">
+             <string extracomment="Color of the selected distance circles used for triangulation."/>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QDoubleSpinBox" name="rubberWidth">
+            <property name="toolTip">
+             <string extracomment="Width of the selected distance circles used for triangulation."/>
+            </property>
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="singleStep">
+             <double>1.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>highlighting</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QGroupBox" name="groupBox">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="title">
+             <string/>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="2" column="0">
+              <widget class="QRadioButton" name="pixels">
+               <property name="text">
+                <string>pixels</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QRadioButton" name="mapUnits">
+               <property name="text">
+                <string>map units</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="tolerance">
+            <property name="singleStep">
+             <double>0.100000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.300000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>select observations within</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QGroupBox" name="resultGroup">
+         <property name="title">
+          <string>Result</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_6">
+          <item row="0" column="0" colspan="2">
+           <widget class="QCheckBox" name="displayReport">
+            <property name="text">
+             <string>display results report from least-squares</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QCheckBox" name="saveReportBox">
+            <property name="text">
+             <string>save LS report in field</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="reportFieldCombo"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QCheckBox" name="placeIntersectionBox">
+            <property name="text">
+             <string>place point in layer</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="intersectionLayerCombo"/>
+          </item>
+         </layout>
+         <zorder>displayReport</zorder>
+         <zorder>displayReport</zorder>
+         <zorder>saveReportBox</zorder>
+         <zorder>reportFieldCombo</zorder>
+         <zorder>placeIntersectionBox</zorder>
+         <zorder>intersectionLayerCombo</zorder>
+        </widget>
+       </item>
+      </layout>
+      <zorder>label</zorder>
+      <zorder>tolerance</zorder>
+      <zorder>selectGroup</zorder>
+      <zorder>resultGroup</zorder>
+      <zorder>line_4</zorder>
+     </widget>
+     <widget class="QWidget" name="dimensionTab">
+      <attribute name="title">
+       <string>Dimensions</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout">
+       <item row="0" column="0">
+        <widget class="QCheckBox" name="placeDimensionBox">
+         <property name="text">
+          <string>place dimension arc in layer</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="dimensionLayerCombo"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QCheckBox" name="placeMeasureBox">
+         <property name="text">
+          <string>place measure in field</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QComboBox" name="measureFieldCombo"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QCheckBox" name="placePrecisionBox">
+         <property name="text">
+          <string>place precision in field</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="precisionFieldCombo"/>
+       </item>
+      </layout>
+      <zorder>groupBox_2</zorder>
+      <zorder>placeDimensionBox</zorder>
+      <zorder>dimensionLayerCombo</zorder>
+      <zorder>placeMeasureBox</zorder>
+      <zorder>measureFieldCombo</zorder>
+      <zorder>placePrecisionBox</zorder>
+      <zorder>precisionFieldCombo</zorder>
+     </widget>
     </widget>
    </item>
-   <item row="6" column="0" colspan="4">
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="13" column="0" colspan="4">
+   <item row="6" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -94,149 +297,6 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="4">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="title">
-      <string>Intersection</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_3">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Select observations within</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QGroupBox" name="groupBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="title">
-         <string/>
-        </property>
-        <layout class="QGridLayout" name="gridLayout_2">
-         <item row="2" column="0">
-          <widget class="QRadioButton" name="pixels">
-           <property name="text">
-            <string>pixels</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QRadioButton" name="mapUnits">
-           <property name="text">
-            <string>map units</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QDoubleSpinBox" name="tolerance">
-        <property name="singleStep">
-         <double>0.100000000000000</double>
-        </property>
-        <property name="value">
-         <double>0.300000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Highlighting</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QDoubleSpinBox" name="rubberWidth">
-        <property name="toolTip">
-         <string extracomment="Width of the selected distance circles used for triangulation."/>
-        </property>
-        <property name="decimals">
-         <number>1</number>
-        </property>
-        <property name="singleStep">
-         <double>1.000000000000000</double>
-        </property>
-        <property name="value">
-         <double>2.000000000000000</double>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QPushButton" name="rubberColor">
-        <property name="toolTip">
-         <string extracomment="Color of the selected distance circles used for triangulation."/>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="2" column="0" colspan="4">
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="7" column="0" colspan="4">
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="title">
-      <string>Dimensions</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_5">
-      <item row="0" column="0">
-       <widget class="QCheckBox" name="placeArcBox">
-        <property name="text">
-         <string>place dimension arc in layer</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="layerCombo"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QCheckBox" name="placeDimensionBox">
-        <property name="text">
-         <string>place dimension in field</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="dimensionFieldCombo"/>
-      </item>
-      <item row="2" column="0">
-       <widget class="QCheckBox" name="placePrecisionBox">
-        <property name="text">
-         <string>place precision in field</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="precisionFieldCombo"/>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

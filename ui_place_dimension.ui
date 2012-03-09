@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>placeArc</class>
- <widget class="QDialog" name="placeArc">
+ <class>placeDimension</class>
+ <widget class="QDialog" name="placeDimension">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -140,7 +140,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>placeArc</receiver>
+   <receiver>placeDimension</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -156,7 +156,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>placeArc</receiver>
+   <receiver>placeDimension</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

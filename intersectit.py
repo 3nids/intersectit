@@ -17,7 +17,7 @@ from maptools import placeMeasureOnMap, placeIntersectionOnMap
 from place_distance import place_distance
 from observation import observation
 from settings import settingsDialog, IntersectItSettings
-from place_arc import placeDimension
+from place_dimension import placeDimension
 from intersection import intersection
 from memory_layers import memoryLayers
 
