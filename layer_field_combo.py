@@ -28,7 +28,7 @@ class field():
 		self.settingIDLambda = settingIDLambda
 		self.checkType = checkType
 
-class layerFieldCombo():
+class layerFieldCombo(QObject):
 	def __init__(self, canvas, layer, fields=[]):
 		self.canvas = canvas
 		self.layer = layer
@@ -39,8 +39,8 @@ class layerFieldCombo():
 		for field in fields:
 			QObject.connect(field.combo, SIGNAL("currentIndexChanged(int)"), self.fieldChanged)
 
-	def layer(self):
-		i = self.dimensionLayerCombo.currentIndex()
+	def getLayer(self):
+		i = self.layer.combo.currentIndex()
 		if i == 0 or len(self.layers)==0: return False
 		else: return self.layers[i-1]
 
@@ -71,18 +71,22 @@ class layerFieldCombo():
 		self.updateFieldsCombo()
 
 	def fieldChanged(self,i):
+		# TODO
 		field = None
+		print self.sender()
+		for testField in self.fields: print testField.combo
+		return
 		for testField in self.fields:
-			if testField.combo == QObject.sender():
+			if testField.combo == self.sender():
 				 field = testField
 				 print "hurray"
 				 break
 		if field is None: raise NameError('LayerFieldCombo: cannot find field')
-		if self.layer() is not False and i > 0:
+		if self.getLayer() is not False and i > 0:
 			fieldName = field.currentText()
-			i = self.layer().dataProvider().fieldNameIndex(fieldName)
+			i = self.getLayer().dataProvider().fieldNameIndex(fieldName)
 			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
-			if self.layer().dataProvider().fields()[i].type() != field.checkType:
+			if self.getLayer().dataProvider().fields()[i].type() != field.checkType:
 				QMessageBox.warning( self , "Bad field" ,  QApplication.translate("Layer Field Combo", "The field must be a %s" % field.type, None, QApplication.UnicodeUTF8) )
 				field.combo.setCurrentIndex(0)	
 
@@ -90,8 +94,8 @@ class layerFieldCombo():
 		for field in self.fields:
 			field.combo.clear()
 			field.combo.addItem(_fromUtf8(""))
-			if self.layer() is False: return
-			for i,fieldItem in enumerate( self.layer().dataProvider().fieldNameMap() ):
-				field.combo.addItem( field )
+			if self.getLayer() is False: continue
+			for i,fieldItem in enumerate( self.getLayer().dataProvider().fieldNameMap() ):
+				field.combo.addItem( fieldItem )
 				if fieldItem == field.settingIDLambda():
 					field.combo.setCurrentIndex(i+1)
