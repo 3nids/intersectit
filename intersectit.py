@@ -92,8 +92,8 @@ class intersectit ():
 	def applySettings(self):
 		self.rubber.setWidth( self.settings.value("rubberWidth").toDouble()[0] )
 		R = self.settings.value("rubberColorR").toInt()[0]
-		G = self.settings.value("rubber_colorG").toInt()[0]
-		B = self.settings.value("rubber_colorB").toInt()[0]
+		G = self.settings.value("rubberColorG").toInt()[0]
+		B = self.settings.value("rubberColorB").toInt()[0]
 		self.rubber.setColor(QColor(R,G,B,255))		
 
 	def cleanMemoryLayers(self):

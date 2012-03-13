@@ -41,11 +41,11 @@ class IntersectItSettings():
 									"defaultPrecisionOrientation" : .01
 								}
 								
-		self.projectDefaultValue = {"dimension_layer": "",
-									"measure_field": "",									
-									"precision_field": "",									
+		self.projectDefaultValue = {"dimensionLayer": "",
+									"measureField": "",									
+									"precisionField": "",									
 									"intersectionLayer": "",									
-									"report_field": ""									
+									"reportField": ""									
 								}
 	
 	def value(self,setting):
@@ -78,11 +78,11 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.settings = IntersectItSettings()
 				
 		# Management of layer/fields combos
-		dimensionLayerCombo           = layerCombo( self.dimensionLayerCombo,    lambda: self.settings.value("dimension_layer") )
-		dimensionMeasureFieldCombo    = fieldCombo( self.measureFieldCombo,      lambda: self.settings.value("measure_field"),  QMetaType.QString )
-		dimensionPrecisionFieldCombo  = fieldCombo( self.precisionFieldCombo,    lambda: self.settings.value("precision_field"), QMetaType.QString )
-		intersectionLayerCombo        = layerCombo( self.intersectionLayerCombo, lambda: self.settings.value("intersection_layer") )
-		intersectionReportFieldCombo  = fieldCombo( self.reportFieldCombo,       lambda: self.settings.value("report_field"), QMetaType.QString )
+		dimensionLayerCombo           = layerCombo( self.dimensionLayerCombo,    lambda: self.settings.value("dimensionLayer") )
+		dimensionMeasureFieldCombo    = fieldCombo( self.measureFieldCombo,      lambda: self.settings.value("measureField"),  QMetaType.QString )
+		dimensionPrecisionFieldCombo  = fieldCombo( self.precisionFieldCombo,    lambda: self.settings.value("precisionField"), QMetaType.QString )
+		intersectionLayerCombo        = layerCombo( self.intersectionLayerCombo, lambda: self.settings.value("intersectionLayer") )
+		intersectionReportFieldCombo  = fieldCombo( self.reportFieldCombo,       lambda: self.settings.value("reportField"), QMetaType.QString )
 		self.dimensionLayerManage     = layerFieldCombo(iface.mapCanvas(), self, dimensionLayerCombo,     [dimensionMeasureFieldCombo, dimensionPrecisionFieldCombo])
 		self.intersectionLayerManage  = layerFieldCombo(iface.mapCanvas(), self, intersectionLayerCombo , [intersectionReportFieldCombo] )
 		
@@ -143,19 +143,19 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.settings.setValue( "displayReport"     , int(self.displayReportBox.isChecked()) )
 		self.settings.setValue( "placeIntersection" , int(self.placeIntersectionBox.isChecked()) )
 		self.settings.setValue( "placeReport"       , int(self.placeReportBox.isChecked()) )
-		if self.layer() is False: intLayerId = ''
+		if self.intersectionLayerManage.getLayer() is False: intLayerId = ''
 		else: intLayerId = self.intersectionLayerManage.getLayer().id()
-		self.settings.setValue("intersectionLayer", dimLayerId )
-		self.settings.setValue("report_field"      , self.measureFieldCombo.currentText()   )
+		self.settings.setValue("intersectionLayer" , intLayerId )
+		self.settings.setValue("reportField"       , self.measureFieldCombo.currentText()   )
 		# dimensions
 		self.settings.setValue( "placeDimension" , int(self.placeDimensionBox.isChecked()) )
 		self.settings.setValue( "placePrecision" , int(self.placePrecisionBox.isChecked()) )
 		self.settings.setValue( "placeMeasure"   , int(self.placeMeasureBox.isChecked()) )
-		if self.layer() is False: dimLayerId = ''
+		if self.dimensionLayerManage.getLayer() is False: dimLayerId = ''
 		else: dimLayerId = self.dimensionLayerManage.getLayer().id()
-		self.settings.setValue("dimension_layer", dimLayerId )
-		self.settings.setValue("measure_field"  , self.measureFieldCombo.currentText()   )
-		self.settings.setValue("precision_field", self.precisionFieldCombo.currentText() )
+		self.settings.setValue("dimensionLayer", dimLayerId )
+		self.settings.setValue("measureField"  , self.measureFieldCombo.currentText()   )
+		self.settings.setValue("precisionField", self.precisionFieldCombo.currentText() )
 
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):
