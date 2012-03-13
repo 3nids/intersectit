@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Fri Mar  9 14:20:27 2012
+# Created: Tue Mar 13 15:57:31 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -110,25 +110,20 @@ class Ui_Settings(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout_3.addWidget(self.label, 1, 0, 1, 1)
         self.gridLayout_4.addWidget(self.selectGroup, 0, 0, 1, 1)
-        self.line_4 = QtGui.QFrame(self.intersectionTab)
-        self.line_4.setFrameShape(QtGui.QFrame.HLine)
-        self.line_4.setFrameShadow(QtGui.QFrame.Sunken)
-        self.line_4.setObjectName(_fromUtf8("line_4"))
-        self.gridLayout_4.addWidget(self.line_4, 1, 0, 1, 1)
         self.resultGroup = QtGui.QGroupBox(self.intersectionTab)
         self.resultGroup.setTitle(QtGui.QApplication.translate("Settings", "Result", None, QtGui.QApplication.UnicodeUTF8))
         self.resultGroup.setObjectName(_fromUtf8("resultGroup"))
         self.gridLayout_6 = QtGui.QGridLayout(self.resultGroup)
         self.gridLayout_6.setObjectName(_fromUtf8("gridLayout_6"))
-        self.displayReport = QtGui.QCheckBox(self.resultGroup)
-        self.displayReport.setText(QtGui.QApplication.translate("Settings", "display results report from least-squares", None, QtGui.QApplication.UnicodeUTF8))
-        self.displayReport.setChecked(True)
-        self.displayReport.setObjectName(_fromUtf8("displayReport"))
-        self.gridLayout_6.addWidget(self.displayReport, 0, 0, 1, 2)
-        self.saveReportBox = QtGui.QCheckBox(self.resultGroup)
-        self.saveReportBox.setText(QtGui.QApplication.translate("Settings", "save LS report in field", None, QtGui.QApplication.UnicodeUTF8))
-        self.saveReportBox.setObjectName(_fromUtf8("saveReportBox"))
-        self.gridLayout_6.addWidget(self.saveReportBox, 2, 0, 1, 1)
+        self.displayReportBox = QtGui.QCheckBox(self.resultGroup)
+        self.displayReportBox.setText(QtGui.QApplication.translate("Settings", "display results report from least-squares", None, QtGui.QApplication.UnicodeUTF8))
+        self.displayReportBox.setChecked(True)
+        self.displayReportBox.setObjectName(_fromUtf8("displayReportBox"))
+        self.gridLayout_6.addWidget(self.displayReportBox, 0, 0, 1, 2)
+        self.placeReportBox = QtGui.QCheckBox(self.resultGroup)
+        self.placeReportBox.setText(QtGui.QApplication.translate("Settings", "place LS report in field", None, QtGui.QApplication.UnicodeUTF8))
+        self.placeReportBox.setObjectName(_fromUtf8("placeReportBox"))
+        self.gridLayout_6.addWidget(self.placeReportBox, 2, 0, 1, 1)
         self.reportFieldCombo = QtGui.QComboBox(self.resultGroup)
         self.reportFieldCombo.setObjectName(_fromUtf8("reportFieldCombo"))
         self.gridLayout_6.addWidget(self.reportFieldCombo, 2, 1, 1, 1)
@@ -140,6 +135,11 @@ class Ui_Settings(object):
         self.intersectionLayerCombo.setObjectName(_fromUtf8("intersectionLayerCombo"))
         self.gridLayout_6.addWidget(self.intersectionLayerCombo, 1, 1, 1, 1)
         self.gridLayout_4.addWidget(self.resultGroup, 2, 0, 1, 1)
+        self.line_4 = QtGui.QFrame(self.intersectionTab)
+        self.line_4.setFrameShape(QtGui.QFrame.HLine)
+        self.line_4.setFrameShadow(QtGui.QFrame.Sunken)
+        self.line_4.setObjectName(_fromUtf8("line_4"))
+        self.gridLayout_4.addWidget(self.line_4, 1, 0, 1, 1)
         self.tabWidget.addTab(self.intersectionTab, _fromUtf8(""))
         self.dimensionTab = QtGui.QWidget()
         self.dimensionTab.setObjectName(_fromUtf8("dimensionTab"))
@@ -177,7 +177,7 @@ class Ui_Settings(object):
         self.gridLayout.addWidget(self.buttonBox, 6, 0, 1, 2)
 
         self.retranslateUi(Settings)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Settings.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Settings.reject)
         QtCore.QMetaObject.connectSlotsByName(Settings)

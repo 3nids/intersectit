@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="observationTab">
       <attribute name="title">
@@ -178,13 +178,6 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="0">
-        <widget class="Line" name="line_4">
-         <property name="orientation">
-          <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="0">
         <widget class="QGroupBox" name="resultGroup">
          <property name="title">
@@ -192,7 +185,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="displayReport">
+           <widget class="QCheckBox" name="displayReportBox">
             <property name="text">
              <string>display results report from least-squares</string>
             </property>
@@ -202,9 +195,9 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QCheckBox" name="saveReportBox">
+           <widget class="QCheckBox" name="placeReportBox">
             <property name="text">
-             <string>save LS report in field</string>
+             <string>place LS report in field</string>
             </property>
            </widget>
           </item>
@@ -222,17 +215,16 @@
            <widget class="QComboBox" name="intersectionLayerCombo"/>
           </item>
          </layout>
-         <zorder>displayReport</zorder>
-         <zorder>displayReport</zorder>
-         <zorder>saveReportBox</zorder>
-         <zorder>reportFieldCombo</zorder>
-         <zorder>placeIntersectionBox</zorder>
-         <zorder>intersectionLayerCombo</zorder>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="Line" name="line_4">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
         </widget>
        </item>
       </layout>
-      <zorder>label</zorder>
-      <zorder>tolerance</zorder>
       <zorder>selectGroup</zorder>
       <zorder>resultGroup</zorder>
       <zorder>line_4</zorder>
@@ -279,13 +271,6 @@
         <widget class="QComboBox" name="precisionFieldCombo"/>
        </item>
       </layout>
-      <zorder>groupBox_2</zorder>
-      <zorder>placeDimensionBox</zorder>
-      <zorder>dimensionLayerCombo</zorder>
-      <zorder>placeMeasureBox</zorder>
-      <zorder>measureFieldCombo</zorder>
-      <zorder>placePrecisionBox</zorder>
-      <zorder>precisionFieldCombo</zorder>
      </widget>
     </widget>
    </item>
