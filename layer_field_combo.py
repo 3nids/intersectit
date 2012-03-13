@@ -1,0 +1,97 @@
+"""
+IntersectIt QGIS plugin
+Denis Rouzaud
+denis.rouzaud@gmail.com
+Jan. 2012
+
+Management class for layer / fields UI combos
+"""
+
+from PyQt4.QtCore import *
+from PyQt4.QtGui import *
+from qgis.core import *
+
+try:
+    _fromUtf8 = QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+    
+class layer():
+	def __init__(self,combo,settingIDLambda=lambda:"",checkType=None):
+		self.combo = combo
+		self.settingIDLambda = settingIDLambda
+		self.checkType = checkType	
+
+class field():
+	def __init__(self,combo,settingIDLambda=lambda:"",checkType=None):
+		self.combo = combo
+		self.settingIDLambda = settingIDLambda
+		self.checkType = checkType
+
+class layerFieldCombo():
+	def __init__(self, canvas, layer, fields=[]):
+		self.canvas = canvas
+		self.layer = layer
+		self.fields = fields
+		self.layers = []
+		# connect combos 
+		QObject.connect(layer.combo, SIGNAL("currentIndexChanged(int)"), self.layerChanged)
+		for field in fields:
+			QObject.connect(field.combo, SIGNAL("currentIndexChanged(int)"), self.fieldChanged)
+
+	def layer(self):
+		i = self.dimensionLayerCombo.currentIndex()
+		if i == 0 or len(self.layers)==0: return False
+		else: return self.layers[i-1]
+
+	def onDialogShow(self):
+		self.layers = self.canvas.layers()
+		self.layer.combo.clear()
+		self.layer.combo.addItem("")
+		for i,layer in enumerate(self.layers):
+			self.layer.combo.addItem(layer.name())
+			if layer.id() == self.layer.settingIDLambda(): self.layer.combo.setCurrentIndex(i+1)
+		self.updateFieldsCombo()
+
+	def layerChanged(self,i):
+		error_msg = ''
+		if i > 0:
+			layer = self.layers[i-1]
+			if layer.type() != QgsMapLayer.VectorLayer:
+				error_msg = QApplication.translate("Layer Field Combo", "The layer must be a vector layer.", None, QApplication.UnicodeUTF8) 
+			elif layer.hasGeometryType() is False:
+				error_msg = QApplication.translate("Layer Field Combo", "The dimension layer has no geometry.", None, QApplication.UnicodeUTF8) 
+			else:
+				# TODO CHECK GEOMETRY
+				print layer.dataProvider().geometryType() , layer.geometryType()
+		if error_msg != '':
+			self.dimensionLayerCombo.setCurrentIndex(0)
+			QMessageBox.warning( self , "Bad Layer", error_msg )
+		# update field list
+		self.updateFieldsCombo()
+
+	def fieldChanged(self,i):
+		field = None
+		for testField in self.fields:
+			if testField.combo == QObject.sender():
+				 field = testField
+				 print "hurray"
+				 break
+		if field is None: raise NameError('LayerFieldCombo: cannot find field')
+		if self.layer() is not False and i > 0:
+			fieldName = field.currentText()
+			i = self.layer().dataProvider().fieldNameIndex(fieldName)
+			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
+			if self.layer().dataProvider().fields()[i].type() != field.checkType:
+				QMessageBox.warning( self , "Bad field" ,  QApplication.translate("Layer Field Combo", "The field must be a %s" % field.type, None, QApplication.UnicodeUTF8) )
+				field.combo.setCurrentIndex(0)	
+
+	def updateFieldsCombo(self):
+		for field in self.fields:
+			field.combo.clear()
+			field.combo.addItem(_fromUtf8(""))
+			if self.layer() is False: return
+			for i,fieldItem in enumerate( self.layer().dataProvider().fieldNameMap() ):
+				field.combo.addItem( field )
+				if fieldItem == field.settingIDLambda():
+					field.combo.setCurrentIndex(i+1)

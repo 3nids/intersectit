@@ -11,6 +11,7 @@ from PyQt4.QtCore import *
 from PyQt4.QtGui import *
 from qgis.core import *
 from ui_settings import Ui_Settings
+from layer_field_combo import layer,field,layerFieldCombo
 
 try:
     _fromUtf8 = QString.fromUtf8
@@ -20,32 +21,46 @@ except AttributeError:
 class IntersectItSettings():
 	def __init__(self):
 		# load settings
-		self.settings = QSettings("IntersectIt","IntersectIt")
+		self.pluginName = "IntersectIt"
+		self.settings = QSettings(self.pluginName,self.pluginName)
 		
-		self.defaultValue = {	"rubber_colorR" : 0,
-								"rubber_colorG" : 0,
-								"rubber_colorB" : 255,
-								"rubber_width"  : 2,
-								"placeDimension": 1,
-								"placeMeasure"  : 1,
-								"placePrecision": 0,
-								"snapping"      : 1,
-								"tolerance"     : 1,
-								"units"         : "map",
-								"defaultPrecisionDistance"    : 25,
-								"defaultPrecisionOrientation" : .01
-							}
+		self.globalDefaultValue = {	"rubber_colorR" : 0,
+									"rubber_colorG" : 0,
+									"rubber_colorB" : 255,
+									"rubber_width"  : 2,
+									"placeDimension": 1,
+									"placeMeasure"  : 1,
+									"placePrecision": 0,
+									"snapping"      : 1,
+									"tolerance"     : 1,
+									"units"         : "map",
+									"defaultPrecisionDistance"    : 25,
+									"defaultPrecisionOrientation" : .01
+								}
+								
+		self.projectDefaultValue = {"dimension_layer": "",
+									"measure_field": "",									
+									"precision_field": "",									
+									"intersection_layer": ""									
+								}
 	
 	def value(self,setting):
-		if setting not in self.defaultValue:
+		if setting in self.globalDefaultValue:
+			return self.settings.value( setting, self.globalDefaultValue[setting] )
+		elif setting in self.projectDefaultValue:
+			return QgsProject.instance().readEntry( self.pluginName, setting , self.projectDefaultValue[setting] )[0]
+		else:
 			raise NameError('IntersectIt has no setting %s' % setting)
-		return self.settings.value(setting,self.defaultValue.get(setting))
+		
 		
 	def setValue(self,setting,value):
-		if setting not in self.defaultValue:
+		if setting in self.globalDefaultValue:
+			return self.settings.setValue( setting, value )
+		elif setting in self.projectDefaultValue:
+			return QgsProject.instance().writeEntry( self.pluginName, setting , value )
+		else:
 			raise NameError('IntersectIt has no setting %s' % setting)
-		self.settings.setValue(setting,value)
-		
+
 		
 
 # create the dialog to connect layers
@@ -77,22 +92,20 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.placeMeasureBox.setChecked( self.settings.value( "placeMeasure" ).toInt()[0] ) 
 		self.placePrecisionBox.setChecked( self.settings.value( "placePrecision" ).toInt()[0] ) 
 		self.defaultPrecisionDistanceBox.setValue( self.settings.value( "defaultPrecisionDistance" ).toDouble()[0] ) 
-		self.defaultPrecisionOrientationBox.setValue( self.settings.value( "defaultPrecisionOrientation" ).toDouble()[0] ) 
+		self.defaultPrecisionOrientationBox.setValue( self.settings.value( "defaultPrecisionOrientation" ).toDouble()[0] )
+		
+		# Management of layer/fields combos
+		dimensionLayerCombo           = layer( self.dimensionLayerCombo, lambda: self.settings.value("dimension_layer") )
+		dimensionMeasureFieldCombo    = field( self.measureFieldCombo,   lambda: self.settings.value("measure_field"),  QMetaType.QString )
+		dimensionPrecisionFieldCombo  = field( self.precisionFieldCombo, lambda: self.settings.value("precision_field"), QMetaType.QString )
+		intersectionLayerCombo        = layer( self.dimensionLayerCombo, lambda: self.settings.value("intersection_layer") )
+		self.dimensionLayerManage     = layerFieldCombo(iface.mapCanvas(),  dimensionLayerCombo,     [dimensionMeasureFieldCombo, dimensionPrecisionFieldCombo])
+		self.intersectionLayerManage  = layerFieldCombo(iface.mapCanvas(),  intersectionLayerCombo , [] )
 		
 	def showEvent(self, e):
-		self.layers = self.iface.mapCanvas().layers()
-		dimLayerId = QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0]
-		intLayerId = QgsProject.instance().readEntry("IntersectIt", "intersection_layer", "")[0]
-		self.dimensionLayerCombo.clear()
-		self.intersectionLayerCombo.clear()
-		self.dimensionLayerCombo.addItem(_fromUtf8(""))
-		self.intersectionLayerCombo.addItem(_fromUtf8(""))
-		for i,layer in enumerate(self.layers):
-			self.dimensionLayerCombo.addItem(layer.name())
-			self.intersectionLayerCombo.addItem(layer.name())
-			if layer.id() == dimLayerId: self.dimensionLayerCombo.setCurrentIndex(i+1)
-			if layer.id() == intLayerId: self.intersectionLayerCombo.setCurrentIndex(i+1)
-		self.updateFieldsCombo()
+		self.dimensionLayerManage.onDialogShow()
+		self.intersectionLayerManage.onDialogShow()
+
 			
 	@pyqtSignature("on_placeDimensionBox_toggled(bool)")
 	def on_placeDimensionBox_toggled(self,b):
@@ -101,71 +114,7 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.measureFieldCombo.setEnabled(b)
 		self.placePrecisionBox.setEnabled(b)
 		self.precisionFieldCombo.setEnabled(b)
-			
-	@pyqtSignature("on_dimensionLayerCombo_currentIndexChanged(int)")
-	def on_dimensionLayerCombo_currentIndexChanged(self,i):
-		error_msg = ''
-		if i > 0:
-			layer = self.layers[i-1]
-			if layer.type() != QgsMapLayer.VectorLayer:
-				error_msg = QApplication.translate("IntersectIt", "The dimension layer must be a vector layer.", None, QApplication.UnicodeUTF8) 
-			elif layer.hasGeometryType() is False:
-				error_msg = QApplication.translate("IntersectIt", "The dimension layer has no geometry.", None, QApplication.UnicodeUTF8) 
-			else:
-				# TODO CHECK GEOMETRY
-				print layer.dataProvider().geometryType() , layer.geometryType()
-		if error_msg != '':
-			self.dimensionLayerCombo.setCurrentIndex(0)
-			QMessageBox.warning( self , "IntersectIt", error_msg )
-		# update field list
-		self.updateFieldsCombo()
 		
-	@pyqtSignature("on_measureFieldCombo_currentIndexChanged(int)")
-	def on_measureFieldCombo_currentIndexChanged(self,i):
-		if self.dimensionLayer() is not False and i > 0:
-			field = self.measureFieldCombo.currentText()
-			i = self.dimensionLayer().dataProvider().fieldNameIndex(field)
-			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
-			if self.dimensionLayer().dataProvider().fields()[i].type() != 10:
-				QMessageBox.warning( self , "IntersectIt" ,  QApplication.translate("IntersectIt", "The dimension field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
-				self.measureFieldCombo.setCurrentIndex(0)
-				
-	@pyqtSignature("on_precisionFieldCombo_currentIndexChanged(int)")
-	def on_precisionFieldCombo_currentIndexChanged(self,i):
-		if self.dimensionLayer() is not False and i > 0:
-			field = self.precisionFieldCombo.currentText()
-			i = self.dimensionLayer().dataProvider().fieldNameIndex(field)
-			# http://developer.qt.nokia.com/doc/qt-4.8/qmetatype.html#Type-enum
-			if self.dimensionLayer().dataProvider().fields()[i].type() != 10:
-				QMessageBox.warning( self , "IntersectIt" ,  QApplication.translate("IntersectIt", "The precision field must be a varchar or a text.", None, QApplication.UnicodeUTF8) )
-				self.precisionFieldCombo.setCurrentIndex(0)
-			
-	def dimensionLayer(self):
-		i = self.dimensionLayerCombo.currentIndex()
-		if i == 0: return False
-		else: return self.layers[i-1]
-				
-	def updateFieldsCombo(self):
-		self.measureFieldCombo.clear()
-		self.precisionFieldCombo.clear()
-		self.measureFieldCombo.addItem(_fromUtf8(""))
-		self.precisionFieldCombo.addItem(_fromUtf8(""))
-		if self.dimensionLayer() is False: return
-		l = 1
-		for field in self.dimensionLayer().dataProvider().fieldNameMap():
-			self.measureFieldCombo.addItem(_fromUtf8("") )
-			self.measureFieldCombo.setItemText( l, field )
-			if field == QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0]:
-				self.measureFieldCombo.setCurrentIndex(l)	
-			l += 1
-		l = 1
-		for field in self.dimensionLayer().dataProvider().fieldNameMap():
-			self.precisionFieldCombo.addItem(_fromUtf8("") )
-			self.precisionFieldCombo.setItemText( l, field )
-			if field == QgsProject.instance().readEntry("IntersectIt", "precision_field", "")[0]:
-				self.precisionFieldCombo.setCurrentIndex(l)	
-			l += 1
-
 	def applySettings(self):
 		self.settings.setValue( "snapping" , int(self.snapBox.isChecked()) )
 		self.settings.setValue( "defaultPrecisionOrientation" , self.defaultPrecisionOrientationBox.value()) 
