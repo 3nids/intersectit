@@ -44,17 +44,17 @@ class placeDimension(QDialog, Ui_placeDimension ):
 		self.observations = observations
 		self.dimension = []
 		self.dimensionCombo.clear()
-		ii = 0
-		nn = len(xyrpi)
-		for c in xyrpi:
-			self.dimensionCombo.addItem(_fromUtf8(""))
-			self.dimensionCombo.setItemText( ii , "%u/%u" % (ii+1,nn) )
-			point = c[0]
-			distance  = c[1] # this is the measure
-			precision = c[2]
-			self.dimension.append(dimension(iface,self.layer,intersectedPoint,point,distance,precision,defaultRadius))
-			ii += 1
-		QObject.connect(self.dimensionCombo, SIGNAL("currentIndexChanged(int)") , self.dimensionSelected) # this must be placed after the combobox population
+		nn = len(observations)
+		for i,obs in enumerate(observations):
+			self.dimensionCombo.addItem( "%u/%u" % (i+1,nn) )
+			self.dimension.append( dimension(	iface,self.layer,
+												intersectedPoint,
+												QgsPoint( obs["x"] , obs["y"] ),
+												obs["measure"],
+												obs["precision"],
+												defaultRadius) )
+		# above line must be placed after the combobox population
+		QObject.connect(self.dimensionCombo, SIGNAL("currentIndexChanged(int)") , self.dimensionSelected)
 		self.dimensionSelected(0)
 		
 	def toggleDistanceLayers(self,i):
