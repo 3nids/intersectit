@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Triangulation :: place arc</string>
+   <string>IntersectIt :: place dimension</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="1" colspan="4">
-    <widget class="QComboBox" name="arcCombo"/>
+    <widget class="QComboBox" name="dimensionCombo"/>
    </item>
    <item row="7" column="1" colspan="4">
     <widget class="QDialogButtonBox" name="buttonBox">
@@ -127,7 +127,7 @@
  </widget>
  <tabstops>
   <tabstop>buttonBox</tabstop>
-  <tabstop>arcCombo</tabstop>
+  <tabstop>dimensionCombo</tabstop>
   <tabstop>nextButton</tabstop>
   <tabstop>createBox</tabstop>
   <tabstop>radiusSlider</tabstop>

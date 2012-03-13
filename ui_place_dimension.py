@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_dimension.ui'
 #
-# Created: Fri Mar  9 14:20:05 2012
+# Created: Tue Mar 13 07:35:29 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,12 +18,12 @@ class Ui_placeDimension(object):
     def setupUi(self, placeDimension):
         placeDimension.setObjectName(_fromUtf8("placeDimension"))
         placeDimension.resize(380, 211)
-        placeDimension.setWindowTitle(QtGui.QApplication.translate("placeDimension", "Triangulation :: place arc", None, QtGui.QApplication.UnicodeUTF8))
+        placeDimension.setWindowTitle(QtGui.QApplication.translate("placeDimension", "IntersectIt :: place dimension", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(placeDimension)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.arcCombo = QtGui.QComboBox(placeDimension)
-        self.arcCombo.setObjectName(_fromUtf8("arcCombo"))
-        self.gridLayout.addWidget(self.arcCombo, 2, 1, 1, 4)
+        self.dimensionCombo = QtGui.QComboBox(placeDimension)
+        self.dimensionCombo.setObjectName(_fromUtf8("dimensionCombo"))
+        self.gridLayout.addWidget(self.dimensionCombo, 2, 1, 1, 4)
         self.buttonBox = QtGui.QDialogButtonBox(placeDimension)
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
@@ -82,8 +82,8 @@ class Ui_placeDimension(object):
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), placeDimension.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), placeDimension.reject)
         QtCore.QMetaObject.connectSlotsByName(placeDimension)
-        placeDimension.setTabOrder(self.buttonBox, self.arcCombo)
-        placeDimension.setTabOrder(self.arcCombo, self.nextButton)
+        placeDimension.setTabOrder(self.buttonBox, self.dimensionCombo)
+        placeDimension.setTabOrder(self.dimensionCombo, self.nextButton)
         placeDimension.setTabOrder(self.nextButton, self.createBox)
         placeDimension.setTabOrder(self.createBox, self.radiusSlider)
         placeDimension.setTabOrder(self.radiusSlider, self.radiusSpin)

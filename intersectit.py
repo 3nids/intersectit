@@ -198,7 +198,7 @@ class intersectit ():
 					if self.uisettings.exec_() == 0: return
 					continue
 			break
-		dlg = placeDimension(self.iface,intersectedPoint,xyrpi,[self.lineLayer(),self.pointLayer()])
+		dlg = placeDimension(self.iface,intersectedPoint,observations,[self.lineLayer(),self.pointLayer()])
 		dlg.exec_()		
 
 	def intersectionToolChanged(self, tool):

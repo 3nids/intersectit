@@ -12,6 +12,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 import math
+from settings import IntersectItSettings
 from ui_place_dimension import Ui_placeDimension
 
 try:
@@ -21,7 +22,7 @@ except AttributeError:
 
 # create the dialog to connect layers
 class placeDimension(QDialog, Ui_placeDimension ):
-	def __init__(self,iface,intersectedPoint,xyrpi,distanceLayers):
+	def __init__(self,iface,intersectedPoint,observations,distanceLayers):
 		QDialog.__init__(self)
 		self.setupUi(self)
 		self.iface = iface
@@ -36,79 +37,79 @@ class placeDimension(QDialog, Ui_placeDimension ):
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"),	self.radiusSpin,   SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
 		# load settings
-		self.settings = QSettings("IntersectIt","IntersectIt")
+		self.settings = IntersectItSettings()
 		# init state for distance layer visibility
 		QObject.connect( self.displayLayersBox , SIGNAL("stateChanged(int)") , self.toggleDistanceLayers )
-		# create the dimensions
-		self.xyrpi = xyrpi
+		# create the observations
+		self.observations = observations
 		self.dimension = []
-		self.arcCombo.clear()
+		self.dimensionCombo.clear()
 		ii = 0
 		nn = len(xyrpi)
 		for c in xyrpi:
-			self.arcCombo.addItem(_fromUtf8(""))
-			self.arcCombo.setItemText( ii , "%u/%u" % (ii+1,nn) )
+			self.dimensionCombo.addItem(_fromUtf8(""))
+			self.dimensionCombo.setItemText( ii , "%u/%u" % (ii+1,nn) )
 			point = c[0]
 			distance  = c[1] # this is the measure
 			precision = c[2]
-			self.arc.append(arc(iface,self.layer,intersectedPoint,point,distance,precision,defaultRadius))
+			self.dimension.append(dimension(iface,self.layer,intersectedPoint,point,distance,precision,defaultRadius))
 			ii += 1
-		QObject.connect(self.arcCombo, SIGNAL("currentIndexChanged(int)") , self.arcSelected) # this must be placed after the combobox population
-		self.arcSelected(0)
+		QObject.connect(self.dimensionCombo, SIGNAL("currentIndexChanged(int)") , self.dimensionSelected) # this must be placed after the combobox population
+		self.dimensionSelected(0)
 		
 	def toggleDistanceLayers(self,i):
 		self.displayLayersBox.setTristate(False)
 		self.iface.legendInterface().setLayerVisible(self.distanceLayers[0],bool(i))
 		self.iface.legendInterface().setLayerVisible(self.distanceLayers[1],bool(i))
 			
-	def currentArc(self):
-		return self.arcCombo.currentIndex()
+	def currentDimension(self):
+		return self.dimensionCombo.currentIndex()
 		
-	def arcSelected(self,i):
-		arc = self.arc[self.currentArc()]
-		self.radiusSlider.setValue(arc.radius)
-		self.createBox.setChecked(arc.isActive)
+	def dimensionSelected(self,i):
+		dimension = self.dimension[self.currentDimension()]
+		self.radiusSlider.setValue(dimension.radius)
+		self.createBox.setChecked(dimension.isActive)
 		self.updateRubber()
 		
 	def radiusChanged(self,radius):
 		self.updateRubber()
-		self.arc[self.currentArc()].setRadius(radius).draw()
+		self.dimension[self.currentDimension()].setRadius(radius).draw()
 
 	def cancel(self):
 		self.rubber.reset()
-		for a in self.arc: a.delete()
+		for a in self.dimension: a.delete()
 	
 	@pyqtSignature("on_prevButton_clicked()")
 	def on_prevButton_clicked(self):
-		i = max(0,self.currentArc()-1)
-		self.arcCombo.setCurrentIndex(i)
+		i = max(0,self.currentDimension()-1)
+		self.dimensionCombo.setCurrentIndex(i)
 		
 	@pyqtSignature("on_nextButton_clicked()")
 	def on_nextButton_clicked(self):
 		self.updateRubber()
-		i = min(self.currentArc()+1,len(self.arc)-1)
-		self.arcCombo.setCurrentIndex(i)
+		i = min(self.currentDimension()+1,len(self.dimension)-1)
+		self.dimensionCombo.setCurrentIndex(i)
 		
 	@pyqtSignature("on_reverseButton_clicked()")
 	def on_reverseButton_clicked(self):
-		self.arc[self.currentArc()].reverse().draw()
+		self.dimension[self.currentDimension()].reverse().draw()
 		self.updateRubber()
 		
 	@pyqtSignature("on_createBox_stateChanged(int)")
 	def on_createBox_stateChanged(self,i):
 		if i == 0:
-			self.arc[self.currentArc()].delete()
+			self.dimension[self.currentDimension()].delete()
 		else:
-			self.arc[self.currentArc()].createFeature()
+			self.dimension[self.currentDimension()].createFeature()
 	
 	def updateRubber(self):
 		self.rubber.reset()
 		if self.createBox.isChecked():
-			geom = self.arc[self.arcCombo.currentIndex()].geometry()
+			geom = self.dimension[self.dimensionCombo.currentIndex()].geometry()
 			self.rubber.addGeometry(geom,self.layer)
 
 
-class arc():
+class dimension():
 	def __init__(self,iface,layer,intersectedPoint,distancePoint,distance,precision,radius):
 		self.iface = iface
 		self.layer = layer
