@@ -27,7 +27,9 @@ class placeDimension(QDialog, Ui_placeDimension ):
 		self.setupUi(self)
 		self.iface = iface
 		self.distanceLayers = distanceLayers
-		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0] ), False )
+		# load settings
+		self.settings = IntersectItSettings()	
+		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer") ), False )
 		self.rubber = QgsRubberBand(iface.mapCanvas())
 		self.rubber.setWidth(2)
 		defaultRadius = self.radiusSlider.value()
@@ -36,8 +38,7 @@ class placeDimension(QDialog, Ui_placeDimension ):
 		QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"),	self.radiusSlider, SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"),	self.radiusSpin,   SLOT("setValue(int)"))
 		QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
-		# load settings
-		self.settings = IntersectItSettings()
+
 		# init state for distance layer visibility
 		QObject.connect( self.displayLayersBox , SIGNAL("stateChanged(int)") , self.toggleDistanceLayers )
 		# create the observations
@@ -142,11 +143,11 @@ class dimension():
 		f.setGeometry(self.geometry())
 		# look for dimension and precision fields
 		if self.settings.value("placeMeasure").toInt()[0] == 1:
-			dimFieldName = QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0]
+			dimFieldName = self.settings.value("dimensionField")
 			ilbl = self.provider.fieldNameIndex(dimFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))
 		if self.settings.value("placePrecision").toInt()[0] == 1:
-			preFieldName = QgsProject.instance().readEntry("IntersectIt", "precision_field", "")[0]
+			preFieldName = self.settings.value("precisionField")
 			ilbl = self.provider.fieldNameIndex(preFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.precision))
 		ans,f = self.provider.addFeatures( [f] )

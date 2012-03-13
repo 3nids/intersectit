@@ -41,11 +41,13 @@ class IntersectItSettings():
 									"defaultPrecisionOrientation" : .01
 								}
 								
-		self.projectDefaultValue = {"dimensionLayer": "",
-									"measureField": "",									
-									"precisionField": "",									
+		self.projectDefaultValue = {"dimensionLayer"   : "",
+									"measureField"     : "",									
+									"precisionField"   : "",									
 									"intersectionLayer": "",									
-									"reportField": ""									
+									"reportField"      : "",								
+									"memoryLineLayer"  : "",								
+									"memoryPointLayer" : ""								
 								}
 	
 	def value(self,setting):
@@ -59,9 +61,9 @@ class IntersectItSettings():
 		
 	def setValue(self,setting,value):
 		if setting in self.globalDefaultValue:
-			return self.settings.setValue( setting, value )
+			self.settings.setValue( setting, value )
 		elif setting in self.projectDefaultValue:
-			return QgsProject.instance().writeEntry( self.pluginName, setting , value )
+			QgsProject.instance().writeEntry( self.pluginName, setting , value )
 		else:
 			raise NameError('IntersectIt has no setting %s' % setting)
 

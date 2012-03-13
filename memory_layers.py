@@ -12,6 +12,8 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
+from settings import IntersectItSettings
+
 try:
     _fromUtf8 = QString.fromUtf8
 except AttributeError:
@@ -20,11 +22,10 @@ except AttributeError:
 class memoryLayers():
 	def __init__(self,iface):
 		self.iface = iface
-
-
+		self.settings = IntersectItSettings()	
 
 	def lineLayer(self):
-		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_line_layer", "")[0]
+		layerID = self.settings.value("memoryLineLayer")
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
 			epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
@@ -32,12 +33,12 @@ class memoryLayers():
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.lineLayerDeleted )
 			QObject.connect( layer, SIGNAL("featureDeleted(int)") , self.lineLayerFeatureDeleted )
-			QgsProject.instance().writeEntry("IntersectIt", "memory_line_layer", layer.id())
+			self.settings.setValue("memoryLineLayer", layer.id())
 		else: self.iface.legendInterface().setLayerVisible(layer,True)
 		return layer
 		
    	def lineLayerDeleted(self):
-		QgsProject.instance().writeEntry("IntersectIt", "memory_line_layer", "")
+		self.settings.setValue("memoryLineLayer", "")
 
 	def lineLayerFeatureDeleted(fid):
 		print "hay"
@@ -45,17 +46,17 @@ class memoryLayers():
 
 
 	def pointLayer(self):
-		layerID = QgsProject.instance().readEntry("IntersectIt", "memory_point_layer", "")[0]
+		layerID = self.settings.value("memoryPointLayer")
 		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
 		if layer is False:
 			epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
 			layer = QgsVectorLayer("Point?crs=%s&field=id:string&index=yes" % epsg, "IntersectIt Points", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
 			QObject.connect( layer, SIGNAL("layerDeleted()") , self.pointLayerDeleted )
-			QgsProject.instance().writeEntry("IntersectIt", "memory_point_layer", layer.id())
+			self.settings.setValue("memoryPointLayer", layer.id())
 		else: self.iface.legendInterface().setLayerVisible(layer,True)
 		return layer
 	
 	def pointLayerDeleted(self):
-		QgsProject.instance().writeEntry("IntersectIt", "memory_point_layer", "")
+		self.settings.setValue("memoryPointLayer", "")
 

@@ -175,14 +175,14 @@ class intersectit ():
 		# check that dimension layer and fields have been set correctly
 		while True:
 			if self.settings.value("placeDimension").toInt()[0] == 0: return # if we do not place any dimension, skip
-			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == QgsProject.instance().readEntry("IntersectIt", "dimension_layer", "")[0] ), False )
+			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("dimension_layer") ), False )
 			if dimLayer is False:
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
 			if self.settings.value("placeMeasure").toInt()[0] == 1: 
-				dimensionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("IntersectIt", "dimension_field", "")[0] ), False )
+				dimensionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("dimension_field") ), False )
 				if dimensionField is False:
 					ok = False
 					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, please select a field for the dimension. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
@@ -190,7 +190,7 @@ class intersectit ():
 					if self.uisettings.exec_() == 0: return
 					continue
 			if self.settings.value("placePrecision").toInt()[0] == 1: 
-				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == QgsProject.instance().readEntry("IntersectIt", "precision_field", "")[0] ), False )
+				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("precision_field") ), False )
 				if precisionField is False:
 					ok = False
 					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, please select a field for the precision. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
