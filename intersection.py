@@ -51,15 +51,15 @@ class intersection:
 			Qll = []
 			w   = []
 			for i,obs in enumerate(self.observations):
-				if obs.get("type") == "distance":
+				if obs["type"] == "distance":
 					# jacobian for parameters
-					A.append( [2*x0[0]-2*obs.get("x") , 2*x0[1]-2*obs.get("y")] )
+					A.append( [2*x0[0]-2*obs["x"] , 2*x0[1]-2*obs["y"]] )
 					# jacobian for observations
-					B.append(-2*obs.get("measure"))
+					B.append(-2*obs["measure"])
 					# stochastic model
-					Qll.append( math.pow(obs.get("precision"),2))
+					Qll.append( math.pow(obs["precision"],2))
 					# misclosure
-					w.append( math.pow(x0[0]-obs.get("x"),2) + math.pow(x0[1]-obs.get("y"),2) - math.pow(obs.get("measure"),2) )
+					w.append( math.pow(x0[0]-obs["x"],2) + math.pow(x0[1]-obs["y"],2) - math.pow(obs["measure"],2) )
 					
 			# generate matrices
 			A   = np.array( A   )
@@ -88,12 +88,12 @@ class intersection:
 						
 	def twoCirclesIntersect(self):
 		# see http://www.mathpages.com/home/kmath396/kmath396.htm
-		x1 = self.observations[0].get("x")
-		y1 = self.observations[0].get("y")
-		r1 = self.observations[0].get("measure")
-		x2 = self.observations[1].get("x")
-		y2 = self.observations[1].get("y")
-		r2 = self.observations[1].get("measure")
+		x1 = self.observations[0]["x"]
+		y1 = self.observations[0]["y"]
+		r1 = self.observations[0]["measure"]
+		x2 = self.observations[1]["x"]
+		y2 = self.observations[1]["y"]
+		r2 = self.observations[1]["measure"]
 		
 		d = math.sqrt( math.pow(x1-x2,2) + math.pow(y1-y2,2) )
 		if d<math.fabs(r1-r2):
