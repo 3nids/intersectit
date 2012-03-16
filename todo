@@ -1,6 +1,5 @@
 
-en cours: renommer quelques settings
-          validation settings: gérer layer/fields pour place LS reporting
+en cours: créer LS reporting
           
           
 
@@ -11,9 +10,10 @@ en cours: renommer quelques settings
 
 - quand on demande pour un layer pour place la cote, si on décoche place dimension, le point est pas placé
 
-- report result from least squares, with option in settings
+- report result from least squares ( with option in settings: done)
 
 - ajouter les observations "orientation"
 
-- renommer place_arc en place_dimension
+-supprimer m/mm et mettre map units et 1/1000 OU ALORS tout mettre dans map units! ouai plutot ca
 
+- enregistrer les nouveaux settings A CONTROLER
