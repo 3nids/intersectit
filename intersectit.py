@@ -15,9 +15,9 @@ from qgis.gui import *
 
 from maptools import placeMeasureOnMap, placeIntersectionOnMap
 from place_distance import place_distance
+from place_dimension import placeDimension
 from observation import observation
 from settings import settingsDialog, IntersectItSettings
-from place_dimension import placeDimension
 from intersection import intersection
 from memory_layers import memoryLayers
 
@@ -161,10 +161,11 @@ class intersectit ():
 	
 		self.intersectionProcess = intersection(point,observations)		
 		try:
-			intersectedPoint =  self.intersectionProcess.getSolution()
+			intersectedPoint,report =  self.intersectionProcess.getSolution()
 		except NameError as detail:
 				QMessageBox.warning( self.iface.mainWindow() , "IntersectIt", "%s" % detail )
 				return
+		if report is None: return
 		# if we do not place any dimension, place the intersected point in layer
 		if self.settings.value("dim_placeDimension").toInt()[0] == 0:
 			f = QgsFeature()

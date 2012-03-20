@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_LSreport.ui'
 #
-# Created: Tue Mar 20 15:15:33 2012
+# Created: Tue Mar 20 16:07:59 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -22,6 +22,10 @@ class Ui_LSreport(object):
         self.gridLayout = QtGui.QGridLayout(LSreport)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.reportBrowser = QtGui.QTextBrowser(LSreport)
+        font = QtGui.QFont()
+        font.setFamily(_fromUtf8("Courier New"))
+        font.setPointSize(12)
+        self.reportBrowser.setFont(font)
         self.reportBrowser.setObjectName(_fromUtf8("reportBrowser"))
         self.gridLayout.addWidget(self.reportBrowser, 0, 0, 1, 2)
         self.buttonBox = QtGui.QDialogButtonBox(LSreport)

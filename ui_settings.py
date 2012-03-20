@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Tue Mar 20 11:25:58 2012
+# Created: Tue Mar 20 15:18:47 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -115,11 +115,11 @@ class Ui_Settings(object):
         self.resultGroup.setObjectName(_fromUtf8("resultGroup"))
         self.gridLayout_6 = QtGui.QGridLayout(self.resultGroup)
         self.gridLayout_6.setObjectName(_fromUtf8("gridLayout_6"))
-        self.displayReportBox = QtGui.QCheckBox(self.resultGroup)
-        self.displayReportBox.setText(QtGui.QApplication.translate("Settings", "display results report from least-squares", None, QtGui.QApplication.UnicodeUTF8))
-        self.displayReportBox.setChecked(True)
-        self.displayReportBox.setObjectName(_fromUtf8("displayReportBox"))
-        self.gridLayout_6.addWidget(self.displayReportBox, 0, 0, 1, 2)
+        self.confirmResultBox = QtGui.QCheckBox(self.resultGroup)
+        self.confirmResultBox.setText(QtGui.QApplication.translate("Settings", "ask to validate intersection results", None, QtGui.QApplication.UnicodeUTF8))
+        self.confirmResultBox.setChecked(True)
+        self.confirmResultBox.setObjectName(_fromUtf8("confirmResultBox"))
+        self.gridLayout_6.addWidget(self.confirmResultBox, 0, 0, 1, 2)
         self.placeReportBox = QtGui.QCheckBox(self.resultGroup)
         self.placeReportBox.setText(QtGui.QApplication.translate("Settings", "place LS report in field", None, QtGui.QApplication.UnicodeUTF8))
         self.placeReportBox.setObjectName(_fromUtf8("placeReportBox"))
@@ -211,7 +211,7 @@ class Ui_Settings(object):
         self.gridLayout.addWidget(self.buttonBox, 6, 0, 1, 2)
 
         self.retranslateUi(Settings)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(1)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Settings.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Settings.reject)
         QtCore.QMetaObject.connectSlotsByName(Settings)
