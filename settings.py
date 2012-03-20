@@ -35,7 +35,7 @@ class IntersectItSettings():
 									"intersect_select_rubberWidth"   : 2,
 									"intersect_LS_convergeThreshold" : 0.0005,
 									"intersect_LS_maxIter"           : 15,
-									"intresect_result_displayReport" : 1,
+									"intresect_result_confirm"       : 1,
 									"intresect_result_placePoint"    : 0,
 									"intresect_result_placeReport"   : 0,
 									"dim_placeDimension"             : 1,
@@ -97,7 +97,7 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.defaultPrecisionOrientationBox.setValue( self.settings.value( "obs_defaultPrecisionOrientation" ).toDouble()[0] )
 		# intersection - selection
 		self.tolerance.setValue( self.settings.value("intersect_select_tolerance").toDouble()[0])
-		if self.settings.value( "units" ).toString() == "map":
+		if self.settings.value( "intersect_select_units" ).toString() == "map":
 			self.mapUnits.setChecked(True)
 			self.pixels.setChecked(False)
 		else:
@@ -109,11 +109,14 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.colorB = self.settings.value("intersect_select_rubberColorB").toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
+		# intersection - LeastSquares
+		self.threshBox.setValue(  self.settings.value("intersect_LS_convergeThreshold").toDouble()[0])
+		self.maxIterBox.setValue( self.settings.value("intersect_LS_maxIter"          ).toInt()[0])	
 		# intersection - intersection
 		self.intersectionLayerManage.onDialogShow()
-		self.placeDimensionBox.setChecked(self.settings.value( "intresect_result_displayReport" ).toInt()[0] ) 
-		self.placeMeasureBox.setChecked(  self.settings.value( "intresect_result_placePoint"    ).toInt()[0] ) 
-		self.placePrecisionBox.setChecked(self.settings.value( "intresect_result_placeReport"   ).toInt()[0] ) 
+		self.placeDimensionBox.setChecked(self.settings.value( "intresect_result_confirm"     ).toInt()[0] ) 
+		self.placeMeasureBox.setChecked(  self.settings.value( "intresect_result_placePoint"  ).toInt()[0] ) 
+		self.placePrecisionBox.setChecked(self.settings.value( "intresect_result_placeReport" ).toInt()[0] ) 
 		# dimensions
 		self.dimensionLayerManage.onDialogShow()
 		self.placeDimensionBox.setChecked(self.settings.value( "dim_placeDimension" ).toInt()[0] ) 
@@ -134,17 +137,20 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.settings.setValue( "obs_defaultPrecisionDistance"    , self.defaultPrecisionDistanceBox.value()) 
 		self.settings.setValue( "obs_defaultPrecisionOrientation" , self.defaultPrecisionOrientationBox.value()) 
 		# intersection - selection
-		self.settings.setValue( "tolerance" , self.tolerance.value() )
+		self.settings.setValue( "intersect_select_tolerance" , self.tolerance.value() )
 		if self.mapUnits.isChecked():
-			self.settings.setValue( "units" , "map")
+			self.settings.setValue( "intersect_select_units" , "map")
 		else:
-			self.settings.setValue( "units" , "pixels")		
+			self.settings.setValue( "intersect_select_units" , "pixels")		
 		self.settings.setValue( "intersect_select_rubberWidth"   , self.rubberWidth.value() )	
 		self.settings.setValue( "intersect_select_rubberColorR"  , self.color.red() )
 		self.settings.setValue( "intersect_select_rubberColorG"  , self.color.green() )
 		self.settings.setValue( "intersect_select_rubberColorB"  , self.color.blue() )
+		# intersection - LeastSquares
+		self.settings.setValue( "intersect_LS_convergeThreshold" , self.threshBox.value()) 
+		self.settings.setValue( "intersect_LS_maxIter"           , self.maxIterBox.value()) 
 		# intersection - result
-		self.settings.setValue( "intresect_result_displayReport" , int(self.displayReportBox.isChecked()) )
+		self.settings.setValue( "intresect_result_confirm"       , int(self.confirmResultBox.isChecked()) )
 		self.settings.setValue( "intresect_result_placePoint"    , int(self.placeIntersectionBox.isChecked()) )
 		self.settings.setValue( "intresect_result_placeReport"   , int(self.placeReportBox.isChecked()) )
 		if self.intersectionLayerManage.getLayer() is False: intLayerId = ''

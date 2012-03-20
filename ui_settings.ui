@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="observationTab">
       <attribute name="title">
@@ -185,9 +185,9 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="displayReportBox">
+           <widget class="QCheckBox" name="confirmResultBox">
             <property name="text">
-             <string>display results report from least-squares</string>
+             <string>ask to validate intersection results</string>
             </property>
             <property name="checked">
              <bool>true</bool>
