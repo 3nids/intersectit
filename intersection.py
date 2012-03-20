@@ -15,34 +15,48 @@ import math
 import numpy as np
 from numpy import linalg as la
 
+from ui_LSreport import Ui_LSreport
 
+class LSreport(QDialog, Ui_LSreport ):
+	def __init__(self,report):
+		QDialog.__init__(self)
+		self.setupUi(self)
+		self.reportBrowser.setText(report)
 
 class intersection:
 	def __init__(self,initPoint,observations):
 		self.initPoint = initPoint
 		self.observations = observations
 		self.nObs = len(observations)
+		self.settings = QSettings("IntersectIt","IntersectIt")
 		
 	def getSolution(self):
 		if self.nObs<2:
 			raise NameError(QApplication.translate("IntersectIt", "Less than 2 observations were found within threshold.", None, QApplication.UnicodeUTF8))
 		elif self.nObs==2:
+			interType = "two circles"
 			pts = self.twoCirclesIntersect()
 			d1 = pts[0].sqrDist(self.initPoint)
 			d2 = pts[1].sqrDist(self.initPoint)
-			if d1<d2:
-				return pts[0]
-			else:
-				return pts[1]
+			if d1<d2: point = pts[0]
+			else:     point = pts[1]
+			if self.settings.value("intresect_result_confirm") == 1:
+				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "A perfect intersection has been found using %s. Use this solution?" % interType , QMessageBox.Yes, QMessageBox.No )			
+				if reply == QMessageBox.No: return QgsPoint()
+				else: return point , "TODO: report" 
 		else:
-			return self.leastSquares()
+			point,report = self.leastSquares()
+			if self.settings.value("intresect_result_confirm") == 1:
+				LSreport(report).exec_()
+			return point
 			
 	def leastSquares(self):
 		# distance equation: (x - xc)^2 + (y-yc)^2 - l^2 = 0 (obs: r, param: xc,yc, fixed: x,y)
-		threshold = .0005 # in meters
+		threshold = self.settings.value("intersect_LS_convergeThreshold").toDouble()[0]
 		# initial parameters
 		x0  = np.array( [ [self.initPoint.x()] , [self.initPoint.y()] ] ) # brackets needed to create column and not row vector
-		print "Initial position: %.3f,%.3f" % (x0[0],x0[1])
+		report = "Initial position: %.3f,%.3f" % (x0[0],x0[1])
+		print    "Initial position: %.3f,%.3f" % (x0[0],x0[1])
 		dx =  np.array( [ [2*threshold],[2*threshold] ] )
 		it = 0
 		# global observations vector
@@ -50,6 +64,11 @@ class intersection:
 		# adjustment main loop
 		while max(np.abs(dx))>threshold:
 			it += 1
+			if it > self.settings.value("intersect_LS_maxIter").toInt()[0]:
+				x0 = [None,None]
+				report += "Maximum iterations reach"
+				print     "Maximum iterations reach"
+				break
 			# init matrices
 			A   = []
 			B   = []
@@ -83,23 +102,31 @@ class intersection:
 			p   = np.dot(q.T,u)
 			dx  = np.dot(la.inv(r),p)
 			x0 -= dx
-			print "Iteration %u Correction: %f,%f" % (it,dx[0],dx[1])
+			report += "Iteration %u Correction: %f,%f" % (it,dx[0],dx[1])
+			print     "Iteration %u Correction: %f,%f" % (it,dx[0],dx[1])
 		Qxx = la.inv(N)
 		p1 = math.sqrt(Qxx[0][0])
 		p2 = math.sqrt(Qxx[1][1])
 		# residuals -Qll*B'*( P * (A* dx(iN)+w) ) !!! ToBeChecked !!!
 		v = np.dot( -Qll , np.dot( B.T , np.dot( P , np.dot( A,dx) + w ) ) )
-		print "Solution: %.3f,%.3f" % (x0[0],x0[1])
-		print "Precision: %.3f %.3f" % (p1,p2)
-		print "Observations\t\tx\t\ty\tMeasure\tPrecision\tResidual"
-		print "\t\t\t[map units]\t[map units]\t[map units]\t[1/1000]\t[1/1000]"
-		for i,obs in enumerate(self.observations): print "%s\t%10.3f\t%10.3f\t%.3f\t%.3f\t\t%.3f" % (obs["type"],obs["x"],obs["y"],obs["measure"],obs["precision"],1000*v[i][0])
+		report += "Solution: %.3f,%.3f" % (x0[0],x0[1])
+		print     "Solution: %.3f,%.3f" % (x0[0],x0[1])
+		report += "Precision: %.3f %.3f" % (p1,p2)
+		print     "Precision: %.3f %.3f" % (p1,p2)
+		report += "Observations\t\tx\t\ty\tMeasure\tPrecision\tResidual"
+		print     "Observations\t\tx\t\ty\tMeasure\tPrecision\tResidual"
+		report += "\t\t\t[map units]\t[map units]\t[map units]\t[1/1000]\t[1/1000]"
+		print     "\t\t\t[map units]\t[map units]\t[map units]\t[1/1000]\t[1/1000]"
+		for i,obs in enumerate(self.observations):
+			report += "%s\t%10.3f\t%10.3f\t%.3f\t%.3f\t\t%.3f" % (obs["type"],obs["x"],obs["y"],obs["measure"],obs["precision"],1000*v[i][0])
+			print     "%s\t%10.3f\t%10.3f\t%.3f\t%.3f\t\t%.3f" % (obs["type"],obs["x"],obs["y"],obs["measure"],obs["precision"],1000*v[i][0])
 		sigmapos =  np.dot( v.T , np.dot( P , v ) ) / (self.nObs -2 ) # vTPv / r
 		if sigmapos > 1.5: sigmapos_comment = "precision is too optimistic"
 		elif sigmapos < .7: sigmapos_comment = "precision is too pessimistc"
 		else: sigmapos_comment = "precision seems realistic"
-		print "Sigma a posteriori: %f \t (%s)" % (sigmapos,sigmapos_comment)
-		return QgsPoint(x0[0],x0[1])
+		report += "Sigma a posteriori: %f \t (%s)" % (sigmapos,sigmapos_comment)
+		print     "Sigma a posteriori: %f \t (%s)" % (sigmapos,sigmapos_comment)
+		return QgsPoint(x0[0],x0[1]) , report
 						
 	def twoCirclesIntersect(self):
 		# see http://www.mathpages.com/home/kmath396/kmath396.htm
