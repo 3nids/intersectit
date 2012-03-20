@@ -159,7 +159,7 @@ class intersectit ():
 	def intersectionStarted(self, point, observations):
 		canvas = self.iface.mapCanvas()
 	
-		self.intersectionProcess = intersection(point,observations)		
+		self.intersectionProcess = intersection(self.iface,point,observations)		
 		try:
 			intersectedPoint,report =  self.intersectionProcess.getSolution()
 		except NameError as detail:

@@ -24,7 +24,8 @@ class LSreport(QDialog, Ui_LSreport ):
 		self.reportBrowser.setText(report)
 
 class intersection:
-	def __init__(self,initPoint,observations):
+	def __init__(self,iface,initPoint,observations):
+		self.iface = iface
 		self.initPoint = initPoint
 		self.observations = observations
 		self.nObs = len(observations)
