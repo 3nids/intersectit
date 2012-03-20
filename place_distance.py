@@ -9,7 +9,7 @@ Init dialog for distance
 
 from PyQt4.QtCore import *
 from PyQt4.QtGui import *
-from ui_distance import Ui_distanceDialog
+from ui_place_distance import Ui_place_distance
 
 try:
     _fromUtf8 = QString.fromUtf8
@@ -17,7 +17,7 @@ except AttributeError:
     _fromUtf8 = lambda s: s
 
 # create the dialog to connect layers
-class place_distance(QDialog, Ui_distanceDialog ):
+class place_distance(QDialog, Ui_place_distance ):
 	def __init__(self,point):
 		QDialog.__init__(self)
 		# Set up the user interface from Designer.
