@@ -24,22 +24,24 @@ class IntersectItSettings():
 		self.pluginName = "IntersectIt"
 		self.settings = QSettings(self.pluginName,self.pluginName)
 		
-		self.globalDefaultValue = {	"rubberColorR"      : 0,
-									"rubberColorG"      : 0,
-									"rubberColorB"      : 255,
-									"rubberWidth"       : 2,
-									"placeDimension"    : 1,
-									"placeMeasure"      : 1,
-									"placePrecision"    : 0,
-									"displayReport"     : 1,
-									"placeIntersection" : 0,
-									"placeReport"       : 0,
-									"snapping"          : 1,
-									"tolerance"         : 1,
-									"units"             : "map",
-									"defaultPrecisionDistance"    : 25,
-									"defaultPrecisionOrientation" : .01
-								}
+		self.globalDefaultValue = {	"obs_snapping"                   : 1,
+									"obs_defaultPrecisionDistance"   : 25,
+									"obs_defaultPrecisionOrientation": .01,
+									"intersect_select_tolerance"     : 0.3,
+									"intersect_select_units"         : "map",
+									"intersect_select_rubberColorR"  : 0,
+									"intersect_select_rubberColorG"  : 0,
+									"intersect_select_rubberColorB"  : 255,
+									"intersect_select_rubberWidth"   : 2,
+									"intersect_LS_convergeThreshold" : 0.0005,
+									"intersect_LS_maxIter"           : 15,
+									"intresect_result_displayReport" : 1,
+									"intresect_result_placePoint"    : 0,
+									"intresect_result_placeReport"   : 0,
+									"dim_placeDimension"             : 1,
+									"dim_placeMeasure"               : 1,
+									"dim_placePrecision"             : 0									
+								}                                    
 								
 		self.projectDefaultValue = {"dimensionLayer"   : "",
 									"measureField"     : "",									
@@ -90,33 +92,33 @@ class settingsDialog(QDialog, Ui_Settings):
 		
 	def showEvent(self, e):
 		# observations
-		self.snapBox.setChecked( self.settings.value( "snapping").toInt()[0] ) 
-		self.defaultPrecisionDistanceBox.setValue(    self.settings.value( "defaultPrecisionDistance" ).toDouble()[0] ) 
-		self.defaultPrecisionOrientationBox.setValue( self.settings.value( "defaultPrecisionOrientation" ).toDouble()[0] )
+		self.snapBox.setChecked( self.settings.value( "obs_snapping").toInt()[0] ) 
+		self.defaultPrecisionDistanceBox.setValue(    self.settings.value( "obs_defaultPrecisionDistance" ).toDouble()[0] ) 
+		self.defaultPrecisionOrientationBox.setValue( self.settings.value( "obs_defaultPrecisionOrientation" ).toDouble()[0] )
 		# intersection - selection
-		self.tolerance.setValue( self.settings.value("tolerance").toDouble()[0])
+		self.tolerance.setValue( self.settings.value("intersect_select_tolerance").toDouble()[0])
 		if self.settings.value( "units" ).toString() == "map":
 			self.mapUnits.setChecked(True)
 			self.pixels.setChecked(False)
 		else:
 			self.mapUnits.setChecked(False)
 			self.pixels.setChecked(True)
-		self.rubberWidth.setValue(self.settings.value("rubberWidth").toDouble()[0])
-		self.colorR = self.settings.value("rubberColorR").toInt()[0]
-		self.colorG = self.settings.value("rubberColorG").toInt()[0]
-		self.colorB = self.settings.value("rubberColorB").toInt()[0]
+		self.rubberWidth.setValue(self.settings.value("intersect_select_rubberWidth").toDouble()[0])
+		self.colorR = self.settings.value("intersect_select_rubberColorR").toInt()[0]
+		self.colorG = self.settings.value("intersect_select_rubberColorG").toInt()[0]
+		self.colorB = self.settings.value("intersect_select_rubberColorB").toInt()[0]
 		self.color = QColor(self.colorR,self.colorG,self.colorB,255)
 		self.applyColorStyle()
 		# intersection - intersection
 		self.intersectionLayerManage.onDialogShow()
-		self.placeDimensionBox.setChecked(self.settings.value( "displayReport"    ).toInt()[0] ) 
-		self.placeMeasureBox.setChecked(  self.settings.value( "placeIntersection").toInt()[0] ) 
-		self.placePrecisionBox.setChecked(self.settings.value( "placeReport"      ).toInt()[0] ) 
+		self.placeDimensionBox.setChecked(self.settings.value( "intresect_result_displayReport" ).toInt()[0] ) 
+		self.placeMeasureBox.setChecked(  self.settings.value( "intresect_result_placePoint"    ).toInt()[0] ) 
+		self.placePrecisionBox.setChecked(self.settings.value( "intresect_result_placeReport"   ).toInt()[0] ) 
 		# dimensions
 		self.dimensionLayerManage.onDialogShow()
-		self.placeDimensionBox.setChecked(self.settings.value( "placeDimension").toInt()[0] ) 
-		self.placeMeasureBox.setChecked(  self.settings.value( "placeMeasure"  ).toInt()[0] ) 
-		self.placePrecisionBox.setChecked(self.settings.value( "placePrecision").toInt()[0] ) 
+		self.placeDimensionBox.setChecked(self.settings.value( "dim_placeDimension" ).toInt()[0] ) 
+		self.placeMeasureBox.setChecked(  self.settings.value( "dim_placeMeasure"   ).toInt()[0] ) 
+		self.placePrecisionBox.setChecked(self.settings.value( "dim_placePrecision" ).toInt()[0] ) 
 
 	@pyqtSignature("on_placeDimensionBox_toggled(bool)")
 	def on_placeDimensionBox_toggled(self,b):
@@ -128,36 +130,36 @@ class settingsDialog(QDialog, Ui_Settings):
 		
 	def applySettings(self):
 		# observations
-		self.settings.setValue( "snapping" , int(self.snapBox.isChecked()) )
-		self.settings.setValue( "defaultPrecisionDistance"    , self.defaultPrecisionDistanceBox.value()) 
-		self.settings.setValue( "defaultPrecisionOrientation" , self.defaultPrecisionOrientationBox.value()) 
+		self.settings.setValue( "obs_snapping" , int(self.snapBox.isChecked()) )
+		self.settings.setValue( "obs_defaultPrecisionDistance"    , self.defaultPrecisionDistanceBox.value()) 
+		self.settings.setValue( "obs_defaultPrecisionOrientation" , self.defaultPrecisionOrientationBox.value()) 
 		# intersection - selection
 		self.settings.setValue( "tolerance" , self.tolerance.value() )
 		if self.mapUnits.isChecked():
 			self.settings.setValue( "units" , "map")
 		else:
 			self.settings.setValue( "units" , "pixels")		
-		self.settings.setValue( "rubberWidth"   , self.rubberWidth.value() )	
-		self.settings.setValue( "rubberColorR"  , self.color.red() )
-		self.settings.setValue( "rubberColorG"  , self.color.green() )
-		self.settings.setValue( "rubberColorB"  , self.color.blue() )
+		self.settings.setValue( "intersect_select_rubberWidth"   , self.rubberWidth.value() )	
+		self.settings.setValue( "intersect_select_rubberColorR"  , self.color.red() )
+		self.settings.setValue( "intersect_select_rubberColorG"  , self.color.green() )
+		self.settings.setValue( "intersect_select_rubberColorB"  , self.color.blue() )
 		# intersection - result
-		self.settings.setValue( "displayReport"     , int(self.displayReportBox.isChecked()) )
-		self.settings.setValue( "placeIntersection" , int(self.placeIntersectionBox.isChecked()) )
-		self.settings.setValue( "placeReport"       , int(self.placeReportBox.isChecked()) )
+		self.settings.setValue( "intresect_result_displayReport" , int(self.displayReportBox.isChecked()) )
+		self.settings.setValue( "intresect_result_placePoint"    , int(self.placeIntersectionBox.isChecked()) )
+		self.settings.setValue( "intresect_result_placeReport"   , int(self.placeReportBox.isChecked()) )
 		if self.intersectionLayerManage.getLayer() is False: intLayerId = ''
 		else: intLayerId = self.intersectionLayerManage.getLayer().id()
 		self.settings.setValue("intersectionLayer" , intLayerId )
 		self.settings.setValue("reportField"       , self.measureFieldCombo.currentText()   )
 		# dimensions
-		self.settings.setValue( "placeDimension" , int(self.placeDimensionBox.isChecked()) )
-		self.settings.setValue( "placePrecision" , int(self.placePrecisionBox.isChecked()) )
-		self.settings.setValue( "placeMeasure"   , int(self.placeMeasureBox.isChecked()) )
+		self.settings.setValue( "dim_placeDimension" , int(self.placeDimensionBox.isChecked()) )
+		self.settings.setValue( "dim_placeMeasure"   , int(self.placePrecisionBox.isChecked()) )
+		self.settings.setValue( "dim_placePrecision" , int(self.placeMeasureBox.isChecked()) )
 		if self.dimensionLayerManage.getLayer() is False: dimLayerId = ''
 		else: dimLayerId = self.dimensionLayerManage.getLayer().id()
-		self.settings.setValue("dimensionLayer", dimLayerId )
-		self.settings.setValue("measureField"  , self.measureFieldCombo.currentText()   )
-		self.settings.setValue("precisionField", self.precisionFieldCombo.currentText() )
+		self.settings.setValue( "dimensionLayer" , dimLayerId )
+		self.settings.setValue( "measureField"   , self.measureFieldCombo.currentText()   )
+		self.settings.setValue( "precisionField" , self.precisionFieldCombo.currentText() )
 
 	@pyqtSignature("on_rubberColor_clicked()")
 	def on_rubberColor_clicked(self):

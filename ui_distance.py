@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_distance.ui'
 #
-# Created: Mon Jan 23 13:39:18 2012
+# Created: Mon Mar 19 10:52:26 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_distanceDialog(object):
     def setupUi(self, distanceDialog):
         distanceDialog.setObjectName(_fromUtf8("distanceDialog"))
-        distanceDialog.resize(201, 177)
+        distanceDialog.resize(241, 177)
         distanceDialog.setWindowTitle(QtGui.QApplication.translate("distanceDialog", "Distance", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(distanceDialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -32,7 +32,7 @@ class Ui_distanceDialog(object):
         self.distance.setObjectName(_fromUtf8("distance"))
         self.gridLayout.addWidget(self.distance, 2, 2, 1, 1)
         self.label_3 = QtGui.QLabel(distanceDialog)
-        self.label_3.setText(QtGui.QApplication.translate("distanceDialog", "m", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("distanceDialog", "map units", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout.addWidget(self.label_3, 2, 3, 1, 1)
         self.label_2 = QtGui.QLabel(distanceDialog)
@@ -46,7 +46,7 @@ class Ui_distanceDialog(object):
         self.precision.setObjectName(_fromUtf8("precision"))
         self.gridLayout.addWidget(self.precision, 3, 2, 1, 1)
         self.label_4 = QtGui.QLabel(distanceDialog)
-        self.label_4.setText(QtGui.QApplication.translate("distanceDialog", "mm", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("distanceDialog", "1/1000", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.gridLayout.addWidget(self.label_4, 3, 3, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(distanceDialog)

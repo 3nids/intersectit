@@ -90,10 +90,10 @@ class intersectit ():
 			return
 
 	def applySettings(self):
-		self.rubber.setWidth( self.settings.value("rubberWidth").toDouble()[0] )
-		R = self.settings.value("rubberColorR").toInt()[0]
-		G = self.settings.value("rubberColorG").toInt()[0]
-		B = self.settings.value("rubberColorB").toInt()[0]
+		self.rubber.setWidth( self.settings.value("intersect_select_rubberWidth").toDouble()[0] )
+		R = self.settings.value("intersect_select_rubberColorR").toInt()[0]
+		G = self.settings.value("intersect_select_rubberColorG").toInt()[0]
+		B = self.settings.value("intersect_select_rubberColorB").toInt()[0]
 		self.rubber.setColor(QColor(R,G,B,255))		
 
 	def cleanMemoryLayers(self):
@@ -119,7 +119,7 @@ class intersectit ():
 			canvas.unsetMapTool(self.placeDistancePoint)
 			return
 		self.distanceAction.setChecked( True )
-		snapping = self.settings.value( "snapping").toInt()[0]
+		snapping = self.settings.value( "obs_snapping" ).toInt()[0]
 		self.placeDistancePoint = placeMeasureOnMap(canvas,snapping)
 		QObject.connect(self.placeDistancePoint , SIGNAL("distancePlaced") , self.distancePlaceIt ) 
 		canvas.setMapTool(self.placeDistancePoint)
@@ -128,7 +128,7 @@ class intersectit ():
 	def distancePlaceIt(self, point, pixpoint):
 		canvas = self.iface.mapCanvas()
 		#snap to layers
-		if self.settings.value( "snapping").toInt()[0] == 1:
+		if self.settings.value( "obs_snapping").toInt()[0] == 1:
 			result,snappingResults = QgsMapCanvasSnapper(canvas).snapToBackgroundLayers(pixpoint,[])
 			if result == 0 and len(snappingResults)>0:
 				point = QgsPoint(snappingResults[0].snappedVertex)
@@ -166,7 +166,7 @@ class intersectit ():
 				QMessageBox.warning( self.iface.mainWindow() , "IntersectIt", "%s" % detail )
 				return
 		# if we do not place any dimension, place the intersected point in layer
-		if self.settings.value("placeDimension").toInt()[0] == 0:
+		if self.settings.value("dim_placeDimension").toInt()[0] == 0:
 			f = QgsFeature()
 			f.setGeometry(QgsGeometry.fromPoint(intersectedPoint))
 			self.pointLayer().dataProvider().addFeatures( [f] )
@@ -174,14 +174,14 @@ class intersectit ():
 			canvas.refresh()
 		# check that dimension layer and fields have been set correctly
 		while True:
-			if self.settings.value("placeDimension").toInt()[0] == 0: return # if we do not place any dimension, skip
+			if self.settings.value("dim_placeDimension").toInt()[0] == 0: return # if we do not place any dimension, skip
 			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer") ), False )
 			if dimLayer is False:
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
-			if self.settings.value("placeMeasure").toInt()[0] == 1: 
+			if self.settings.value("dim_placeMeasure").toInt()[0] == 1: 
 				measureField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("measureField") ), False )
 				if measureField is False:
 					ok = False
@@ -189,7 +189,7 @@ class intersectit ():
 					if reply == QMessageBox.No:  	 return
 					if self.uisettings.exec_() == 0: return
 					continue
-			if self.settings.value("placePrecision").toInt()[0] == 1: 
+			if self.settings.value("dim_placePrecision").toInt()[0] == 1: 
 				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("precisionField") ), False )
 				if precisionField is False:
 					ok = False

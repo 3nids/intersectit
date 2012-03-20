@@ -42,7 +42,7 @@ class intersection:
 		threshold = .0005 # in meters
 		# initial parameters
 		x0  = np.array( [ [self.initPoint.x()] , [self.initPoint.y()] ] ) # brackets needed to create column and not row vector
-		print "Initial position: %f,%f" % (x0[0],x0[1])
+		print "Initial position: %.3f,%.3f" % (x0[0],x0[1])
 		dx =  np.array( [ [2*threshold],[2*threshold] ] )
 		it = 0
 		# global observations vector
@@ -71,7 +71,6 @@ class intersection:
 			B   = np.diag(  B   )
 			Qll = np.diag(  Qll )
 			w   = np.array(  w  )
-			print A
 						
 			# weight matrix
 			Pm  = np.dot( B , np.dot(Qll,B.T) )
@@ -90,12 +89,16 @@ class intersection:
 		p2 = math.sqrt(Qxx[1][1])
 		# residuals -Qll*B'*( P * (A* dx(iN)+w) ) !!! ToBeChecked !!!
 		v = np.dot( -Qll , np.dot( B.T , np.dot( P , np.dot( A,dx) + w ) ) )
-		print "Intersection: %f,%f" % (x0[0],x0[1])
+		print "Solution: %.3f,%.3f" % (x0[0],x0[1])
 		print "Precision: %.3f %.3f" % (p1,p2)
 		print "Observations\t\tx\t\ty\tMeasure\tPrecision\tResidual"
-		for i,obs in enumerate(self.observations): print "%s\t%10.3f\t%10.3f\t%.3f\t%.3f\t%f" % (obs["type"],obs["x"],obs["y"],obs["measure"],obs["precision"],1000*v[i][0])
+		print "\t\t\t[map units]\t[map units]\t[map units]\t[1/1000]\t[1/1000]"
+		for i,obs in enumerate(self.observations): print "%s\t%10.3f\t%10.3f\t%.3f\t%.3f\t\t%.3f" % (obs["type"],obs["x"],obs["y"],obs["measure"],obs["precision"],1000*v[i][0])
 		sigmapos =  np.dot( v.T , np.dot( P , v ) ) / (self.nObs -2 ) # vTPv / r
-		print "Sigma  a posterior: %f" % sigmapos
+		if sigmapos > 1.5: sigmapos_comment = "precision is too optimistic"
+		elif sigmapos < .7: sigmapos_comment = "precision is too pessimistc"
+		else: sigmapos_comment = "precision seems realistic"
+		print "Sigma a posteriori: %f \t (%s)" % (sigmapos,sigmapos_comment)
 		return QgsPoint(x0[0],x0[1])
 						
 	def twoCirclesIntersect(self):
