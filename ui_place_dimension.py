@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_dimension.ui'
 #
-# Created: Tue Mar 13 07:35:29 2012
+# Created: Wed Mar 21 09:39:52 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -42,7 +42,7 @@ class Ui_placeDimension(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 5, 1, 1, 2)
         self.createBox = QtGui.QCheckBox(placeDimension)
-        self.createBox.setText(QtGui.QApplication.translate("placeDimension", "Create arc for this distance", None, QtGui.QApplication.UnicodeUTF8))
+        self.createBox.setText(QtGui.QApplication.translate("placeDimension", "Create arc for this observation", None, QtGui.QApplication.UnicodeUTF8))
         self.createBox.setChecked(True)
         self.createBox.setObjectName(_fromUtf8("createBox"))
         self.gridLayout.addWidget(self.createBox, 3, 1, 1, 4)
@@ -72,11 +72,11 @@ class Ui_placeDimension(object):
         self.line.setObjectName(_fromUtf8("line"))
         self.gridLayout.addWidget(self.line, 1, 0, 1, 6)
         self.displayLayersBox = QtGui.QCheckBox(placeDimension)
-        self.displayLayersBox.setText(QtGui.QApplication.translate("placeDimension", "Display distances", None, QtGui.QApplication.UnicodeUTF8))
+        self.displayLayersBox.setText(QtGui.QApplication.translate("placeDimension", "Display observations", None, QtGui.QApplication.UnicodeUTF8))
         self.displayLayersBox.setChecked(True)
         self.displayLayersBox.setTristate(False)
         self.displayLayersBox.setObjectName(_fromUtf8("displayLayersBox"))
-        self.gridLayout.addWidget(self.displayLayersBox, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.displayLayersBox, 0, 1, 1, 3)
 
         self.retranslateUi(placeDimension)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), placeDimension.accept)

@@ -51,7 +51,7 @@
    <item row="3" column="1" colspan="4">
     <widget class="QCheckBox" name="createBox">
      <property name="text">
-      <string>Create arc for this distance</string>
+      <string>Create arc for this observation</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -110,10 +110,10 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="1" colspan="3">
     <widget class="QCheckBox" name="displayLayersBox">
      <property name="text">
-      <string>Display distances</string>
+      <string>Display observations</string>
      </property>
      <property name="checked">
       <bool>true</bool>
