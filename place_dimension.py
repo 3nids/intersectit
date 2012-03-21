@@ -142,11 +142,11 @@ class dimension():
 		f = QgsFeature()
 		f.setGeometry(self.geometry())
 		# look for dimension and precision fields
-		if self.settings.value("placeMeasure").toInt()[0] == 1:
+		if self.settings.value("dim_placeMeasure").toInt()[0] == 1:
 			dimFieldName = self.settings.value("measureField").toString()
 			ilbl = self.provider.fieldNameIndex(dimFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))
-		if self.settings.value("placePrecision").toInt()[0] == 1:
+		if self.settings.value("dim_placePrecision").toInt()[0] == 1:
 			preFieldName = self.settings.value("precisionField").toString()
 			ilbl = self.provider.fieldNameIndex(preFieldName)
 			f.addAttribute(ilbl,QVariant("%.2f" % self.precision))
