@@ -30,7 +30,7 @@ class intersection:
 		self.observations = observations
 		self.nObs = len(observations)
 		self.settings = QSettings("IntersectIt","IntersectIt")
-		
+
 	def getSolution(self):
 		if self.nObs<2:
 			raise NameError(QApplication.translate("IntersectIt", "Less than 2 observations were found within threshold.", None, QApplication.UnicodeUTF8))
@@ -44,13 +44,13 @@ class intersection:
 			if self.settings.value("intresect_result_confirm") == 1:
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "A perfect intersection has been found using %s. Use this solution?" % interType , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No: return QgsPoint(),None
-				else: return point , "TODO: report" 
+				else: return point , "A perfect intersection has been found using %s." % interType
 		else:
 			point,report = self.leastSquares()
 			if self.settings.value("intresect_result_confirm") == 1:
 				if LSreport(report).exec_(): 	return point,report
 				else:							return QgsPoint(),None
-			
+
 	def leastSquares(self):
 		threshold = self.settings.value("intersect_LS_convergeThreshold").toDouble()[0]
 		# initial parameters
@@ -118,7 +118,7 @@ class intersection:
 		else: sigmapos_comment = "precision seems realistic"
 		report += "\n\nSigma a posteriori: %5.2f \t (%s)" % (sigmapos,sigmapos_comment)
 		return QgsPoint(x0[0],x0[1]) , report
-						
+
 	def twoCirclesIntersect(self):
 		# see http://www.mathpages.com/home/kmath396/kmath396.htm
 		x1 = self.observations[0]["x"]
@@ -127,7 +127,7 @@ class intersection:
 		x2 = self.observations[1]["x"]
 		y2 = self.observations[1]["y"]
 		r2 = self.observations[1]["measure"]
-		
+
 		d = math.sqrt( math.pow(x1-x2,2) + math.pow(y1-y2,2) )
 		if d<math.fabs(r1-r2):
 			# circle is within the other
@@ -147,6 +147,3 @@ class intersection:
 		xb = xlt - xrt
 		yb = ylt + yrt
 		return [QgsPoint(xa,ya),QgsPoint(xb,yb)]
-		
-		
-		
