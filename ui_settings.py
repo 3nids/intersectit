@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Tue Mar 20 15:18:47 2012
+# Created: Wed Mar 21 08:43:32 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -211,7 +211,7 @@ class Ui_Settings(object):
         self.gridLayout.addWidget(self.buttonBox, 6, 0, 1, 2)
 
         self.retranslateUi(Settings)
-        self.tabWidget.setCurrentIndex(1)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Settings.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Settings.reject)
         QtCore.QMetaObject.connectSlotsByName(Settings)

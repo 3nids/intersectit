@@ -166,19 +166,41 @@ class intersectit ():
 				QMessageBox.warning( self.iface.mainWindow() , "IntersectIt", "%s" % detail )
 				return
 		if report is None: return
-		# if we do not place any dimension, place the intersected point in layer
-		if self.settings.value("dim_placeDimension").toInt()[0] == 0:
+		
+		# save intersection point and report
+		while True:
+			if self.settings.value("intresect_result_placePoint").toInt()[0] == 0: break # if we do not place any point, skip
+			intLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("intersectionLayer") ), False )
+			if intLayer is False:
+				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place the intersection solution, you must select a layer in the settings. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+				if reply == QMessageBox.No:	        return
+				if self.uisettings.exec_() ==	 0: return
+				continue
+			if self.settings.value("intresect_result_placeReport").toInt()[0] == 1: 
+				reportField = next( ( field for field in intLayer.dataProvider().fieldNameMap() if field == self.settings.value("reportField") ), False )
+				if reportField is False:
+					ok = False
+					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To save the intersection report, please select a field for tit. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+					if reply == QMessageBox.No:  	 return
+					if self.uisettings.exec_() == 0: return
+					continue
+			break
+		if self.settings.value("intresect_result_placePoint").toInt()[0] == 1:
 			f = QgsFeature()
 			f.setGeometry(QgsGeometry.fromPoint(intersectedPoint))
-			self.pointLayer().dataProvider().addFeatures( [f] )
-			self.pointLayer().updateExtents()
+			if self.settings.value("intresect_result_placeReport").toInt()[0] == 1: 
+				irep = intLayer.dataProvider().fieldNameIndex(reportField)
+				f.addAttribute(irep,QVariant(report))
+			intLayer.dataProvider().addFeatures( [f] )
+			intLayer.updateExtents()
 			canvas.refresh()
+			
 		# check that dimension layer and fields have been set correctly
 		while True:
 			if self.settings.value("dim_placeDimension").toInt()[0] == 0: return # if we do not place any dimension, skip
 			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer") ), False )
 			if dimLayer is False:
-				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, you must select a dimension layer in the preferences. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
+				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, you must select a layer in the settings. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
