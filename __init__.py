@@ -1,15 +1,15 @@
 """
-Triangulation QGIS plugin
+Intersect It QGIS plugin
 Denis Rouzaud
 denis.rouzaud@gmail.com
-Jan. 2012
+March. 2012
 """
 def name():
     return "Intersect It"
 def description():
-    return "Place measures with their corresponding precision, intersect the measures using a least-squares solution and place dimensions in layers to keep the measures available on maps."
+    return "Intersect It is a QGIS plugin to place measures (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer to produce maps."
 def version():
-    return "Version 0.1"
+    return "Version 1.0"
 def icon():
     return "icon.png"
 def qgisMinimumVersion():
