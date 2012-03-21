@@ -14,7 +14,7 @@ from qgis.core import *
 from qgis.gui import *
 
 from maptools import placeMeasureOnMap, placeIntersectionOnMap
-from place_distance import place_distance
+from ui_place_distance import Ui_place_distance
 from place_dimension import placeDimension
 from observation import observation
 from settings import settingsDialog, IntersectItSettings
@@ -29,6 +29,14 @@ try:
 except AttributeError:
     _fromUtf8 = lambda s: s
 
+class place_distance(QDialog, Ui_place_distance ):
+	def __init__(self,point):
+		QDialog.__init__(self)
+		# Set up the user interface from Designer.
+		self.setupUi(self)	
+		self.x.setText("%.3f" % point.x())
+		self.y.setText("%.3f" % point.y())
+		self.distance.selectAll()
 
 class intersectit ():
 	def __init__(self, iface):
