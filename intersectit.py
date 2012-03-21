@@ -68,17 +68,24 @@ class intersectit ():
 		QObject.connect(self.intersectAction, SIGNAL("triggered()"), self.intersectionInitTool)
 		self.toolBar.addAction(self.intersectAction)
 		self.iface.addPluginToMenu("&Intersect It", self.intersectAction)
+		# cleaner
+		self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/cleaner.png"), "clean points and circles", self.iface.mainWindow())
+		QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
+		self.toolBar.addAction(self.cleanerAction)
+		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
 		# settings
 		self.uisettings = settingsDialog(self.iface)	
 		QObject.connect(self.uisettings , SIGNAL( "accepted()" ) , self.applySettings)
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)	
-		# cleaner
-		self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/cleaner.png"), "clean points and circles", self.iface.mainWindow())
-		QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
-		self.toolBar.addAction(self.cleanerAction)
-		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
+		# help
+		self.helpAction = QAction("help", self.iface.mainWindow())
+		QObject.connect(self.helpAction, SIGNAL("triggered()"), self.help)
+		self.iface.addPluginToMenu("&Intersect It", self.helpAction)	
+		
+	def help(self):
+		QDesktopServices.openUrl(QUrl("https://github.com/3nids/intersectit/wiki"))
 
 	def unload(self):
 		self.iface.removePluginMenu("&Intersect It",self.distanceAction)
