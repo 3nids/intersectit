@@ -42,7 +42,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		self.rubber = rubber
 		self.provider = lineLayer().dataProvider()
 		QgsMapToolEmitPoint.__init__(self, canvas)
-		self.settings = QSettings("IntersectIt","IntersectIt")
+		self.settings = IntersectItSettings()
 
 		self.tolerance = self.settings.value("tolerance").toDouble()[0]
 		units = self.settings.value("units").toString()

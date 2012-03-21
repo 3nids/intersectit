@@ -29,7 +29,7 @@ class intersection:
 		self.initPoint = initPoint
 		self.observations = observations
 		self.nObs = len(observations)
-		self.settings = QSettings("IntersectIt","IntersectIt")
+		self.settings = IntersectItSettings()
 
 	def getSolution(self):
 		if self.nObs<2:
