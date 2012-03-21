@@ -114,9 +114,9 @@ class settingsDialog(QDialog, Ui_Settings):
 		self.maxIterBox.setValue( self.settings.value("intersect_LS_maxIter"          ).toInt()[0])	
 		# intersection - intersection
 		self.intersectionLayerManage.onDialogShow()
-		self.placeDimensionBox.setChecked(self.settings.value( "intresect_result_confirm"     ).toInt()[0] ) 
-		self.placeMeasureBox.setChecked(  self.settings.value( "intresect_result_placePoint"  ).toInt()[0] ) 
-		self.placePrecisionBox.setChecked(self.settings.value( "intresect_result_placeReport" ).toInt()[0] ) 
+		self.confirmResultBox.setChecked(self.settings.value( "intresect_result_confirm"     ).toInt()[0] ) 
+		self.placeIntersectionBox.setChecked(  self.settings.value( "intresect_result_placePoint"  ).toInt()[0] ) 
+		self.placeReportBox.setChecked(self.settings.value( "intresect_result_placeReport" ).toInt()[0] ) 
 		# dimensions
 		self.dimensionLayerManage.onDialogShow()
 		self.placeDimensionBox.setChecked(self.settings.value( "dim_placeDimension" ).toInt()[0] ) 
@@ -156,11 +156,11 @@ class settingsDialog(QDialog, Ui_Settings):
 		if self.intersectionLayerManage.getLayer() is False: intLayerId = ''
 		else: intLayerId = self.intersectionLayerManage.getLayer().id()
 		self.settings.setValue("intersectionLayer" , intLayerId )
-		self.settings.setValue("reportField"       , self.measureFieldCombo.currentText()   )
+		self.settings.setValue("reportField"       , self.reportFieldCombo.currentText()   )
 		# dimensions
 		self.settings.setValue( "dim_placeDimension" , int(self.placeDimensionBox.isChecked()) )
-		self.settings.setValue( "dim_placeMeasure"   , int(self.placePrecisionBox.isChecked()) )
-		self.settings.setValue( "dim_placePrecision" , int(self.placeMeasureBox.isChecked()) )
+		self.settings.setValue( "dim_placeMeasure"   , int(self.placeMeasureBox.isChecked()) )
+		self.settings.setValue( "dim_placePrecision" , int(self.placePrecisionBox.isChecked()) )
 		if self.dimensionLayerManage.getLayer() is False: dimLayerId = ''
 		else: dimLayerId = self.dimensionLayerManage.getLayer().id()
 		self.settings.setValue( "dimensionLayer" , dimLayerId )
