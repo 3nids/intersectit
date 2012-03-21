@@ -125,7 +125,7 @@ class dimension():
 		self.anchorPoint       = [  (intersectedPoint.x()+distancePoint.x())/2 , (intersectedPoint.y()+distancePoint.y())/2 ]
 		self.direction         = [ -(intersectedPoint.y()-distancePoint.y())   ,  intersectedPoint.x()-distancePoint.x()    ]
 		self.way = 1
-		self.settings = QSettings("IntersectIt","IntersectIt")
+		self.settings = IntersectItSettings()
 		self.createFeature()
 		
 	def setRadius(self,radius):
