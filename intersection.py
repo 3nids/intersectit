@@ -16,6 +16,7 @@ import numpy as np
 from numpy import linalg as la
 
 from ui_LSreport import Ui_LSreport
+from settings import IntersectItSettings
 
 class LSreport(QDialog, Ui_LSreport ):
 	def __init__(self,report):

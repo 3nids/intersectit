@@ -12,6 +12,8 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
+from settings import IntersectItSettings
+
 class placeMeasureOnMap(QgsMapToolEmitPoint):
 	def __init__(self, canvas, snapping=0):
 		self.canvas = canvas
