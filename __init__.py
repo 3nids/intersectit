@@ -9,7 +9,7 @@ def name():
 def description():
     return "Intersect It is a QGIS plugin to place measures (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer to produce maps."
 def version():
-    return "Version 1.0"
+    return "Version 1.0.1"
 def icon():
     return "icon.png"
 def qgisMinimumVersion():

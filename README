@@ -3,6 +3,8 @@ Intersect It is a QGIS plugin to place measures (distance or orientation) with t
 
 A demo is available on [youtube](http://www.youtube.com/watch?v=IJQvIe1CLD0&hd=1).
 
+The plugin requires numpy.
+
 ## How ?
 
 ### Observations
@@ -30,3 +32,8 @@ If defined in settings, the least-squares report is displayed for confirmation. 
 
 Once the intersection is found, if defined in settings, the dimensions can be place in layers. These are stored in a multipoint layer: three points are saved. From this, you can use a view in postgis to draw dimension arcs.
 The SQL creation code of these two layers can be found [here](https://github.com/3nids/intersectit/wiki/Dimension-layers).
+
+
+## Changelog
+###1.0.1 21.03.2012
+* Added help in menu
