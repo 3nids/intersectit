@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_distance.ui'
 #
-# Created: Tue Mar 20 15:05:58 2012
+# Created: Fri Mar 23 14:34:03 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -26,7 +26,7 @@ class Ui_place_distance(object):
         self.label.setObjectName(_fromUtf8("label"))
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
         self.distance = QtGui.QDoubleSpinBox(place_distance)
-        self.distance.setDecimals(3)
+        self.distance.setDecimals(4)
         self.distance.setMaximum(999.99)
         self.distance.setSingleStep(1.0)
         self.distance.setObjectName(_fromUtf8("distance"))

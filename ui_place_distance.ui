@@ -24,7 +24,7 @@
    <item row="2" column="2">
     <widget class="QDoubleSpinBox" name="distance">
      <property name="decimals">
-      <number>3</number>
+      <number>4</number>
      </property>
      <property name="maximum">
       <double>999.990000000000009</double>
