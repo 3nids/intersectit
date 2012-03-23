@@ -35,5 +35,8 @@ The SQL creation code of these two layers can be found [here](https://github.com
 
 
 ## Changelog
+### 1.0.2 23.03.2012
+* Added one digit in place distance UI
+
 ###1.0.1 21.03.2012
 * Added help in menu
