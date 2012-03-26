@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_distance.ui'
 #
-# Created: Fri Mar 23 14:34:03 2012
+# Created: Mon Mar 26 10:55:16 2012
 #      by: PyQt4 UI code generator 4.8.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_place_distance(object):
     def setupUi(self, place_distance):
         place_distance.setObjectName(_fromUtf8("place_distance"))
-        place_distance.resize(241, 177)
+        place_distance.resize(273, 177)
         place_distance.setWindowTitle(QtGui.QApplication.translate("place_distance", "IntersectIt :: Place Distance", None, QtGui.QApplication.UnicodeUTF8))
         self.gridLayout = QtGui.QGridLayout(place_distance)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
@@ -27,7 +27,7 @@ class Ui_place_distance(object):
         self.gridLayout.addWidget(self.label, 2, 1, 1, 1)
         self.distance = QtGui.QDoubleSpinBox(place_distance)
         self.distance.setDecimals(4)
-        self.distance.setMaximum(999.99)
+        self.distance.setMaximum(999999.99)
         self.distance.setSingleStep(1.0)
         self.distance.setObjectName(_fromUtf8("distance"))
         self.gridLayout.addWidget(self.distance, 2, 2, 1, 1)
