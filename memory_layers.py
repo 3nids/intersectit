@@ -12,17 +12,12 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from settings import IntersectItSettings
-
-try:
-    _fromUtf8 = QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
+from mysettings import MySettings
     
 class memoryLayers():
 	def __init__(self,iface):
 		self.iface = iface
-		self.settings = IntersectItSettings()	
+		self.settings = MySettings()	
 
 	def lineLayer(self):
 		layerID = self.settings.value("memoryLineLayer")

@@ -12,9 +12,20 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from settings import IntersectItSettings
+from mysettings import MySettings
+from observation import observation
+from ui.ui_place_distance import Ui_place_distance
 
-class placeMeasureOnMap(QgsMapToolEmitPoint):
+class PlaceDistanceDialog(QDialog, Ui_place_distance ):
+	def __init__(self,point):
+		QDialog.__init__(self)
+		# Set up the user interface from Designer.
+		self.setupUi(self)	
+		self.x.setText("%.3f" % point.x())
+		self.y.setText("%.3f" % point.y())
+		self.distance.selectAll()
+
+class PlaceDistanceOnMap(QgsMapToolEmitPoint):
 	def __init__(self, canvas, snapping=0):
 		self.canvas = canvas
 		self.snapping = snapping
@@ -22,21 +33,32 @@ class placeMeasureOnMap(QgsMapToolEmitPoint):
 		QgsMapToolEmitPoint.__init__(self, canvas)
 
 	def canvasMoveEvent(self, mouseEvent):
-		#snap to layers	
-		self.rubber.reset()
-		if self.snapping == 1:
-			pixPoint = mouseEvent.pos()
-			result,snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint,[])
-			if result == 0 and len(snappingResults)>0:
-				snappedPoint = QgsPoint(snappingResults[0].snappedVertex)
-				self.rubber.addGeometry(QgsGeometry.fromPoint(snappedPoint),None)
+		if self.snapping:
+			snappedPoint = self.snapToLayers( mouseEvent.pos() )
+			self.rubber.setToGeometry( QgsGeometry.fromPoint(snappedPoint), None )
 
 	def canvasPressEvent(self, mouseEvent):
 		if mouseEvent.button() != Qt.LeftButton: return
 		self.rubber.reset()
 		pixpoint = mouseEvent.pos()
-		mappoint = self.toMapCoordinates( mouseEvent.pos() )
-		self.emit( SIGNAL( "distancePlaced" ), mappoint, pixpoint )
+		mappoint = self.toMapCoordinates( pixpoint )
+		#snap to layers
+		if self.snapping:
+			mappoint = self.snapToLayers( pixpoint )
+		# creates ditance with dialog
+		dlg = PlaceDistanceDialog(point)
+		if dlg.exec_():
+			radius    = dlg.distance.value()
+			precision = dlg.precision.value()
+			if radius==0: return
+			observation( canvas,self.lineLayer,self.pointLayer,"distance",point,radius,precision )
+			
+	def snapToLayers(self, point):
+		if self.snapping:
+			result,snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint,[])
+			if result == 0 and len(snappingResults)>0:
+				point = QgsPoint(snappingResults[0].snappedVertex)
+		return point
 
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
 	def __init__(self, canvas, lineLayer, rubber):

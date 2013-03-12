@@ -12,7 +12,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 import math
-from settings import IntersectItSettings
+from mysettings import MySettings
 from ui_place_dimension import Ui_placeDimension
 
 try:

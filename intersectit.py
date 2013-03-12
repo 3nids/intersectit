@@ -13,30 +13,19 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from maptools import placeMeasureOnMap, placeIntersectionOnMap
-from ui_place_distance import Ui_place_distance
+from maptools import PlaceDistanceOnMap, placeIntersectionOnMap
+
 from place_dimension import placeDimension
-from observation import observation
-from settings import settingsDialog, IntersectItSettings
+
 from intersection import intersection
 from memory_layers import memoryLayers
+
+from mysettings import MySettings,MySettingsDialog
+
 
 # Initialize Qt resources from file resources.py
 import resources
 
-try:
-    _fromUtf8 = QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
-
-class place_distance(QDialog, Ui_place_distance ):
-	def __init__(self,point):
-		QDialog.__init__(self)
-		# Set up the user interface from Designer.
-		self.setupUi(self)	
-		self.x.setText("%.3f" % point.x())
-		self.y.setText("%.3f" % point.y())
-		self.distance.selectAll()
 
 class intersectit ():
 	def __init__(self, iface):
@@ -48,8 +37,7 @@ class intersectit ():
 		memLay = memoryLayers(iface)
 		self.lineLayer  = memLay.lineLayer
 		self.pointLayer = memLay.pointLayer
-		# settings
-		self.settings = IntersectItSettings()
+
 		# apply settings at first launch
 		self.applySettings()
 
@@ -74,11 +62,13 @@ class intersectit ():
 		self.toolBar.addAction(self.cleanerAction)
 		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
 		# settings
-		self.uisettings = settingsDialog(self.iface)	
+		self.uisettings = MySettingsDialog()
+		self.settings = MySettings(self.uisettings)
 		QObject.connect(self.uisettings , SIGNAL( "accepted()" ) , self.applySettings)
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)	
+		
 		# help
 		self.helpAction = QAction("help", self.iface.mainWindow())
 		QObject.connect(self.helpAction, SIGNAL("triggered()"), self.help)
@@ -105,11 +95,12 @@ class intersectit ():
 			return
 
 	def applySettings(self):
-		self.rubber.setWidth( self.settings.value("intersect_select_rubberWidth").toDouble()[0] )
-		R = self.settings.value("intersect_select_rubberColorR").toInt()[0]
-		G = self.settings.value("intersect_select_rubberColorG").toInt()[0]
-		B = self.settings.value("intersect_select_rubberColorB").toInt()[0]
-		self.rubber.setColor(QColor(R,G,B,255))		
+		pass
+		#self.rubber.setWidth( self.settings.value("intersect_select_rubberWidth").toDouble()[0] )
+		#R = self.settings.value("intersect_select_rubberColorR").toInt()[0]
+		#G = self.settings.value("intersect_select_rubberColorG").toInt()[0]
+		#B = self.settings.value("intersect_select_rubberColorB").toInt()[0]
+		#self.rubber.setColor(QColor(R,G,B,255))		
 
 	def cleanMemoryLayers(self):
 		self.rubber.reset()
@@ -134,26 +125,10 @@ class intersectit ():
 			canvas.unsetMapTool(self.placeDistancePoint)
 			return
 		self.distanceAction.setChecked( True )
-		snapping = self.settings.value( "obs_snapping" ).toInt()[0]
-		self.placeDistancePoint = placeMeasureOnMap(canvas,snapping)
-		QObject.connect(self.placeDistancePoint , SIGNAL("distancePlaced") , self.distancePlaceIt ) 
+		snapping = self.settings.value( "obs_snapping" )
+		self.placeDistancePoint = PlaceDistanceOnMap(canvas,snapping)
 		canvas.setMapTool(self.placeDistancePoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
-
-	def distancePlaceIt(self, point, pixpoint):
-		canvas = self.iface.mapCanvas()
-		#snap to layers
-		if self.settings.value( "obs_snapping").toInt()[0] == 1:
-			result,snappingResults = QgsMapCanvasSnapper(canvas).snapToBackgroundLayers(pixpoint,[])
-			if result == 0 and len(snappingResults)>0:
-				point = QgsPoint(snappingResults[0].snappedVertex)
-		# creates ditance with dialog
-		dlg = place_distance(point)
-		if dlg.exec_():
-			radius    = dlg.distance.value()
-			precision = dlg.precision.value()
-			if radius==0: return
-			observation( canvas,self.lineLayer,self.pointLayer,"distance",point,radius,precision )
 
 	def distanceToolChanged(self, tool):
 		QObject.disconnect( self.iface.mapCanvas(), SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
