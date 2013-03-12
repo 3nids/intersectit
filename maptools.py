@@ -40,25 +40,27 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
 	def canvasPressEvent(self, mouseEvent):
 		if mouseEvent.button() != Qt.LeftButton: return
 		self.rubber.reset()
-		pixpoint = mouseEvent.pos()
-		mappoint = self.toMapCoordinates( pixpoint )
+		pixPoint = mouseEvent.pos()
+		mapPoint = self.toMapCoordinates( pixPoint )
 		#snap to layers
 		if self.snapping:
-			mappoint = self.snapToLayers( pixpoint )
+			mapPoint = self.snapToLayers( pixPoint, mapPoint)
 		# creates ditance with dialog
-		dlg = PlaceDistanceDialog(point)
+		dlg = PlaceDistanceDialog(mapPoint)
 		if dlg.exec_():
 			radius    = dlg.distance.value()
 			precision = dlg.precision.value()
 			if radius==0: return
 			observation( canvas,self.lineLayer,self.pointLayer,"distance",point,radius,precision )
 			
-	def snapToLayers(self, point):
-		if self.snapping:
-			result,snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint,[])
-			if result == 0 and len(snappingResults)>0:
-				point = QgsPoint(snappingResults[0].snappedVertex)
-		return point
+	def snapToLayers(self, pixPoint, dfltPoint=QgsPoint()):
+		if not self.snapping:
+			return None
+		result,snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint,[])
+		if result == 0 and len(snappingResults)>0:
+			return QgsPoint(snappingResults[0].snappedVertex)
+		else:
+			return dfltPoint
 
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
 	def __init__(self, canvas, lineLayer, rubber):

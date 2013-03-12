@@ -6,7 +6,7 @@ Denis Rouzaud
 denis.rouzaud@gmail.com
 Jan. 2013
 """
-from qgis-tools.pluginsettings.pluginsettings import PluginSettings
+from qgistools.pluginsettings.pluginsettings import PluginSettings
 
 from PyQt4.QtGui import QColor,QDialog
 
