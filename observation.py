@@ -17,44 +17,48 @@ from datetime import datetime
 from memorylayers import MemoryLayers
 
 class Observation():
-	def __init__(self, canvas, obsType, point, observation, precision):
+	def __init__(self, iface, obsType, point, observation, precision):
+		memoryLayers = MemoryLayers(iface)
+		lineLayer = memoryLayers.lineLayer()
+		pointLayer = memoryLayers.pointLayer()
+		
 		# generate ID
 		id = datetime.now().strftime("%Y%m%d%H%M%S%f")
 		
-		# creates features
-		# obsservations are stored in the lineLayer layer
-		# attributeMap: 
-		#   0: otherid (the id of the feature in the other layer)
-		#   1: type
+		# obsservations are stored in the lineLayer layer attributes: 
+		#   0: id
+		#   1: observation type
 		#   2: x
 		#   3: y
 		#   4: observation
 		#   5: precision
 
-		# draw observation and save info in feature
+		# save info in feature
 		f = QgsFeature()
-		f.setAttributeMap( {0: QVariant(id),
-							1: QVariant(type),
-							2: QVariant(point.x()),
-							3: QVariant(point.y()),
-							4: QVariant(observation),
-							5: QVariant(precision)} )
+		f.setAttributes( [ 	QVariant(id),
+							QVariant(obsType),
+							QVariant(point.x()),
+							QVariant(point.y()),
+							QVariant(observation),
+							QVariant(precision) ] )
+		
+		# draw observation
 		if obsType == "distance":
 			# trace circle at distance from point
 			geom = QgsGeometry.fromPolyline( [QgsPoint(point.x()+observation*math.cos(math.pi/180*a),point.y()+observation*math.sin(math.pi/180*a)) for a in range(0,361,3)] )
 		f.setGeometry(geom)
-		lineLayer().dataProvider().addFeatures( [f] )
-		lineLayer().updateExtents()
+		lineLayer.dataProvider().addFeatures( [f] )
+		lineLayer.updateExtents()
 
 		# draw center
 		f = QgsFeature()
-		f.setAttributeMap( {0: QVariant(id)} )
+		f.setAttributes( [QVariant(id)] )
 		f.setGeometry(QgsGeometry.fromPoint(point))
-		pointLayer().dataProvider().addFeatures( [f] )
-		pointLayer().updateExtents()
+		pointLayer.dataProvider().addFeatures( [f] )
+		pointLayer.updateExtents()
 		
 		# refresh canvas
-		canvas.refresh()
+		iface.mapCanvas().refresh()
 		
 		
 #	def delete(self):

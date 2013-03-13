@@ -17,6 +17,7 @@ class MySettings(PluginSettings):
 		PluginSettings.__init__(self, "intersectit",uiObject)
 		self.addSetting("obs_snapping", "global", "bool", True)
 		self.addSetting("memoryLineLayer", "project", "string", "")
+		self.addSetting("memoryPointLayer", "project", "string", "")
 		
 		
 		#self.addSetting("rubberColor", "global", "color", QColor(0,0,255),True)

@@ -12,7 +12,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from mysettings import MySettings
+#from mysettings import MySettings
 from observation import Observation
 from ui.ui_place_distance import Ui_place_distance
 
@@ -26,11 +26,12 @@ class PlaceDistanceDialog(QDialog, Ui_place_distance ):
 		self.distance.selectAll()
 
 class PlaceDistanceOnMap(QgsMapToolEmitPoint):
-	def __init__(self, canvas, snapping=0):
-		self.canvas = canvas
+	def __init__(self, iface, snapping=0):
+		self.iface = iface
+		self.canvas = iface.mapCanvas()
 		self.snapping = snapping
-		self.rubber = QgsRubberBand(canvas)
-		QgsMapToolEmitPoint.__init__(self, canvas)
+		self.rubber = QgsRubberBand(self.canvas)
+		QgsMapToolEmitPoint.__init__(self, self.canvas)
 
 	def canvasMoveEvent(self, mouseEvent):
 		if self.snapping:
@@ -54,7 +55,7 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
 			radius    = dlg.distance.value()
 			precision = dlg.precision.value()
 			if radius==0: return
-			Observation( self.canvas, "distance", point, radius, precision )
+			Observation( self.iface, "distance", mapPoint, radius, precision )
 			
 	def snapToLayers(self, pixPoint, dfltPoint=None):
 		if not self.snapping:

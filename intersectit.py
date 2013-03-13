@@ -19,7 +19,7 @@ from placeintersection import placeIntersectionOnMap
 from place_dimension import placeDimension
 
 from intersection import intersection
-from memory_layers import memoryLayers
+from memorylayers import MemoryLayers
 
 from mysettings import MySettings,MySettingsDialog
 
@@ -35,7 +35,7 @@ class intersectit ():
 		# create rubber band to emphasis selected circles
 		self.rubber = QgsRubberBand(self.iface.mapCanvas())
 		# init memory layers
-		memLay = memoryLayers(iface)
+		memLay = MemoryLayers(iface)
 		self.lineLayer  = memLay.lineLayer
 		self.pointLayer = memLay.pointLayer
 
@@ -127,7 +127,7 @@ class intersectit ():
 			return
 		self.distanceAction.setChecked( True )
 		snapping = self.settings.value( "obs_snapping" )
-		self.placeDistancePoint = PlaceDistanceOnMap(canvas,snapping)
+		self.placeDistancePoint = PlaceDistanceOnMap(self.iface, snapping)
 		canvas.setMapTool(self.placeDistancePoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 
