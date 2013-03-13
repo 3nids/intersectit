@@ -13,7 +13,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from placedistance import PlaceDistanceOnMap, PlaceDistanceDialog
+from placeobservation import PlaceObservationOnMap
 from placeintersection import placeIntersectionOnMap
 from place_dimension import placeDimension
 from memorylayers import MemoryLayers
@@ -123,7 +123,7 @@ class intersectit ():
 			return
 		self.distanceAction.setChecked( True )
 		snapping = self.settings.value( "obs_snapping" )
-		self.placeDistancePoint = PlaceDistanceOnMap(self.iface, snapping)
+		self.placeDistancePoint = PlaceObservationOnMap(self.iface, "distance", snapping)
 		canvas.setMapTool(self.placeDistancePoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 

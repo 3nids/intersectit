@@ -25,11 +25,12 @@ class PlaceDistanceDialog(QDialog, Ui_place_distance ):
 		self.y.setText("%.3f" % point.y())
 		self.distance.selectAll()
 
-class PlaceDistanceOnMap(QgsMapToolEmitPoint):
-	def __init__(self, iface, snapping=0):
+class PlaceObservationOnMap(QgsMapToolEmitPoint):
+	def __init__(self, iface, obsType, snapping=0):
 		self.iface = iface
-		self.canvas = iface.mapCanvas()
+		self.obsType = obsType
 		self.snapping = snapping
+		self.canvas = iface.mapCanvas()
 		self.rubber = QgsRubberBand(self.canvas)
 		QgsMapToolEmitPoint.__init__(self, self.canvas)
 
@@ -49,13 +50,14 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
 		#snap to layers
 		if self.snapping:
 			mapPoint = self.snapToLayers( pixPoint, mapPoint)
-		# creates ditance with dialog
-		dlg = PlaceDistanceDialog(mapPoint)
-		if dlg.exec_():
-			radius    = dlg.distance.value()
-			precision = dlg.precision.value()
-			if radius==0: return
-			Observation( self.iface, "distance", mapPoint, radius, precision )
+		if self.obsType == "distance":
+			# creates ditance with dialog
+			dlg = PlaceDistanceDialog(mapPoint)
+			if dlg.exec_():
+				radius    = dlg.distance.value()
+				precision = dlg.precision.value()
+				if radius==0: return
+		Observation( self.iface, self.obsType, mapPoint, radius, precision )
 			
 	def snapToLayers(self, pixPoint, dfltPoint=None):
 		if not self.snapping:
