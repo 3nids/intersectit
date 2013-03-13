@@ -16,6 +16,8 @@ class MySettings(PluginSettings):
 	def __init__(self,uiObject=None):
 		PluginSettings.__init__(self, "intersectit",uiObject)
 		self.addSetting("obs_snapping", "global", "bool", True)
+		self.addSetting("intresect_result_confirm", "global", "bool", True)
+		
 		self.addSetting("memoryLineLayer", "project", "string", "")
 		self.addSetting("memoryPointLayer", "project", "string", "")
 		
