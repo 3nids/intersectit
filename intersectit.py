@@ -15,12 +15,8 @@ from qgis.gui import *
 
 from placedistance import PlaceDistanceOnMap, PlaceDistanceDialog
 from placeintersection import placeIntersectionOnMap
-
 from place_dimension import placeDimension
-
-from intersection import intersection
 from memorylayers import MemoryLayers
-
 from mysettings import MySettings,MySettingsDialog
 
 
@@ -145,8 +141,6 @@ class intersectit ():
 		self.placeInitialIntersectionPoint = placeIntersectionOnMap(self.iface,self.rubber)
 		canvas.setMapTool(self.placeInitialIntersectionPoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.intersectionToolChanged)
-
-	
 
 	def intersectionToolChanged(self, tool):
 		self.rubber.reset()

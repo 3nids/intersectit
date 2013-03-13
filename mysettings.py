@@ -17,6 +17,8 @@ class MySettings(PluginSettings):
 		PluginSettings.__init__(self, "intersectit",uiObject)
 		self.addSetting("obs_snapping", "global", "bool", True)
 		self.addSetting("intresect_result_confirm", "global", "bool", True)
+		self.addSetting("intersect_select_tolerance", "global", "double", 0.3)
+		self.addSetting("intersect_select_units", "global", "string", "map")
 		
 		self.addSetting("memoryLineLayer", "project", "string", "")
 		self.addSetting("memoryPointLayer", "project", "string", "")

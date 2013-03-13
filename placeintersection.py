@@ -23,25 +23,27 @@ from ui.ui_place_distance import Ui_place_distance
 from ui.ui_LSreport import Ui_LSreport
 
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
-	def __init__(self, iface, lineLayer, rubber):
+	def __init__(self, iface, rubber):
 		self.iface = iface
 		self.canvas = iface.mapCanvas()
 		self.rubber = rubber
-		self.provider = lineLayer().dataProvider()
-		QgsMapToolEmitPoint.__init__(self, canvas)
+		self.layer = MemoryLayers(iface).lineLayer
+		QgsMapToolEmitPoint.__init__(self, self.canvas)
 		self.settings = MySettings()
-		self.tolerance = self.settings.value("intersect_select_tolerance").toDouble()[0]
-		units = self.settings.value("intersect_select_units").toString()
-		if units == "pixels": self.tolerance *= canvas.mapUnitsPerPixel()
-		self.layer = MemoryLayers().lineLayer
+		self.tolerance = self.settings.value("intersect_select_tolerance")
+		units = self.settings.value("intersect_select_units")
+		if units == "pixels": self.tolerance *= self.canvas.mapUnitsPerPixel()
+		
 
 	def canvasMoveEvent(self, mouseEvent):
 		# put the observations within tolerance in the rubber band
 		self.rubber.reset()
 		point = self.toMapCoordinates( mouseEvent.pos() )
-		self.provider.select([], self.getBox(point) , True, True)
+		featReq = QgsFeatureRequest()
+		featReq.setFilterRect( self.getBox(point) )
 		f = QgsFeature()
-		while (self.provider.nextFeature(f)):
+		iter = self.layer().getFeatures(featReq)
+		while (iter.nextFeature(f)):
 			self.rubber.addGeometry( f.geometry() , None )
 
 	def canvasPressEvent(self, mouseEvent):
@@ -51,7 +53,8 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		featReq = QgsFeatureRequest()
 		featReq.setFilterRect( self.getBox(point) )
 		f = QgsFeature()
-		while (self.layer().getFeatures(featReq).nextFeature(f)):
+		iter = self.layer().getFeatures(featReq)
+		while (iter.nextFeature(f)):
 			observations.append({	"type": f.attribute("type").toString(),
 									"x": f.attribute("x").toDouble()[0],
 									"y": f.attribute("y").toDouble()[0],
@@ -76,6 +79,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 			point,report = self.leastSquares(observations, initPoint)
 			if self.settings.value("intresect_result_confirm"):
 				if not LSreport(report).exec_(): return
+
 		
 		# save intersection point and report
 		while True:
