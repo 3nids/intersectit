@@ -13,7 +13,8 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from maptools import PlaceDistanceOnMap, placeIntersectionOnMap
+from placedistance import PlaceDistanceOnMap, PlaceDistanceDialog
+from placeintersection import placeIntersectionOnMap
 
 from place_dimension import placeDimension
 

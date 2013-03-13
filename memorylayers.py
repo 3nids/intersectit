@@ -14,7 +14,7 @@ from qgis.gui import *
 
 from mysettings import MySettings
     
-class memoryLayers():
+class MemoryLayers():
 	def __init__(self,iface):
 		self.iface = iface
 		self.settings = MySettings()	
@@ -37,7 +37,6 @@ class memoryLayers():
 
 	def lineLayerFeatureDeleted(fid):
 		print "hay"
-
 
 
 	def pointLayer(self):

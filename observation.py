@@ -14,15 +14,10 @@ from qgis.gui import *
 
 import math
 from datetime import datetime
+from memorylayers import MemoryLayers
 
-try:
-    _fromUtf8 = QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
-
-# create the dialog to connect layers
-class observation():
-	def __init__(self,canvas,lineLayer,pointLayer,type,point,observation,precision):
+class Observation():
+	def __init__(self, canvas, obsType, point, observation, precision):
 		# generate ID
 		id = datetime.now().strftime("%Y%m%d%H%M%S%f")
 		
@@ -44,7 +39,8 @@ class observation():
 							3: QVariant(point.y()),
 							4: QVariant(observation),
 							5: QVariant(precision)} )
-		if type == "distance":
+		if obsType == "distance":
+			# trace circle at distance from point
 			geom = QgsGeometry.fromPolyline( [QgsPoint(point.x()+observation*math.cos(math.pi/180*a),point.y()+observation*math.sin(math.pi/180*a)) for a in range(0,361,3)] )
 		f.setGeometry(geom)
 		lineLayer().dataProvider().addFeatures( [f] )
