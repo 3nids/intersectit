@@ -6,18 +6,28 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>448</width>
-    <height>508</height>
+    <width>427</width>
+    <height>472</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>IntersectIt :: settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="6" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="observationTab">
       <attribute name="title">
@@ -25,7 +35,7 @@
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
-        <widget class="QCheckBox" name="snapBox">
+        <widget class="QCheckBox" name="obsSnapping">
          <property name="text">
           <string>Snap to layers to place observations</string>
          </property>
@@ -42,7 +52,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QDoubleSpinBox" name="defaultPrecisionDistanceBox">
+        <widget class="QDoubleSpinBox" name="obsDefaultPrecisionDistance">
          <property name="decimals">
           <number>1</number>
          </property>
@@ -65,7 +75,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QDoubleSpinBox" name="defaultPrecisionOrientationBox">
+        <widget class="QDoubleSpinBox" name="obsDefaultPrecisionOrientation">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -94,7 +104,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="2" column="2">
-           <widget class="QPushButton" name="rubberColor">
+           <widget class="QPushButton" name="intersectRubberColor">
             <property name="toolTip">
              <string extracomment="Color of the selected distance circles used for triangulation."/>
             </property>
@@ -104,7 +114,7 @@
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QDoubleSpinBox" name="rubberWidth">
+           <widget class="QDoubleSpinBox" name="intersectRubberWidth">
             <property name="toolTip">
              <string extracomment="Width of the selected distance circles used for triangulation."/>
             </property>
@@ -126,40 +136,8 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="2">
-           <widget class="QGroupBox" name="groupBox">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="title">
-             <string/>
-            </property>
-            <layout class="QGridLayout" name="gridLayout_2">
-             <item row="2" column="0">
-              <widget class="QRadioButton" name="pixels">
-               <property name="text">
-                <string>pixels</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QRadioButton" name="mapUnits">
-               <property name="text">
-                <string>map units</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
           <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="tolerance">
+           <widget class="QDoubleSpinBox" name="intersecSelectTolerance">
             <property name="singleStep">
              <double>0.100000000000000</double>
             </property>
@@ -175,6 +153,44 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="2">
+           <widget class="QWidget" name="widget" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <property name="margin">
+              <number>0</number>
+             </property>
+             <item row="2" column="0">
+              <widget class="QRadioButton" name="pixels">
+               <property name="text">
+                <string>pixels</string>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">intersecSelectUnits</string>
+               </attribute>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QRadioButton" name="map">
+               <property name="text">
+                <string>map units</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <attribute name="buttonGroup">
+                <string notr="true">intersecSelectUnits</string>
+               </attribute>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
          </layout>
         </widget>
        </item>
@@ -185,7 +201,7 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_6">
           <item row="0" column="0" colspan="2">
-           <widget class="QCheckBox" name="confirmResultBox">
+           <widget class="QCheckBox" name="intersecResultConfirm">
             <property name="text">
              <string>ask to validate intersection results</string>
             </property>
@@ -195,24 +211,24 @@
            </widget>
           </item>
           <item row="2" column="0">
-           <widget class="QCheckBox" name="placeReportBox">
+           <widget class="QCheckBox" name="intersecResultPlaceReport">
             <property name="text">
              <string>place LS report in field</string>
             </property>
            </widget>
           </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="reportFieldCombo"/>
+           <widget class="QComboBox" name="reportField"/>
           </item>
           <item row="1" column="0">
-           <widget class="QCheckBox" name="placeIntersectionBox">
+           <widget class="QCheckBox" name="intersecResultPlacePoint">
             <property name="text">
              <string>place point in layer</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QComboBox" name="intersectionLayerCombo"/>
+           <widget class="QComboBox" name="intersectionLayer"/>
           </item>
          </layout>
         </widget>
@@ -238,7 +254,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="threshBox">
+           <widget class="QDoubleSpinBox" name="intersecLSconvergeThreshold">
             <property name="decimals">
              <number>4</number>
             </property>
@@ -254,7 +270,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QSpinBox" name="maxIterBox">
+           <widget class="QSpinBox" name="intersecLSmaxIter">
             <property name="value">
              <number>15</number>
             </property>
@@ -292,7 +308,7 @@
       </attribute>
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
-        <widget class="QCheckBox" name="placeDimensionBox">
+        <widget class="QCheckBox" name="dimenPlaceDimension">
          <property name="text">
           <string>place dimension arc in layer</string>
          </property>
@@ -302,10 +318,10 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QComboBox" name="dimensionLayerCombo"/>
+        <widget class="QComboBox" name="dimensionLayer"/>
        </item>
        <item row="1" column="0">
-        <widget class="QCheckBox" name="placeMeasureBox">
+        <widget class="QCheckBox" name="dimenPlaceMeasure">
          <property name="text">
           <string>place measure in field</string>
          </property>
@@ -315,30 +331,20 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="measureFieldCombo"/>
+        <widget class="QComboBox" name="measureField"/>
        </item>
        <item row="2" column="0">
-        <widget class="QCheckBox" name="placePrecisionBox">
+        <widget class="QCheckBox" name="dimenPlacePrecision">
          <property name="text">
           <string>place precision in field</string>
          </property>
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="precisionFieldCombo"/>
+        <widget class="QComboBox" name="precisionField"/>
        </item>
       </layout>
      </widget>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
     </widget>
    </item>
   </layout>
@@ -382,4 +388,7 @@
    </hints>
   </connection>
  </connections>
+ <buttongroups>
+  <buttongroup name="intersecSelectUnits"/>
+ </buttongroups>
 </ui>

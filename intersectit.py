@@ -35,9 +35,6 @@ class intersectit ():
 		self.lineLayer  = memLay.lineLayer
 		self.pointLayer = memLay.pointLayer
 
-		# apply settings at first launch
-		self.applySettings()
-
 	def initGui(self):
 		self.toolBar = self.iface.addToolBar("IntersectIt")
 		self.toolBar.setObjectName("IntersectIt")
@@ -59,13 +56,11 @@ class intersectit ():
 		self.toolBar.addAction(self.cleanerAction)
 		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
 		# settings
-		self.uisettings = MySettingsDialog()
+		self.uisettings = MySettingsDialog(self.iface)
 		self.settings = MySettings(self.uisettings)
-		QObject.connect(self.uisettings , SIGNAL( "accepted()" ) , self.applySettings)
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)	
-		
 		# help
 		self.helpAction = QAction("help", self.iface.mainWindow())
 		QObject.connect(self.helpAction, SIGNAL("triggered()"), self.help)
@@ -91,14 +86,6 @@ class intersectit ():
 		except AttributeError:
 			return
 
-	def applySettings(self):
-		pass
-		#self.rubber.setWidth( self.settings.value("intersect_select_rubberWidth").toDouble()[0] )
-		#R = self.settings.value("intersect_select_rubberColorR").toInt()[0]
-		#G = self.settings.value("intersect_select_rubberColorG").toInt()[0]
-		#B = self.settings.value("intersect_select_rubberColorB").toInt()[0]
-		#self.rubber.setColor(QColor(R,G,B,255))		
-
 	def cleanMemoryLayers(self):
 		self.rubber.reset()
 		lineProv = self.lineLayer().dataProvider()
@@ -122,8 +109,7 @@ class intersectit ():
 			canvas.unsetMapTool(self.placeDistancePoint)
 			return
 		self.distanceAction.setChecked( True )
-		snapping = self.settings.value( "obs_snapping" )
-		self.placeDistancePoint = PlaceObservationOnMap(self.iface, "distance", snapping)
+		self.placeDistancePoint = PlaceObservationOnMap(self.iface, "distance")
 		canvas.setMapTool(self.placeDistancePoint)
 		QObject.connect( canvas, SIGNAL( "mapToolSet(QgsMapTool *)" ), self.distanceToolChanged)
 
