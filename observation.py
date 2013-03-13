@@ -59,6 +59,7 @@ class Observation():
 		
 		# refresh canvas
 		iface.mapCanvas().refresh()
+		iface.mapCanvas().zoomOut()
 		
 		
 #	def delete(self):

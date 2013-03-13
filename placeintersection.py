@@ -68,29 +68,29 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 	def doIntersection(self, initPoint, observations):
 		nObs = len(observations)
 		if nObs<2: return
-		if self.nObs==2:
+		if nObs==2:
 			interType = "two circles"
 			point = self.twoCirclesIntersect(observations, initPoint)
 			if point is None:return
-			if self.settings.value("intresect_result_confirm"):
+			if self.settings.value("intersect_result_confirm"):
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "A perfect intersection has been found using %s. Use this solution?" % interType , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	return
 		else:
 			point,report = self.leastSquares(observations, initPoint)
-			if self.settings.value("intresect_result_confirm"):
+			if self.settings.value("intersect_result_confirm"):
 				if not LSreport(report).exec_(): return
 
 		
-		# save intersection point and report
+		# save the intersection result (point) and its report
 		while True:
-			if self.settings.value("intresect_result_placePoint").toInt()[0] == 0: break # if we do not place any point, skip
+			if not self.settings.value("intersect_result_placePoint"): break # if we do not place any point, skip
 			intLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("intersectionLayer") ), False )
 			if intLayer is False:
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place the intersection solution, you must select a layer in the settings. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
-			if self.settings.value("intresect_result_placeReport").toInt()[0] == 1: 
+			if self.settings.value("intersect_result_placeReport").toInt()[0] == 1: 
 				reportField = next( ( field for field in intLayer.dataProvider().fieldNameMap() if field == self.settings.value("reportField") ), False )
 				if reportField is False:
 					ok = False
@@ -99,10 +99,10 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 					if self.uisettings.exec_() == 0: return
 					continue
 			break
-		if self.settings.value("intresect_result_placePoint").toInt()[0] == 1:
+		if self.settings.value("intersect_result_placePoint"):
 			f = QgsFeature()
 			f.setGeometry(QgsGeometry.fromPoint(intersectedPoint))
-			if self.settings.value("intresect_result_placeReport").toInt()[0] == 1: 
+			if self.settings.value("intersect_result_placeReport"): 
 				irep = intLayer.dataProvider().fieldNameIndex(reportField)
 				f.addAttribute(irep,QVariant(report))
 			intLayer.dataProvider().addFeatures( [f] )
