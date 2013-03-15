@@ -15,8 +15,8 @@ def icon():
 def qgisMinimumVersion():
     return "1.9"
 def classFactory(iface):
-    from intersectit import intersectit
-    return intersectit(iface)
+    from intersectit import IntersectIt
+    return IntersectIt(iface)
     
 
 

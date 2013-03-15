@@ -24,7 +24,7 @@ from mysettings import MySettings,MySettingsDialog
 import resources
 
 
-class intersectit ():
+class IntersectIt ():
 	def __init__(self, iface):
 		# Save reference to the QGIS interface
 		self.iface = iface
@@ -57,7 +57,6 @@ class intersectit ():
 		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
 		# settings
 		self.uisettings = MySettingsDialog(self.iface)
-		self.settings = MySettings(self.uisettings)
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)	
