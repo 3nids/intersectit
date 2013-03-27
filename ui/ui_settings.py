@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_settings.ui'
+# Form implementation generated from reading ui file 'ui/ui_settings.ui'
 #
-# Created: Wed Mar 13 15:32:23 2013
+# Created: Wed Mar 27 11:12:43 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -64,11 +64,6 @@ class Ui_Settings(object):
         self.selectGroup.setObjectName(_fromUtf8("selectGroup"))
         self.gridLayout_3 = QtGui.QGridLayout(self.selectGroup)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
-        self.intersectRubberColor = QtGui.QPushButton(self.selectGroup)
-        self.intersectRubberColor.setToolTip(_fromUtf8(""))
-        self.intersectRubberColor.setText(_fromUtf8(""))
-        self.intersectRubberColor.setObjectName(_fromUtf8("intersectRubberColor"))
-        self.gridLayout_3.addWidget(self.intersectRubberColor, 2, 2, 1, 1)
         self.intersectRubberWidth = QtGui.QDoubleSpinBox(self.selectGroup)
         self.intersectRubberWidth.setToolTip(_fromUtf8(""))
         self.intersectRubberWidth.setDecimals(1)
@@ -76,17 +71,6 @@ class Ui_Settings(object):
         self.intersectRubberWidth.setProperty("value", 2.0)
         self.intersectRubberWidth.setObjectName(_fromUtf8("intersectRubberWidth"))
         self.gridLayout_3.addWidget(self.intersectRubberWidth, 2, 1, 1, 1)
-        self.label_2 = QtGui.QLabel(self.selectGroup)
-        self.label_2.setObjectName(_fromUtf8("label_2"))
-        self.gridLayout_3.addWidget(self.label_2, 2, 0, 1, 1)
-        self.intersecSelectTolerance = QtGui.QDoubleSpinBox(self.selectGroup)
-        self.intersecSelectTolerance.setSingleStep(0.1)
-        self.intersecSelectTolerance.setProperty("value", 0.3)
-        self.intersecSelectTolerance.setObjectName(_fromUtf8("intersecSelectTolerance"))
-        self.gridLayout_3.addWidget(self.intersecSelectTolerance, 1, 1, 1, 1)
-        self.label = QtGui.QLabel(self.selectGroup)
-        self.label.setObjectName(_fromUtf8("label"))
-        self.gridLayout_3.addWidget(self.label, 1, 0, 1, 1)
         self.widget = QtGui.QWidget(self.selectGroup)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
@@ -110,6 +94,21 @@ class Ui_Settings(object):
         self.intersecSelectUnits.addButton(self.map)
         self.gridLayout_2.addWidget(self.map, 1, 0, 1, 1)
         self.gridLayout_3.addWidget(self.widget, 1, 2, 1, 1)
+        self.label_2 = QtGui.QLabel(self.selectGroup)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.gridLayout_3.addWidget(self.label_2, 2, 0, 1, 1)
+        self.intersecSelectTolerance = QtGui.QDoubleSpinBox(self.selectGroup)
+        self.intersecSelectTolerance.setSingleStep(0.1)
+        self.intersecSelectTolerance.setProperty("value", 0.3)
+        self.intersecSelectTolerance.setObjectName(_fromUtf8("intersecSelectTolerance"))
+        self.gridLayout_3.addWidget(self.intersecSelectTolerance, 1, 1, 1, 1)
+        self.label = QtGui.QLabel(self.selectGroup)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.gridLayout_3.addWidget(self.label, 1, 0, 1, 1)
+        self.intersectRubberColor = QtGui.QLabel(self.selectGroup)
+        self.intersectRubberColor.setText(_fromUtf8(""))
+        self.intersectRubberColor.setObjectName(_fromUtf8("intersectRubberColor"))
+        self.gridLayout_3.addWidget(self.intersectRubberColor, 2, 2, 1, 1)
         self.gridLayout_4.addWidget(self.selectGroup, 0, 0, 1, 1)
         self.resultGroup = QtGui.QGroupBox(self.intersectionTab)
         self.resultGroup.setObjectName(_fromUtf8("resultGroup"))
@@ -209,10 +208,10 @@ class Ui_Settings(object):
         self.label_4.setText(QtGui.QApplication.translate("Settings", "Default precision for orientations [°]", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.observationTab), QtGui.QApplication.translate("Settings", "Observations", None, QtGui.QApplication.UnicodeUTF8))
         self.selectGroup.setTitle(QtGui.QApplication.translate("Settings", "Selection of observations", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_2.setText(QtGui.QApplication.translate("Settings", "highlighting", None, QtGui.QApplication.UnicodeUTF8))
-        self.label.setText(QtGui.QApplication.translate("Settings", "select observations within", None, QtGui.QApplication.UnicodeUTF8))
         self.pixels.setText(QtGui.QApplication.translate("Settings", "pixels", None, QtGui.QApplication.UnicodeUTF8))
         self.map.setText(QtGui.QApplication.translate("Settings", "map units", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Settings", "highlighting", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Settings", "select observations within", None, QtGui.QApplication.UnicodeUTF8))
         self.resultGroup.setTitle(QtGui.QApplication.translate("Settings", "Result", None, QtGui.QApplication.UnicodeUTF8))
         self.intersecResultConfirm.setText(QtGui.QApplication.translate("Settings", "ask to validate intersection results", None, QtGui.QApplication.UnicodeUTF8))
         self.intersecResultPlaceReport.setText(QtGui.QApplication.translate("Settings", "place LS report in field", None, QtGui.QApplication.UnicodeUTF8))
