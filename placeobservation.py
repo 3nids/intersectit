@@ -12,7 +12,7 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from mysettings import MySettings
+from intersectitsettings import IntersectItSettings
 from observation import Observation
 from ui.ui_place_distance import Ui_place_distance
 
@@ -31,7 +31,7 @@ class PlaceObservationOnMap(QgsMapToolEmitPoint):
 		self.obsType = obsType
 		self.canvas = iface.mapCanvas()
 		self.rubber = QgsRubberBand(self.canvas)
-		self.snapping = MySettings().value( "obsSnapping" )
+		self.snapping = IntersectItSettings().value( "obsSnapping" )
 		QgsMapToolEmitPoint.__init__(self, self.canvas)
 
 	def canvasMoveEvent(self, mouseEvent):

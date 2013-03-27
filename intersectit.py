@@ -17,7 +17,7 @@ from placeobservation import PlaceObservationOnMap
 from placeintersection import placeIntersectionOnMap
 from place_dimension import placeDimension
 from memorylayers import MemoryLayers
-from mysettings import MySettings,MySettingsDialog
+from intersectitsettings import IntersectItSettings,SettingsDialog
 
 
 # Initialize Qt resources from file resources.py
@@ -56,7 +56,7 @@ class IntersectIt ():
 		self.toolBar.addAction(self.cleanerAction)
 		self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)	
 		# settings
-		self.uisettings = MySettingsDialog(self.iface)
+		self.uisettings = SettingsDialog(self.iface)
 		self.uisettingsAction = QAction("settings", self.iface.mainWindow())
 		QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
 		self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)	
@@ -73,6 +73,7 @@ class IntersectIt ():
 		self.iface.removePluginMenu("&Intersect It",self.intersectAction)
 		self.iface.removePluginMenu("&Intersect It",self.uisettingsAction)
 		self.iface.removePluginMenu("&Intersect It",self.cleanerAction)
+		self.iface.removePluginMenu("&Intersect It",self.helpAction)
 		self.iface.removeToolBarIcon(self.distanceAction)
 		self.iface.removeToolBarIcon(self.intersectAction)	
 		self.iface.removeToolBarIcon(self.cleanerAction)	

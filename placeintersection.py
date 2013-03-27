@@ -16,7 +16,7 @@ import math
 import numpy as np
 from numpy import linalg as la
 
-from mysettings import MySettings
+from intersectitsettings import IntersectItSettings
 from memorylayers import MemoryLayers
 
 from ui.ui_place_distance import Ui_place_distance
@@ -29,7 +29,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		self.rubber = rubber
 		self.layer = MemoryLayers(iface).lineLayer
 		QgsMapToolEmitPoint.__init__(self, self.canvas)
-		self.settings = MySettings()
+		self.settings = IntersectItSettings()
 		self.tolerance = self.settings.value("intersecSelectTolerance")
 		units = self.settings.value("intersecSelectUnits")
 		if units == "pixels": self.tolerance *= self.canvas.mapUnitsPerPixel()

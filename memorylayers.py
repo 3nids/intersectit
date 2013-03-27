@@ -12,12 +12,12 @@ from PyQt4.QtGui import *
 from qgis.core import *
 from qgis.gui import *
 
-from mysettings import MySettings
+from intersectitsettings import IntersectItSettings
     
 class MemoryLayers():
 	def __init__(self,iface):
 		self.iface = iface
-		self.settings = MySettings()	
+		self.settings = IntersectItSettings()	
 
 	def lineLayer(self):
 		layerID = self.settings.value("memoryLineLayer")
