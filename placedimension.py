@@ -151,11 +151,8 @@ class Dimension():
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "The field to save the measure could not be found. Would you like to continue?" % QMessageBox.Yes, QMessageBox.No )
 				if reply == QMessageBox.No:	return	
 			f.setAttribute(idx,QVariant("%.4f" % self.precision))
-		print f.id()
-		ans = self.provider.addFeatures( [f] )
-		print "ok"
-		self.f_id = f.id()
-		print f.id()
+		ans,f = self.provider.addFeatures( [f] )
+		self.f_id = f[0].id()
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
 		
