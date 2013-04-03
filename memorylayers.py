@@ -21,8 +21,8 @@ class MemoryLayers():
 
 	def lineLayer(self):
 		layerID = self.settings.value("memoryLineLayer")
-		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
-		if layer is False:
+		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  None )
+		if layer is None:
 			epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
 			layer = QgsVectorLayer("LineString?crs=%s&field=id:string&field=type:string&field=x:double&field=y:double&field=measure:double&field=precision:double&index=yes" % epsg, "IntersectIt Lines", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 
@@ -41,8 +41,8 @@ class MemoryLayers():
 
 	def pointLayer(self):
 		layerID = self.settings.value("memoryPointLayer")
-		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  False ) 
-		if layer is False:
+		layer = next(    ( layer for layer in self.iface.legendInterface().layers() if layer.id() == layerID ),  None ) 
+		if layer is None:
 			epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
 			layer = QgsVectorLayer("Point?crs=%s&field=id:string&index=yes" % epsg, "IntersectIt Points", "memory") 
 			QgsMapLayerRegistry.instance().addMapLayer(layer) 

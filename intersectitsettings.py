@@ -54,7 +54,7 @@ class SettingsDialog( QDialog, Ui_Settings, PluginSettings):
 		self.setupUi(self)
 		PluginSettings.__init__(self, pluginName, intersectItSettings)
 		
-		self.dimensionLayerCombo = VectorLayerCombo(iface, self.dimensionLayer, lambda: self.value("dimensionLayer"), {"groupLayers":True,"hasGeometry":True})
+		self.dimensionLayerCombo = VectorLayerCombo(iface, self.dimensionLayer, lambda: self.value("dimensionLayer"), {"groupLayers":False,"hasGeometry":True})
 		self.measureFieldCombo   = FieldCombo(self.measureField,   self.dimensionLayerCombo, lambda: self.value("measureField"))
 		self.precisionFieldCombo = FieldCombo(self.precisionField, self.dimensionLayerCombo, lambda: self.value("precisionField"))
         

@@ -18,6 +18,7 @@ from numpy import linalg as la
 
 from intersectitsettings import IntersectItSettings
 from memorylayers import MemoryLayers
+from placedimension import PlaceDimension
 
 from ui.ui_place_distance import Ui_place_distance
 from ui.ui_LSreport import Ui_LSreport
@@ -27,7 +28,8 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		self.iface = iface
 		self.canvas = iface.mapCanvas()
 		self.rubber = rubber
-		self.layer = MemoryLayers(iface).lineLayer
+		self.lineLayer = MemoryLayers(iface).lineLayer
+		self.pointLayer = MemoryLayers(iface).pointLayer
 		QgsMapToolEmitPoint.__init__(self, self.canvas)
 		self.settings = IntersectItSettings()
 		self.tolerance = self.settings.value("intersecSelectTolerance")
@@ -42,7 +44,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		featReq = QgsFeatureRequest()
 		featReq.setFilterRect( self.getBox(point) )
 		f = QgsFeature()
-		iter = self.layer().getFeatures(featReq)
+		iter = self.lineLayer().getFeatures(featReq)
 		while (iter.nextFeature(f)):
 			self.rubber.addGeometry( f.geometry() , None )
 
@@ -53,7 +55,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		featReq = QgsFeatureRequest()
 		featReq.setFilterRect( self.getBox(point) )
 		f = QgsFeature()
-		iter = self.layer().getFeatures(featReq)
+		iter = self.lineLayer().getFeatures(featReq)
 		while (iter.nextFeature(f)):
 			observations.append({	"type": f.attribute("type").toString(),
 									"x": f.attribute("x").toDouble()[0],
@@ -69,30 +71,28 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		nObs = len(observations)
 		if nObs<2: return
 		if nObs==2:
-			interType = "two circles"
-			point = self.twoCirclesIntersect(observations, initPoint)
-			if point is None:return
+			intersectedPoint = self.twoCirclesIntersect(observations, initPoint)
+			if intersectedPoint is None:return
 			if self.settings.value("intersecResultConfirm"):
-				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "A perfect intersection has been found using %s. Use this solution?" % interType , QMessageBox.Yes, QMessageBox.No )			
+				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "A perfect intersection has been found using two circles. Use this solution?", QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	return
 		else:
-			point,report = self.leastSquares(observations, initPoint)
+			intersectedPoint,report = self.leastSquares(observations, initPoint)
 			if self.settings.value("intersecResultConfirm"):
 				if not LSreport(report).exec_(): return
-
 		
 		# save the intersection result (point) and its report
 		while True:
 			if not self.settings.value("intersecResultPlacePoint"): break # if we do not place any point, skip
-			intLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("intersectionLayer") ), False )
-			if intLayer is False:
+			intLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("intersectionLayer") ), None )
+			if intLayer is None:
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place the intersection solution, you must select a layer in the settings. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
 			if self.settings.value("intersecResultPlaceReport"): 
-				reportField = next( ( field for field in intLayer.dataProvider().fieldNameMap() if field == self.settings.value("reportField") ), False )
-				if reportField is False:
+				reportField = next( ( field for field in intLayer.dataProvider().fieldNameMap() if field == self.settings.value("reportField") ), None )
+				if reportField is None:
 					ok = False
 					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To save the intersection report, please select a field for tit. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 					if reply == QMessageBox.No:  	 return
@@ -112,30 +112,30 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 		# check that dimension layer and fields have been set correctly
 		while True:
 			if not self.settings.value("dimenPlaceDimension"): return # if we do not place any dimension, skip
-			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer") ), False )
-			if dimLayer is False:
+			dimLayer = next( ( layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer") ), None )
+			if dimLayer is None:
 				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To place dimension arcs, you must select a layer in the settings. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 				if reply == QMessageBox.No:	        return
 				if self.uisettings.exec_() ==	 0: return
 				continue
 			if self.settings.value("dimenPlaceMeasure"): 
-				measureField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("measureField") ), False )
-				if measureField is False:
+				measureField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("measureField") ), None )
+				if measureField is None:
 					ok = False
 					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To save the measured distance, please select a field for tit. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 					if reply == QMessageBox.No:  	 return
 					if self.uisettings.exec_() == 0: return
 					continue
 			if self.settings.value("dimenPlacePrecision"): 
-				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("precisionField") ), False )
-				if precisionField is False:
+				precisionField = next( ( True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("precisionField") ), None )
+				if precisionField is None:
 					ok = False
 					reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "To save the measure precision, please select a field for it. Would you like to open settings?" , QMessageBox.Yes, QMessageBox.No )			
 					if reply == QMessageBox.No: 	 return
 					if self.uisettings.exec_() == 0: return
 					continue
 			break
-		dlg = placeDimension(self.iface,intersectedPoint,observations,[self.lineLayer(),self.pointLayer()])
+		dlg = PlaceDimension(self.iface,intersectedPoint,observations,[self.lineLayer(),self.pointLayer()])
 		dlg.exec_()	
 		
 	def leastSquares(self, observations, initPoint):

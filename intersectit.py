@@ -15,7 +15,6 @@ from qgis.gui import *
 
 from placeobservation import PlaceObservationOnMap
 from placeintersection import placeIntersectionOnMap
-from place_dimension import placeDimension
 from memorylayers import MemoryLayers
 from intersectitsettings import IntersectItSettings,SettingsDialog
 

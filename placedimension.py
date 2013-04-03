@@ -13,15 +13,9 @@ from qgis.core import *
 from qgis.gui import *
 import math
 from intersectitsettings import IntersectItSettings
-from ui_place_dimension import Ui_placeDimension
+from ui.ui_place_dimension import Ui_placeDimension
 
-try:
-    _fromUtf8 = QString.fromUtf8
-except AttributeError:
-    _fromUtf8 = lambda s: s
-
-# create the dialog to connect layers
-class placeDimension(QDialog, Ui_placeDimension ):
+class PlaceDimension(QDialog, Ui_placeDimension ):
 	def __init__(self,iface,intersectedPoint,observations,distanceLayers):
 		QDialog.__init__(self)
 		self.setupUi(self)
@@ -29,7 +23,7 @@ class placeDimension(QDialog, Ui_placeDimension ):
 		self.distanceLayers = distanceLayers
 		# load settings
 		self.settings = IntersectItSettings()	
-		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer") ), False )
+		self.layer = next( ( layer for layer in iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer") ), None )
 		self.rubber = QgsRubberBand(iface.mapCanvas())
 		self.rubber.setWidth(2)
 		defaultRadius = self.radiusSlider.value()
@@ -48,7 +42,7 @@ class placeDimension(QDialog, Ui_placeDimension ):
 		nn = len(observations)
 		for i,obs in enumerate(observations):
 			self.dimensionCombo.addItem( "%u/%u" % (i+1,nn) )
-			self.dimension.append( dimension(	iface,self.layer,
+			self.dimension.append( Dimension(	iface,self.layer,
 												intersectedPoint,
 												QgsPoint( obs["x"] , obs["y"] ),
 												obs["measure"],
@@ -110,7 +104,7 @@ class placeDimension(QDialog, Ui_placeDimension ):
 			self.rubber.addGeometry(geom,self.layer)
 
 
-class dimension():
+class Dimension():
 	def __init__(self,iface,layer,intersectedPoint,distancePoint,distance,precision,radius):
 		self.iface = iface
 		self.layer = layer
@@ -140,18 +134,28 @@ class dimension():
 		self.isActive = True
 		# create feature and geometry
 		f = QgsFeature()
+		f.initAttributes( self.provider.fields().count() )
 		f.setGeometry(self.geometry())
 		# look for dimension and precision fields
-		if self.settings.value("dim_placeMeasure").toInt()[0] == 1:
+		if self.settings.value("dimenPlaceMeasure"):
 			dimFieldName = self.settings.value("measureField")
-			ilbl = self.provider.fieldNameIndex(dimFieldName)
-			f.addAttribute(ilbl,QVariant("%.2f" % self.distance))
-		if self.settings.value("dim_placePrecision").toInt()[0] == 1:
+			idx = self.provider.fieldNameIndex(dimFieldName)
+			if idx == -1:
+				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "The field to save the measure could not be found. Would you like to continue?" % QMessageBox.Yes, QMessageBox.No )
+				if reply == QMessageBox.No:	return				
+			f.setAttribute(idx,QVariant("%.4f" % self.distance))
+		if self.settings.value("dimenPlacePrecision"):
 			preFieldName = self.settings.value("precisionField")
-			ilbl = self.provider.fieldNameIndex(preFieldName)
-			f.addAttribute(ilbl,QVariant("%.2f" % self.precision))
-		ans,f = self.provider.addFeatures( [f] )
-		self.f_id = f[0].id()
+			idx = self.provider.fieldNameIndex(preFieldName)
+			if idx == -1:
+				reply = QMessageBox.question( self.iface.mainWindow() , "IntersectIt", "The field to save the measure could not be found. Would you like to continue?" % QMessageBox.Yes, QMessageBox.No )
+				if reply == QMessageBox.No:	return	
+			f.setAttribute(idx,QVariant("%.4f" % self.precision))
+		print f.id()
+		ans = self.provider.addFeatures( [f] )
+		print "ok"
+		self.f_id = f.id()
+		print f.id()
 		self.layer.updateExtents()
 		self.iface.mapCanvas().refresh()
 		
@@ -169,7 +173,8 @@ class dimension():
 			
 	def geometry(self):
 		# http://www.vb-helper.com/howto_find_quadratic_curve.html
-		curvePoint = QgsPoint(   self.anchorPoint[0] + self.way * self.direction[0] * self.radius/100    ,   self.anchorPoint[1] + self.way * self.direction[1] * self.radius/100    )
+		curvePoint = QgsPoint(	self.anchorPoint[0] + self.way * self.direction[0] * self.radius/100 ,
+								self.anchorPoint[1] + self.way * self.direction[1] * self.radius/100 )
 		return  QgsGeometry().fromMultiPoint([self.intersectedPoint,curvePoint,self.distancePoint])  
 
 	
