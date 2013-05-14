@@ -7,24 +7,15 @@ Jan. 2012
 mapTools
 """
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtCore import Qt
+from qgis.core import QgsGeometry, QgsPoint
+from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint, QgsMapCanvasSnapper
 
-from intersectitsettings import IntersectItSettings
-from observation import Observation
-from ui.ui_place_distance import Ui_place_distance
+from ..core.mysettings import MySettings
+from ..core.observation import Observation
 
+from placedistancedialog import PlaceDistanceDialog
 
-class PlaceDistanceDialog(QDialog, Ui_place_distance):
-    def __init__(self,point):
-        QDialog.__init__(self)
-        # Set up the user interface from Designer.
-        self.setupUi(self)
-        self.x.setText("%.3f" % point.x())
-        self.y.setText("%.3f" % point.y())
-        self.distance.selectAll()
 
 class PlaceObservationOnMap(QgsMapToolEmitPoint):
     def __init__(self, iface, obsType):
@@ -32,7 +23,7 @@ class PlaceObservationOnMap(QgsMapToolEmitPoint):
         self.obsType = obsType
         self.canvas = iface.mapCanvas()
         self.rubber = QgsRubberBand(self.canvas)
-        self.snapping = IntersectItSettings().value("obsSnapping")
+        self.snapping = MySettings().value("obsSnapping")
         QgsMapToolEmitPoint.__init__(self, self.canvas)
 
     def canvasMoveEvent(self, mouseEvent):
@@ -44,7 +35,8 @@ class PlaceObservationOnMap(QgsMapToolEmitPoint):
                 self.rubber.setToGeometry(QgsGeometry.fromPoint(snappedPoint), None)
 
     def canvasPressEvent(self, mouseEvent):
-        if mouseEvent.button() != Qt.LeftButton: return
+        if mouseEvent.button() != Qt.LeftButton:
+            return
         self.rubber.reset()
         pixPoint = mouseEvent.pos()
         mapPoint = self.toMapCoordinates(pixPoint)
@@ -66,7 +58,7 @@ class PlaceObservationOnMap(QgsMapToolEmitPoint):
     def snapToLayers(self, pixPoint, dfltPoint=None):
         if not self.snapping:
             return None
-        result,snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint,[])
+        result, snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint, [])
         if result == 0 and len(snappingResults) > 0:
             return QgsPoint(snappingResults[0].snappedVertex)
         else:

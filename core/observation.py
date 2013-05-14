@@ -7,10 +7,8 @@ Jan. 2012
 Observation class for distances
 """
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtCore import QVariant
+from qgis.core import QgsPoint, QgsGeometry, QgsFeature
 
 import math
 from datetime import datetime
@@ -36,6 +34,7 @@ class Observation():
 
         # save info in feature
         f = QgsFeature()
+        # todo: check this
         f.setAttributes([QVariant(id),
                          QVariant(obsType),
                          QVariant(point.x()),
@@ -45,8 +44,8 @@ class Observation():
 
         # draw observation
         if obsType == "distance":
-             # trace circle at distance from point
-             geom = QgsGeometry.fromPolyline([QgsPoint(point.x()+observation*math.cos(math.pi/180*a),point.y()+observation*math.sin(math.pi/180*a)) for a in range(0,361,3)])
+            # trace circle at distance from point
+            geom = QgsGeometry.fromPolyline([QgsPoint(point.x()+observation*math.cos(math.pi/180*a),point.y()+observation*math.sin(math.pi/180*a)) for a in range(0,361,3)])
         f.setGeometry(geom)
         lineLayer.dataProvider().addFeatures([f])
         lineLayer.updateExtents()
