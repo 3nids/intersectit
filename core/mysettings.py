@@ -1,17 +1,7 @@
-"""
-Plain Geometry Editor
-QGIS plugin
 
-Denis Rouzaud
-denis.rouzaud@gmail.com
-Jan. 2013
-"""
-from PyQt4.QtGui import QColor, QDialog
-
+from PyQt4.QtGui import QColor
 from ..qgissettingmanager import *
-from ..qgiscombomanager import VectorLayerCombo, FieldCombo
 
-from ..ui.ui_settings import Ui_Settings
 
 pluginName = "intersectit"
 
@@ -47,22 +37,3 @@ class MySettings(SettingManager):
         self.addSetting("memoryLineLayer", "String", "project", "")
         self.addSetting("memoryPointLayer", "String", "project", "")
 
-
-class SettingsDialog(QDialog, Ui_Settings, SettingDialog):
-    def __init__(self, iface):
-        QDialog.__init__(self)
-        self.setupUi(self)
-        self.settings = MySettings()
-        SettingDialog.__init__(self, self.settings)
-          
-        self.dimensionLayerCombo = VectorLayerCombo(self.dimensionLayer, lambda: self.value("dimensionLayer"),
-                                                    {"groupLayers": False, "hasGeometry": True})
-        self.measureFieldCombo = FieldCombo(self.measureField, self.dimensionLayerCombo,
-                                            lambda: self.value("measureField"))
-        self.precisionFieldCombo = FieldCombo(self.precisionField, self.dimensionLayerCombo,
-                                              lambda: self.value("precisionField"))
-        
-        self.intersectionLayerCombo = VectorLayerCombo(self.intersectionLayer, lambda: self.value("intersectionLayer"),
-                                                       {"groupLayers": True, "hasGeometry": True})
-        self.reportFieldCombo = FieldCombo(self.reportField, self.intersectionLayerCombo,
-                                           lambda: self.value("reportField"))

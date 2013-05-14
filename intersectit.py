@@ -1,25 +1,15 @@
-"""
-Intersect It QGIS plugin
-Denis Rouzaud
-denis.rouzaud@gmail.com
-Jan. 2012
 
-Main class
-"""
+from PyQt4.QtCore import SIGNAL, QObject, QUrl
+from PyQt4.QtGui import QAction, QIcon, QDesktopServices
+from qgis.core import QgsFeature, QgsMapLayerRegistry
+from qgis.gui import QgsRubberBand
 
-# Import the PyQt and QGIS libraries
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
+from gui.mysettingsdialog import MySettingsDialog
 
 from placeobservation import PlaceObservationOnMap
 from placeintersection import placeIntersectionOnMap
 from memorylayers import MemoryLayers
-from mysettings import MySettings
 
-
-# Initialize Qt resources from file resources.py
 import resources
 
 
@@ -55,9 +45,8 @@ class IntersectIt ():
         self.toolBar.addAction(self.cleanerAction)
         self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)
         # settings
-        self.uisettings = SettingsDialog(self.iface)
         self.uisettingsAction = QAction("settings", self.iface.mainWindow())
-        QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), self.uisettings.exec_)
+        QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), MySettingsDialog().exec_)
         self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)
         # help
         self.helpAction = QAction("help", self.iface.mainWindow())
@@ -86,21 +75,21 @@ class IntersectIt ():
             return
 
     def cleanMemoryLayers(self):
-         self.rubber.reset()
-         lineProv = self.lineLayer().dataProvider()
-         pointProv = self.pointLayer().dataProvider()
-         lineProv.select([])
-         pointProv.select([])
-         f = QgsFeature()
-         f2del = []
-         while lineProv.nextFeature(f):
-              f2del.append(f.id())
-         lineProv.deleteFeatures(f2del)
-         f2del = []
-         while pointProv.nextFeature(f):
-              f2del.append(f.id())
-         pointProv.deleteFeatures(f2del)
-         self.iface.mapCanvas().refresh()
+        self.rubber.reset()
+        lineProv = self.lineLayer().dataProvider()
+        pointProv = self.pointLayer().dataProvider()
+        lineProv.select([])
+        pointProv.select([])
+        f = QgsFeature()
+        f2del = []
+        while lineProv.nextFeature(f):
+            f2del.append(f.id())
+        lineProv.deleteFeatures(f2del)
+        f2del = []
+        while pointProv.nextFeature(f):
+            f2del.append(f.id())
+        pointProv.deleteFeatures(f2del)
+        self.iface.mapCanvas().refresh()
 
     def distanceInitTool(self):
         canvas = self.iface.mapCanvas()
