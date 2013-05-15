@@ -47,7 +47,7 @@ class PlaceObservationOnMap(QgsMapToolEmitPoint):
             # creates ditance with dialog
             dlg = PlaceDistanceDialog(mapPoint)
             if dlg.exec_():
-                radius    = dlg.distance.value()
+                radius = dlg.distance.value()
                 precision = dlg.precision.value()
                 if radius == 0:
                     return

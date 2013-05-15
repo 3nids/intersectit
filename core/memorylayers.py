@@ -7,18 +7,16 @@ Jan. 2012
 Memory layers class
 """
 
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
-from qgis.core import *
-from qgis.gui import *
+from PyQt4.QtCore import SIGNAL, QObject
+from qgis.core import QgsMapLayerRegistry, QgsVectorLayer
 
-from intersectitsettings import IntersectItSettings
+from mysettings import MySettings
 
 
 class MemoryLayers():
-    def __init__(self,iface):
+    def __init__(self, iface):
         self.iface = iface
-        self.settings = IntersectItSettings()
+        self.settings = MySettings()
 
     def lineLayer(self):
         layerID = self.settings.value("memoryLineLayer")
@@ -27,10 +25,11 @@ class MemoryLayers():
             epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
             layer = QgsVectorLayer("LineString?crs=%s&field=id:string&field=type:string&field=x:double&field=y:double&field=measure:double&field=precision:double&index=yes" % epsg, "IntersectIt Lines", "memory")
             QgsMapLayerRegistry.instance().addMapLayer(layer)
-            QObject.connect(layer, SIGNAL("layerDeleted()") , self.__lineLayerDeleted)
-            QObject.connect(layer, SIGNAL("featureDeleted(int)") , self.__lineLayerFeatureDeleted)
+            QObject.connect(layer, SIGNAL("layerDeleted()"), self.__lineLayerDeleted)
+            QObject.connect(layer, SIGNAL("featureDeleted(int)"), self.__lineLayerFeatureDeleted)
             self.settings.setValue("memoryLineLayer", layer.id())
-        else: self.iface.legendInterface().setLayerVisible(layer, True)
+        else:
+            self.iface.legendInterface().setLayerVisible(layer, True)
         return layer
 
     def __lineLayerDeleted(self):
@@ -46,9 +45,10 @@ class MemoryLayers():
             epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
             layer = QgsVectorLayer("Point?crs=%s&field=id:string&index=yes" % epsg, "IntersectIt Points", "memory")
             QgsMapLayerRegistry.instance().addMapLayer(layer)
-            QObject.connect(layer, SIGNAL("layerDeleted()") , self.__pointLayerDeleted)
+            QObject.connect(layer, SIGNAL("layerDeleted()"), self.__pointLayerDeleted)
             self.settings.setValue("memoryPointLayer", layer.id())
-        else: self.iface.legendInterface().setLayerVisible(layer, True)
+        else:
+            self.iface.legendInterface().setLayerVisible(layer, True)
         return layer
 
     def __pointLayerDeleted(self):
