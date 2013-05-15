@@ -1,0 +1,129 @@
+
+from PyQt4.QtCore import QObject, SIGNAL, SLOT, pyqtSignature
+from PyQt4.QtGui import QDialog, QMessageBox
+from qgis.core import QgsPoint
+from qgis.gui import QgsRubberBand
+
+from ..core.mysettings import MySettings
+from ..core.dimension import Dimension
+
+from mysettingsdialog import MySettingsDialog
+
+from ..ui.ui_place_dimension import Ui_placeDimension
+
+
+class PlaceDimension(QDialog, Ui_placeDimension):
+    def __init__(self, iface, intersectedPoint, observations, distanceLayers):
+        QDialog.__init__(self)
+        self.setupUi(self)
+        self.iface = iface
+        self.distanceLayers = distanceLayers
+        # load settings
+        self.settings = MySettings()
+        self.layer = next((layer for layer in iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer")), None)
+        self.rubber = QgsRubberBand(iface.mapCanvas())
+        self.rubber.setWidth(2)
+        defaultRadius = self.radiusSlider.value()
+        QObject.connect(self, SIGNAL("accepted()"), self.rubber.reset)
+        QObject.connect(self, SIGNAL("rejected()"), self.cancel)
+        QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"), self.radiusSlider, SLOT("setValue(int)"))
+        QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusSpin,   SLOT("setValue(int)"))
+        QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
+
+        # init state for distance layer visibility
+        QObject.connect(self.displayLayersBox, SIGNAL("stateChanged(int)"), self.toggleDistanceLayers)
+
+        # check dimension and precision fields
+        if self.settings.value("dimenPlaceMeasure"):
+            dimFieldName = self.settings.value("measureField")
+            idx = self.provider.fieldNameIndex(dimFieldName)
+            if idx == -1:
+                if QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
+                                        "The field to save the measure could not be found."
+                                        " Would you like to open settings?" % QMessageBox.Yes, QMessageBox.No
+                                        ) == QMessageBox.Yes:
+                    MySettingsDialog().exec_()
+
+        if self.settings.value("dimenPlacePrecision"):
+            preFieldName = self.settings.value("precisionField")
+            idx = self.provider.fieldNameIndex(preFieldName)
+            if idx == -1:
+                if QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
+                                        "The field to save the precision could not be found."
+                                        " Would you like to open settings?" % QMessageBox.Yes, QMessageBox.No
+                                        ) == QMessageBox.Yes:
+                    MySettingsDialog().exec_()
+
+        # create the observations
+        self.observations = observations
+        self.dimension = []
+        self.dimensionCombo.clear()
+        nn = len(observations)
+        for i, obs in enumerate(observations):
+            self.dimensionCombo.addItem("%u/%u" % (i+1, nn))
+            self.dimension.append(Dimension(iface, self.layer,
+                                            intersectedPoint,
+                                            QgsPoint(obs["x"], obs["y"]),
+                                            obs["measure"],
+                                            obs["precision"],
+                                            defaultRadius))
+        # above line must be placed after the combobox population
+        QObject.connect(self.dimensionCombo, SIGNAL("currentIndexChanged(int)"), self.dimensionSelected)
+        self.dimensionSelected(0)
+
+    def toggleDistanceLayers(self, i):
+        self.displayLayersBox.setTristate(False)
+        self.iface.legendInterface().setLayerVisible(self.distanceLayers[0], bool(i))
+        self.iface.legendInterface().setLayerVisible(self.distanceLayers[1], bool(i))
+
+    def currentDimension(self):
+        return self.dimensionCombo.currentIndex()
+
+    def dimensionSelected(self, i):
+        dimension = self.dimension[self.currentDimension()]
+        self.radiusSlider.setValue(dimension.radius)
+        self.createBox.setChecked(dimension.isActive)
+        self.updateRubber()
+
+    def radiusChanged(self, radius):
+        self.updateRubber()
+        self.dimension[self.currentDimension()].setRadius(radius).draw()
+
+    def cancel(self):
+        self.rubber.reset()
+        for a in self.dimension:
+            a.delete()
+
+    @pyqtSignature("on_prevButton_clicked()")
+    def on_prevButton_clicked(self):
+        i = max(0, self.currentDimension()-1)
+        self.dimensionCombo.setCurrentIndex(i)
+
+    @pyqtSignature("on_nextButton_clicked()")
+    def on_nextButton_clicked(self):
+        self.updateRubber()
+        i = min(self.currentDimension()+1, len(self.dimension)-1)
+        self.dimensionCombo.setCurrentIndex(i)
+
+    @pyqtSignature("on_reverseButton_clicked()")
+    def on_reverseButton_clicked(self):
+        self.dimension[self.currentDimension()].reverse().draw()
+        self.updateRubber()
+
+    @pyqtSignature("on_createBox_stateChanged(int)")
+    def on_createBox_stateChanged(self, i):
+        if i == 0:
+            self.dimension[self.currentDimension()].delete()
+        else:
+            self.dimension[self.currentDimension()].createFeature()
+
+    def updateRubber(self):
+        self.rubber.reset()
+        if self.createBox.isChecked():
+            geom = self.dimension[self.dimensionCombo.currentIndex()].geometry()
+            self.rubber.addGeometry(geom, self.layer)
+
+
+
+
+
