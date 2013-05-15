@@ -8,15 +8,13 @@ from qgis.core import QgsPoint
 from mysettings import MySettings
 
 
-class Intersection():
-    def __init__(self):
-        self.settings = MySettings()
-
-    def leastSquares(self, observations, initPoint):
+class LeastSquares():
+    def __init__(self, observations, initPoint):
+        settings = MySettings()
         nObs = len(observations)
-        threshold = self.settings.value("intersecLSconvergeThreshold")
+        threshold = settings.value("intersecLSconvergeThreshold")
         # initial parameters
-        x0 = np.array([[initPoint.x()], [initPoint.y()]]) # brackets needed to create column and not row vector
+        x0 = np.array([[initPoint.x()], [initPoint.y()]])  # brackets needed to create column and not row vector
         report = "Initial position: %13.3f %13.3f\n" % (x0[0], x0[1])
         dx = np.array([[2*threshold], [2*threshold]])
         it = 0
@@ -25,7 +23,7 @@ class Intersection():
         # adjustment main loop
         while max(np.abs(dx)) > threshold:
             it += 1
-            if it > self.settings.value("intersecLSmaxIter"):
+            if it > settings.value("intersecLSmaxIter"):
                 x0 = [None, None]
                 report += "\n!!! Maximum iterations reached (%u)" % (it-1)
                 break
@@ -85,40 +83,8 @@ class Intersection():
         else:
             sigmapos_comment = "precision seems realistic"
         report += "\n\nSigma a posteriori: %5.2f \t (%s)" % (sigmapos, sigmapos_comment)
-        return QgsPoint(x0[0], x0[1]), report
 
-    def twoCirclesIntersect(self, observations, initPoint):
-        # see http://www.mathpages.com/home/kmath396/kmath396.htm
-        x1 = observations[0]["x"]
-        y1 = observations[0]["y"]
-        r1 = observations[0]["measure"]
-        x2 = observations[1]["x"]
-        y2 = observations[1]["y"]
-        r2 = observations[1]["measure"]
-        d = math.sqrt(math.pow(x1-x2, 2) + math.pow(y1-y2, 2))
-        if d < math.fabs(r1-r2):
-            # circle is within the other
-            return None
-        if d > r1+r2:
-            # circles are not intersecting, scaling their radius to get intersection"
-            s = d/(r1+r2)
-            r1 *= s
-            r2 *= s
-        a = math.sqrt((d+r1+r2) * (d+r1-r2) * (d-r1+r2) * (-d+r1+r2)) / 4
-        xlt = (x1+x2)/2.0 - (x1-x2)*(r1*r1-r2*r2)/(2.0*d*d)
-        ylt = (y1+y2)/2.0 - (y1-y2)*(r1*r1-r2*r2)/(2.0*d*d)
-        xrt = 2.0*(y1-y2)*a/(d*d)
-        yrt = 2.0*(x1-x2)*a/(d*d)
-        xa = xlt + xrt
-        ya = ylt - yrt
-        xb = xlt - xrt
-        yb = ylt + yrt
-        pt1 = QgsPoint(xa, ya)
-        pt2 = QgsPoint(xb, yb)
-        # return unique point
-        d1 = pt1.sqrDist(initPoint)
-        d2 = pt2.sqrDist(initPoint)
-        if d1 < d2:
-            return pt1
-        else:
-            return pt2
+        self.solution = QgsPoint(x0[0], x0[1])
+        self.report = report
+
+

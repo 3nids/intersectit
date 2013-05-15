@@ -13,10 +13,9 @@ from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry
 from qgis.gui import QgsMapToolEmitPoint
 
 from ..core.mysettings import MySettings
-
-
-from memorylayers import MemoryLayers
-
+from ..core.memorylayers import MemoryLayers
+from ..core.leastsquares import LeastSquares
+from ..core.twocirclesintersection import TwoCirclesIntersection
 
 from placedimension import PlaceDimension
 from lsreport import LSreport
@@ -72,10 +71,11 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 
     def doIntersection(self, initPoint, observations):
         nObs = len(observations)
+        report = ""
         if nObs < 2:
             return
         if nObs == 2:
-            intersectedPoint = self.twoCirclesIntersect(observations, initPoint)
+            intersectedPoint = TwoCirclesIntersection(observations, initPoint).intersection
             if intersectedPoint is None:
                 return
             if self.settings.value("intersecResultConfirm"):
@@ -85,7 +85,9 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                 if reply == QMessageBox.No:
                     return
         else:
-            intersectedPoint, report = self.leastSquares(observations, initPoint)
+            LS = LeastSquares(observations, initPoint)
+            intersectedPoint = LS.solution
+            report = LS.report
             if self.settings.value("intersecResultConfirm"):
                 if not LSreport(report).exec_():
                     return
@@ -109,7 +111,6 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
             if self.settings.value("intersecResultPlaceReport"):
                 reportField = next((field for field in intLayer.dataProvider().fieldNameMap() if field == self.settings.value("reportField")), None)
                 if reportField is None:
-                    ok = False
                     reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                                  "To save the intersection report, please select a field for tit."
                                                  " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
