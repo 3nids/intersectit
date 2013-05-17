@@ -26,6 +26,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.rubber = rubber
+        memoryLayers = MemoryLayers(iface)
         self.lineLayer = MemoryLayers(iface).lineLayer
         self.pointLayer = MemoryLayers(iface).pointLayer
         QgsMapToolEmitPoint.__init__(self, self.canvas)

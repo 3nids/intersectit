@@ -1,7 +1,7 @@
 
 from PyQt4.QtGui import QDialog
 
-from qgissettingmanager import SettingDialog
+from ..qgissettingmanager import SettingDialog
 from ..qgiscombomanager import VectorLayerCombo, FieldCombo
 
 from ..core.mysettings import MySettings
@@ -16,14 +16,16 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
         self.settings = MySettings()
         SettingDialog.__init__(self, self.settings)
 
-        self.dimensionLayerCombo = VectorLayerCombo(self.dimensionLayer, lambda: self.value("dimensionLayer"),
+        self.dimensionLayerCombo = VectorLayerCombo(self.dimensionLayer,
+                                                    lambda: self.settings.value("dimensionLayer"),
                                                     {"groupLayers": False, "hasGeometry": True})
         self.measureFieldCombo = FieldCombo(self.measureField, self.dimensionLayerCombo,
-                                            lambda: self.value("measureField"))
+                                            lambda: self.settings.value("measureField"))
         self.precisionFieldCombo = FieldCombo(self.precisionField, self.dimensionLayerCombo,
-                                              lambda: self.value("precisionField"))
+                                              lambda: self.settings.value("precisionField"))
 
-        self.intersectionLayerCombo = VectorLayerCombo(self.intersectionLayer, lambda: self.value("intersectionLayer"),
-                                                       {"groupLayers": True, "hasGeometry": True})
+        self.intersectionLayerCombo = VectorLayerCombo(self.intersectionLayer,
+                                                       lambda: self.settings.value("intersectionLayer"),
+                                                       {"groupLayers": False, "hasGeometry": True})
         self.reportFieldCombo = FieldCombo(self.reportField, self.intersectionLayerCombo,
-                                           lambda: self.value("reportField"))
+                                           lambda: self.settings.value("reportField"))

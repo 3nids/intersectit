@@ -2,7 +2,7 @@
 
 from PyQt4.QtGui import QDialog
 
-from ui.ui_place_distance import Ui_place_distance
+from ..ui.ui_place_distance import Ui_place_distance
 
 
 class PlaceDistanceDialog(QDialog, Ui_place_distance):
