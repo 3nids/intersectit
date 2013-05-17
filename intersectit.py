@@ -15,11 +15,9 @@ import resources
 
 class IntersectIt ():
     def __init__(self, iface):
-        # Save reference to the QGIS interface
         self.iface = iface
-        # create rubber band to emphasis selected circles
-        self.rubber = QgsRubberBand(self.iface.mapCanvas())
-        # init memory layers
+        self.canvas = iface.mapCanvas()
+        self.rubber = QgsRubberBand(self.canvas)
         memLay = MemoryLayers(iface)
         self.lineLayer = memLay.lineLayer
         self.pointLayer = memLay.pointLayer
@@ -30,45 +28,46 @@ class IntersectIt ():
         # distance
         self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.png"), "place distance", self.iface.mainWindow())
         self.distanceAction.setCheckable(True)
-        QObject.connect(self.distanceAction, SIGNAL("triggered()"), self.distanceInitTool)
+        self.distanceAction.triggered.connect(self.distanceInitTool)
         self.toolBar.addAction(self.distanceAction)
         self.iface.addPluginToMenu("&Intersect It", self.distanceAction)
         # intersection
         self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersection.png"), "intersection", self.iface.mainWindow())
         self.intersectAction.setCheckable(True)
-        QObject.connect(self.intersectAction, SIGNAL("triggered()"), self.intersectionInitTool)
+        self.intersectAction.triggered.connect(self.intersectionInitTool)
         self.toolBar.addAction(self.intersectAction)
         self.iface.addPluginToMenu("&Intersect It", self.intersectAction)
         # cleaner
         self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/cleaner.png"), "clean points and circles", self.iface.mainWindow())
-        QObject.connect(self.cleanerAction, SIGNAL("triggered()"), self.cleanMemoryLayers)
+        self.cleanerAction.triggered.connect(self.cleanMemoryLayers)
         self.toolBar.addAction(self.cleanerAction)
         self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)
         # settings
         self.uisettingsAction = QAction("settings", self.iface.mainWindow())
-        QObject.connect(self.uisettingsAction, SIGNAL("triggered()"), MySettingsDialog().exec_)
+        self.uisettingsAction.triggered.connect(self.showSettings)
         self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)
         # help
         self.helpAction = QAction("help", self.iface.mainWindow())
-        QObject.connect(self.helpAction, SIGNAL("triggered()"), self.help)
+        self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToMenu("&Intersect It", self.helpAction)
           
     def help(self):
         QDesktopServices.openUrl(QUrl("https://github.com/3nids/intersectit/wiki"))
 
     def unload(self):
-        self.iface.removePluginMenu("&Intersect It",self.distanceAction)
-        self.iface.removePluginMenu("&Intersect It",self.intersectAction)
-        self.iface.removePluginMenu("&Intersect It",self.uisettingsAction)
-        self.iface.removePluginMenu("&Intersect It",self.cleanerAction)
-        self.iface.removePluginMenu("&Intersect It",self.helpAction)
+        self.iface.removePluginMenu("&Intersect It", self.distanceAction)
+        self.iface.removePluginMenu("&Intersect It", self.intersectAction)
+        self.iface.removePluginMenu("&Intersect It", self.uisettingsAction)
+        self.iface.removePluginMenu("&Intersect It", self.cleanerAction)
+        self.iface.removePluginMenu("&Intersect It", self.helpAction)
         self.iface.removeToolBarIcon(self.distanceAction)
         self.iface.removeToolBarIcon(self.intersectAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
-        QObject.disconnect(self.iface.mapCanvas(), SIGNAL("mapToolSet(QgsMapTool *)"), self.distanceToolChanged)
-        QObject.disconnect(self.iface.mapCanvas(), SIGNAL("mapToolSet(QgsMapTool *)"), self.intersectionToolChanged)
+        self.canvas.mapToolSet.disconnect(self.distanceToolChanged)
+        self.canvas.mapToolSet.disconnect(self.intersectionToolChanged)
         try:
             print "IntersecIt :: Removing temporary layer"
+            # todo
             QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
             QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer.id())
         except AttributeError:
@@ -89,35 +88,38 @@ class IntersectIt ():
         while pointProv.nextFeature(f):
             f2del.append(f.id())
         pointProv.deleteFeatures(f2del)
-        self.iface.mapCanvas().refresh()
+        self.canvas.refresh()
 
     def distanceInitTool(self):
-        canvas = self.iface.mapCanvas()
+        canvas = self.canvas
         if self.distanceAction.isChecked() is False:
             canvas.unsetMapTool(self.placeDistancePoint)
             return
         self.distanceAction.setChecked(True)
         self.placeDistancePoint = PlaceObservationOnMap(self.iface, "distance")
         canvas.setMapTool(self.placeDistancePoint)
-        QObject.connect(canvas, SIGNAL("mapToolSet(QgsMapTool *)"), self.distanceToolChanged)
+        canvas.mapToolSet.connect(self.distanceToolChanged)
 
     def distanceToolChanged(self, tool):
-        QObject.disconnect(self.iface.mapCanvas(), SIGNAL("mapToolSet(QgsMapTool *)"), self.distanceToolChanged)
+        self.canvas.mapToolSet.disconnect(self.distanceToolChanged)
         self.distanceAction.setChecked(False)
-        self.iface.mapCanvas().unsetMapTool(self.placeDistancePoint)
+        self.canvas.unsetMapTool(self.placeDistancePoint)
 
     def intersectionInitTool(self):
-        canvas = self.iface.mapCanvas()
+        canvas = self.canvas
         if self.intersectAction.isChecked() is False:
             canvas.unsetMapTool(self.placeInitialIntersectionPoint)
             return
         self.intersectAction.setChecked(True)
         self.placeInitialIntersectionPoint = placeIntersectionOnMap(self.iface, self.rubber)
         canvas.setMapTool(self.placeInitialIntersectionPoint)
-        QObject.connect(canvas, SIGNAL("mapToolSet(QgsMapTool *)"), self.intersectionToolChanged)
+        canvas.mapToolSet.connect(self.intersectionToolChanged)
 
     def intersectionToolChanged(self, tool):
         self.rubber.reset()
-        QObject.disconnect(self.iface.mapCanvas(), SIGNAL("mapToolSet(QgsMapTool *)"), self.intersectionToolChanged)
+        self.canvas.mapToolSet.disconnect(self.intersectionToolChanged)
         self.intersectAction.setChecked(False)
-        self.iface.mapCanvas().unsetMapTool(self.placeInitialIntersectionPoint)
+        self.canvas.unsetMapTool(self.placeInitialIntersectionPoint)
+
+    def showSettings(self):
+        MySettingsDialog().exec_()

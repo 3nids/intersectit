@@ -26,7 +26,6 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.rubber = rubber
-        memoryLayers = MemoryLayers(iface)
         self.lineLayer = MemoryLayers(iface).lineLayer
         self.pointLayer = MemoryLayers(iface).pointLayer
         QgsMapToolEmitPoint.__init__(self, self.canvas)
@@ -99,7 +98,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                 break  # if we do not place any point, skip
             intLayer = next((layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("intersectionLayer")), None)
             if intLayer is None:
-                reply = QMessageBox.question(self.iface.mainWindow() , "IntersectIt",
+                reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                              "To place the intersection solution, "
                                              "you must select a layer in the settings. "
                                              "Would you like to open settings?",
