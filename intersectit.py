@@ -61,8 +61,6 @@ class IntersectIt ():
         self.iface.removeToolBarIcon(self.distanceAction)
         self.iface.removeToolBarIcon(self.intersectAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
-        self.canvas.mapToolSet.disconnect(self.distanceToolChanged)
-        self.canvas.mapToolSet.disconnect(self.intersectionToolChanged)
         try:
             print "IntersecIt :: Removing temporary layer"
             # todo
