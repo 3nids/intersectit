@@ -1,8 +1,7 @@
 
-from PyQt4.QtCore import SIGNAL, QObject, QUrl
+from PyQt4.QtCore import QUrl
 from PyQt4.QtGui import QAction, QIcon, QDesktopServices
 from qgis.core import QgsFeature, QgsMapLayerRegistry
-from qgis.gui import QgsRubberBand
 
 from core.memorylayers import MemoryLayers
 
@@ -17,7 +16,6 @@ class IntersectIt ():
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.rubber = QgsRubberBand(self.canvas)
         memLay = MemoryLayers(iface)
         self.lineLayer = memLay.lineLayer
         self.pointLayer = memLay.pointLayer
@@ -111,12 +109,11 @@ class IntersectIt ():
             canvas.unsetMapTool(self.placeInitialIntersectionPoint)
             return
         self.intersectAction.setChecked(True)
-        self.placeInitialIntersectionPoint = placeIntersectionOnMap(self.iface, self.rubber)
+        self.placeInitialIntersectionPoint = placeIntersectionOnMap(self.iface)
         canvas.setMapTool(self.placeInitialIntersectionPoint)
         canvas.mapToolSet.connect(self.intersectionToolChanged)
 
     def intersectionToolChanged(self, tool):
-        self.rubber.reset()
         self.canvas.mapToolSet.disconnect(self.intersectionToolChanged)
         self.intersectAction.setChecked(False)
         self.canvas.unsetMapTool(self.placeInitialIntersectionPoint)

@@ -10,7 +10,7 @@ mapTools
 from PyQt4.QtCore import QVariant
 from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry
-from qgis.gui import QgsMapToolEmitPoint
+from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 
 from ..core.mysettings import MySettings
 from ..core.memorylayers import MemoryLayers
@@ -22,18 +22,23 @@ from lsreport import LSreport
 
 
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
-    def __init__(self, iface, rubber):
+    def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.rubber = rubber
-        self.lineLayer = MemoryLayers(iface).lineLayer
-        self.pointLayer = MemoryLayers(iface).pointLayer
         QgsMapToolEmitPoint.__init__(self, self.canvas)
         self.settings = MySettings()
+        self.lineLayer = MemoryLayers(iface).lineLayer
+        self.pointLayer = MemoryLayers(iface).pointLayer
+        self.rubber = QgsRubberBand(self.canvas)
+        self.rubber.setWidth(self.settings.value("intersectRubberWidth"))
+        self.rubber.setColor(self.settings.value("intersectRubberColor"))
         self.tolerance = self.settings.value("intersecSelectTolerance")
         units = self.settings.value("intersecSelectUnits")
         if units == "pixels":
             self.tolerance *= self.canvas.mapUnitsPerPixel()
+
+    def deactivate(self):
+        self.rubber.reset()
 
     def canvasMoveEvent(self, mouseEvent):
         # put the observations within tolerance in the rubber band
