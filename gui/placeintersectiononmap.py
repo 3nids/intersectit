@@ -72,12 +72,11 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         observations = []
         point = self.toMapCoordinates(mouseEvent.pos())
         for f in self.getFeatures(point):
-            # todo: new API
-            observations.append({"type": f.attribute("type").toString(),
-                                 "x": f.attribute("x").toDouble()[0],
-                                 "y": f.attribute("y").toDouble()[0],
-                                 "measure": f.attribute("measure").toDouble()[0],
-                                 "precision": f.attribute("precision").toDouble()[0]})
+            observations.append({"type": f["type"].toString(),
+                                 "x": f["x"].toDouble()[0],
+                                 "y": f["y"].toDouble()[0],
+                                 "measure": f["measure"].toDouble()[0],
+                                 "precision": f["precision"].toDouble()[0]})
         self.doIntersection(point, observations)
 
     def getFeatures(self, point):
