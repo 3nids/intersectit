@@ -64,7 +64,7 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         # check dimension and precision fields
         if self.settings.value("dimenPlaceMeasure"):
             dimFieldName = self.settings.value("measureField")
-            idx = self.provider.fieldNameIndex(dimFieldName)
+            idx = self.layer.dataProvider().fieldNameIndex(dimFieldName)
             if idx == -1:
                 if QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                         "The field to save the measure could not be found."
@@ -74,7 +74,7 @@ class PlaceDimension(QDialog, Ui_placeDimension):
 
         if self.settings.value("dimenPlacePrecision"):
             preFieldName = self.settings.value("precisionField")
-            idx = self.provider.fieldNameIndex(preFieldName)
+            idx = self.layer.dataProvider().fieldNameIndex(preFieldName)
             if idx == -1:
                 if QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                         "The field to save the precision could not be found."
