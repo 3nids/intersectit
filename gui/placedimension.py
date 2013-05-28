@@ -105,48 +105,48 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         self.iface.legendInterface().setLayerVisible(self.distanceLayers[1], bool(i))
 
     def currentDimension(self):
-        return self.dimensionCombo.currentIndex()
+        return self.dimension[self.dimensionCombo.currentIndex()]
 
     def dimensionSelected(self, i):
-        dimension = self.dimension[self.currentDimension()]
+        dimension = self.currentDimension()
         self.radiusSlider.setValue(dimension.radius)
         self.createBox.setChecked(dimension.isActive)
         self.updateRubber()
 
     def radiusChanged(self, radius):
         self.updateRubber()
-        self.dimension[self.currentDimension()].setRadius(radius).draw()
+        self.currentDimension().setRadius(radius).draw()
 
     def cancel(self):
         self.rubber.reset()
-        for a in self.dimension:
-            a.delete()
+        for d in self.dimension:
+            d.delete()
 
     @pyqtSignature("on_prevButton_clicked()")
     def on_prevButton_clicked(self):
-        i = max(0, self.currentDimension()-1)
+        i = max(0, self.dimensionCombo.currentIndex()-1)
         self.dimensionCombo.setCurrentIndex(i)
 
     @pyqtSignature("on_nextButton_clicked()")
     def on_nextButton_clicked(self):
         self.updateRubber()
-        i = min(self.currentDimension()+1, len(self.dimension)-1)
+        i = min(self.dimensionCombo.currentIndex()+1, len(self.dimension)-1)
         self.dimensionCombo.setCurrentIndex(i)
 
     @pyqtSignature("on_reverseButton_clicked()")
     def on_reverseButton_clicked(self):
-        self.dimension[self.currentDimension()].reverse().draw()
+        self.currentDimension().reverse().draw()
         self.updateRubber()
 
     @pyqtSignature("on_createBox_stateChanged(int)")
     def on_createBox_stateChanged(self, i):
         if i == 0:
-            self.dimension[self.currentDimension()].delete()
+            self.currentDimension().delete()
         else:
-            self.dimension[self.currentDimension()].createFeature()
+            self.currentDimension().createFeature()
 
     def updateRubber(self):
         self.rubber.reset()
         if self.createBox.isChecked():
-            geom = self.dimension[self.dimensionCombo.currentIndex()].geometry()
+            geom = self.currentDimension().geometry()
             self.rubber.addGeometry(geom, self.layer)
