@@ -92,27 +92,16 @@ class IntersectIt ():
         self.iface.removeToolBarIcon(self.cleanerAction)
         try:
             print "IntersecIt :: Removing temporary layer"
-            # todo
             QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
-            QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer.id())
+            QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer().id())
         except AttributeError:
             return
 
     def cleanMemoryLayers(self):
-        self.rubber.reset()
-        lineProv = self.lineLayer().dataProvider()
-        pointProv = self.pointLayer().dataProvider()
-        lineProv.select([])
-        pointProv.select([])
-        f = QgsFeature()
-        f2del = []
-        while lineProv.nextFeature(f):
-            f2del.append(f.id())
-        lineProv.deleteFeatures(f2del)
-        f2del = []
-        while pointProv.nextFeature(f):
-            f2del.append(f.id())
-        pointProv.deleteFeatures(f2del)
+        for layer in (self.lineLayer(), self.pointLayer()):
+            layer.selectAll()
+            ids = layer.selectedFeaturesIds()
+            layer.dataProvider().deleteFeatures(ids)
         self.canvas.refresh()
 
     def distanceInitTool(self):
