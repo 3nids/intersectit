@@ -64,22 +64,14 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         # put the observations within tolerance in the rubber band
         self.rubber.reset()
         point = self.toMapCoordinates(mouseEvent.pos())
-        featReq = QgsFeatureRequest()
-        featReq.setFilterRect(self.getBox(point))
-        f = QgsFeature()
-        iter = self.lineLayer().getFeatures(featReq)
-        while iter.nextFeature(f):
+        for f in self.getFeatures(point):
             self.rubber.addGeometry(f.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
         self.rubber.reset()
         observations = []
         point = self.toMapCoordinates(mouseEvent.pos())
-        featReq = QgsFeatureRequest()
-        featReq.setFilterRect(self.getBox(point))
-        f = QgsFeature()
-        iter = self.lineLayer().getFeatures(featReq)
-        while iter.nextFeature(f):
+        for f in self.getFeatures(point):
             # todo: new API
             observations.append({"type": f.attribute("type").toString(),
                                  "x": f.attribute("x").toDouble()[0],
@@ -88,11 +80,19 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                                  "precision": f.attribute("precision").toDouble()[0]})
         self.doIntersection(point, observations)
 
-    def getBox(self, point):
-        return QgsRectangle(point.x()-self.tolerance,
-                            point.y()-self.tolerance,
-                            point.x()+self.tolerance,
-                            point.y()+self.tolerance)
+    def getFeatures(self, point):
+        features = []
+        featReq = QgsFeatureRequest()
+        box = QgsRectangle(point.x()-self.tolerance,
+                           point.y()-self.tolerance,
+                           point.x()+self.tolerance,
+                           point.y()+self.tolerance)
+        featReq.setFilterRect(box)
+        f = QgsFeature()
+        iter = self.lineLayer().getFeatures(featReq)
+        while iter.nextFeature(f):
+            features.append(QgsFeature(f))
+        return features
 
     def doIntersection(self, initPoint, observations):
         nObs = len(observations)

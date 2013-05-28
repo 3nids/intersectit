@@ -150,8 +150,3 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         if self.createBox.isChecked():
             geom = self.dimension[self.dimensionCombo.currentIndex()].geometry()
             self.rubber.addGeometry(geom, self.layer)
-
-
-
-
-
