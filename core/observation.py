@@ -65,7 +65,9 @@ class Observation():
         # draw observation
         if obsType == "distance":
             # trace circle at distance from point
-            geom = QgsGeometry.fromPolyline([QgsPoint(point.x()+observation*math.cos(math.pi/180*a),point.y()+observation*math.sin(math.pi/180*a)) for a in range(0,361,3)])
+            geom = QgsGeometry.fromPolyline([QgsPoint(point.x()+observation*math.cos(math.pi/180*a),
+                                                      point.y()+observation*math.sin(math.pi/180*a))
+                                             for a in range(0,361,3)])
         f.setGeometry(geom)
         lineLayer.dataProvider().addFeatures([f])
         lineLayer.updateExtents()
