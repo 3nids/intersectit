@@ -74,6 +74,7 @@ class PlaceObservationOnMap(QgsMapToolEmitPoint):
             else:
                 return
         Observation(self.iface, self.obsType, mapPoint, radius, precision)
+        self.iface.mapCanvas().refresh()
 
     def snapToLayers(self, pixPoint, dfltPoint=None):
         if not self.snapping:

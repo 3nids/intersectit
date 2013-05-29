@@ -69,6 +69,7 @@ class Observation():
         f.setGeometry(geom)
         lineLayer.dataProvider().addFeatures([f])
         lineLayer.updateExtents()
+        lineLayer.setCacheImage(None)
 
         # draw center
         f = QgsFeature()
@@ -76,12 +77,9 @@ class Observation():
         f.setGeometry(QgsGeometry.fromPoint(point))
         pointLayer.dataProvider().addFeatures([f])
         pointLayer.updateExtents()
+        pointLayer.setCacheImage(None)
 
-        # refresh canvas
-        iface.mapCanvas().refresh()
-        iface.mapCanvas().zoomOut()
 
-          
 #     def delete(self):
 #          self.pointLayer().dataProvider().deleteFeatures([self.point_id])
 #          self.lineLayer().dataProvider().deleteFeatures([self.line_id])
