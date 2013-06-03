@@ -36,8 +36,7 @@ from mysettings import MySettings
 
 
 class Dimension():
-    def __init__(self, iface, layer, intersectedPoint, distancePoint, distance, precision, radius):
-        self.iface = iface
+    def __init__(self, layer, intersectedPoint, distancePoint, distance, precision, radius):
         self.layer = layer
         self.provider = layer.dataProvider()
         self.radius = radius
@@ -55,7 +54,6 @@ class Dimension():
 
     def setRadius(self, radius):
         self.radius = radius
-        return self
 
     def reverse(self):
         self.way *= -1
@@ -65,35 +63,42 @@ class Dimension():
         self.isActive = True
         # create feature and geometry
         f = QgsFeature()
-        f.setFields(self.provider.fields())
+        fields = self.provider.fields()
+        f.setFields(fields)
         f.setGeometry(self.geometry())
         # dimension and precision fields
         if self.settings.value("dimenPlaceMeasure"):
             dimFieldName = self.settings.value("measureField")
             idx = self.provider.fieldNameIndex(dimFieldName)
             if idx != -1:
-                f[idx] = QVariant("%.4f" % self.distance)
+                f[dimFieldName] = QVariant("%.4f" % self.distance)
         if self.settings.value("dimenPlacePrecision"):
             preFieldName = self.settings.value("precisionField")
             idx = self.provider.fieldNameIndex(preFieldName)
             if idx != -1:
-                f[idx] = QVariant("%.4f" % self.precision)
-        ans, f = self.provider.addFeatures([f])
-        self.f_id = f[0].id()
+                f[preFieldName] = QVariant("%.4f" % self.precision)
+        ans, fz = self.provider.addFeatures([f])
+        self.f_id = fz[0].id()
+        print "llkk" , self.f_id, len(fz)
+        print fz[0].fields()
         self.layer.updateExtents()
-        self.iface.mapCanvas().refresh()
+        self.layer.setCacheImage(None)
+        self.layer.triggerRepaint()
 
     def delete(self):
         self.isActive = False
         self.provider.deleteFeatures([self.f_id])
         self.layer.updateExtents()
-        self.iface.mapCanvas().refresh()
+        self.layer.setCacheImage(None)
+        self.layer.triggerRepaint()
 
     def draw(self):
         if self.isActive:
             # can also do on layer: startEditing, changeGeometry, rollBack, updateExtents
+            print self.f_id
             self.provider.changeGeometryValues({self.f_id: self.geometry()})
-            self.iface.mapCanvas().refresh()
+            self.layer.setCacheImage(None)
+            self.layer.triggerRepaint()
 
     def geometry(self):
         # http://www.vb-helper.com/howto_find_quadratic_curve.html

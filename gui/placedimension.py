@@ -27,7 +27,7 @@
 #
 #---------------------------------------------------------------------
 
-from PyQt4.QtCore import QObject, SIGNAL, SLOT, pyqtSignature
+from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QDialog, QMessageBox
 from qgis.core import QgsPoint
 from qgis.gui import QgsRubberBand
@@ -44,7 +44,6 @@ class PlaceDimension(QDialog, Ui_placeDimension):
     def __init__(self, iface, intersectedPoint, observations, distanceLayers):
         QDialog.__init__(self)
         self.setupUi(self)
-        self.iface = iface
         self.distanceLayers = distanceLayers
         # load settings
         self.settings = MySettings()
@@ -52,14 +51,14 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         self.rubber = QgsRubberBand(iface.mapCanvas())
         self.rubber.setWidth(2)
         defaultRadius = self.radiusSlider.value()
-        QObject.connect(self, SIGNAL("accepted()"), self.rubber.reset)
-        QObject.connect(self, SIGNAL("rejected()"), self.cancel)
-        QObject.connect(self.radiusSpin,   SIGNAL("valueChanged(int)"), self.radiusSlider, SLOT("setValue(int)"))
-        QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusSpin,   SLOT("setValue(int)"))
-        QObject.connect(self.radiusSlider, SIGNAL("valueChanged(int)"), self.radiusChanged)
+        self.accepted.connect(self.rubber.reset)
+        self.rejected.connect(self.cancel)
+        self.radiusSpin.valueChanged.connect(self.radiusSlider.setValue)
+        self.radiusSlider.valueChanged.connect(self.radiusSpin.setValue)
+        self.radiusSlider.valueChanged.connect(self.radiusChanged)
 
         # init state for distance layer visibility
-        QObject.connect(self.displayLayersBox, SIGNAL("stateChanged(int)"), self.toggleDistanceLayers)
+        self.displayLayersBox.stateChanged.connect(self.toggleDistanceLayers)
 
         # check dimension and precision fields
         if self.settings.value("dimenPlaceMeasure"):
@@ -89,14 +88,14 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         nn = len(observations)
         for i, obs in enumerate(observations):
             self.dimensionCombo.addItem("%u/%u" % (i+1, nn))
-            self.dimension.append(Dimension(iface, self.layer,
+            self.dimension.append(Dimension(self.layer,
                                             intersectedPoint,
                                             QgsPoint(obs["x"], obs["y"]),
                                             obs["measure"],
                                             obs["precision"],
                                             defaultRadius))
         # above line must be placed after the combobox population
-        QObject.connect(self.dimensionCombo, SIGNAL("currentIndexChanged(int)"), self.dimensionSelected)
+        self.dimensionCombo.currentIndexChanged.connect(self.dimensionSelected)
         self.dimensionSelected(0)
 
     def toggleDistanceLayers(self, i):
@@ -114,8 +113,9 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         self.updateRubber()
 
     def radiusChanged(self, radius):
+        self.currentDimension().setRadius(radius)
+        self.currentDimension().draw()
         self.updateRubber()
-        self.currentDimension().setRadius(radius).draw()
 
     def cancel(self):
         self.rubber.reset()
