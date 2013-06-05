@@ -79,8 +79,8 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
     def snapToLayers(self, pixPoint, dfltPoint=None):
         if not self.snapping:
             return None
-        result, snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint, [])
-        if result == 0 and len(snappingResults) > 0:
+        ok, snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint, [])
+        if ok == 0 and len(snappingResults) > 0:
             return QgsPoint(snappingResults[0].snappedVertex)
         else:
             return dfltPoint

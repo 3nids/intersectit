@@ -30,12 +30,13 @@
 
 from PyQt4.QtCore import QUrl
 from PyQt4.QtGui import QAction, QIcon, QDesktopServices
-from qgis.core import QgsFeature, QgsMapLayerRegistry
+from qgis.core import QgsMapLayerRegistry
 
 from core.memorylayers import MemoryLayers
 
 from gui.mysettingsdialog import MySettingsDialog
 from gui.placedistanceonmap import PlaceDistanceOnMap
+from gui.placeprolongationonmap import PlaceProlongationOnMap
 from gui.placeintersectiononmap import placeIntersectionOnMap
 
 import resources
@@ -58,6 +59,12 @@ class IntersectIt ():
         self.distanceAction.triggered.connect(self.distanceInitTool)
         self.toolBar.addAction(self.distanceAction)
         self.iface.addPluginToMenu("&Intersect It", self.distanceAction)
+        # prlongation
+        self.prolongationAction = QAction(QIcon(":/plugins/intersectit/icons/prolongation.png"), "place prolongation", self.iface.mainWindow())
+        self.prolongationAction.setCheckable(True)
+        self.prolongationAction.triggered.connect(self.prolongationInitTool)
+        self.toolBar.addAction(self.prolongationAction)
+        self.iface.addPluginToMenu("&Intersect It", self.prolongationAction)
         # intersection
         self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersection.png"), "intersection", self.iface.mainWindow())
         self.intersectAction.setCheckable(True)
@@ -107,17 +114,32 @@ class IntersectIt ():
     def distanceInitTool(self):
         canvas = self.canvas
         if self.distanceAction.isChecked() is False:
-            canvas.unsetMapTool(self.placeDistancePoint)
+            canvas.unsetMapTool(self.placeDistanceTool)
             return
         self.distanceAction.setChecked(True)
-        self.placeDistancePoint = PlaceDistanceOnMap(self.iface, "distance")
-        canvas.setMapTool(self.placeDistancePoint)
+        self.placeDistanceTool = PlaceDistanceOnMap(self.iface, "distance")
+        canvas.setMapTool(self.placeDistanceTool)
         canvas.mapToolSet.connect(self.distanceToolChanged)
 
     def distanceToolChanged(self, tool):
         self.canvas.mapToolSet.disconnect(self.distanceToolChanged)
         self.distanceAction.setChecked(False)
-        self.canvas.unsetMapTool(self.placeDistancePoint)
+        self.canvas.unsetMapTool(self.placeDistanceTool)
+
+    def prolongationInitTool(self):
+        canvas = self.canvas
+        if self.prolongationAction.isChecked() is False:
+            canvas.unsetMapTool(self.placeProlongationTool)
+            return
+        self.prolongationAction.setChecked(True)
+        self.placeProlongationTool = PlaceProlongationOnMap(self.iface, "prolongation")
+        canvas.setMapTool(self.placeProlongationTool)
+        canvas.mapToolSet.connect(self.prolongationToolChanged)
+
+    def prolongationToolChanged(self, tool):
+        self.canvas.mapToolSet.disconnect(self.prolongationToolChanged)
+        self.prolongationAction.setChecked(False)
+        self.canvas.unsetMapTool(self.placeProlongationTool)
 
     def intersectionInitTool(self):
         canvas = self.canvas

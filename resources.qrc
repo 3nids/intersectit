@@ -3,6 +3,9 @@
         <file>icons/distance.png</file>
     </qresource>    
     <qresource prefix="/plugins/intersectit" >
+        <file>icons/prolongation.png</file>
+    </qresource>
+    <qresource prefix="/plugins/intersectit" >
         <file>icons/intersection.png</file>
     </qresource>
     <qresource prefix="/plugins/intersectit" >
