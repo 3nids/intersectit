@@ -65,6 +65,7 @@ class Dimension():
         f = QgsFeature()
         fields = self.provider.fields()
         f.setFields(fields)
+        f.initAttributes(fields.count())
         f.setGeometry(self.geometry())
         # dimension and precision fields
         if self.settings.value("dimenPlaceMeasure"):
@@ -79,8 +80,6 @@ class Dimension():
                 f[preFieldName] = QVariant("%.4f" % self.precision)
         ans, fz = self.provider.addFeatures([f])
         self.f_id = fz[0].id()
-        print "llkk" , self.f_id, len(fz)
-        print fz[0].fields()
         self.layer.updateExtents()
         self.layer.setCacheImage(None)
         self.layer.triggerRepaint()
