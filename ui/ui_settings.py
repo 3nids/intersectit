@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Wed Jun  5 08:20:48 2013
+# Created: Wed Jun  5 15:48:57 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
-        Settings.resize(453, 472)
+        Settings.resize(459, 472)
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.buttonBox = QtGui.QDialogButtonBox(Settings)
@@ -64,6 +64,14 @@ class Ui_Settings(object):
         self.obsDefaultPrecisionOrientation.setProperty("value", 0.5)
         self.obsDefaultPrecisionOrientation.setObjectName(_fromUtf8("obsDefaultPrecisionOrientation"))
         self.gridLayout_8.addWidget(self.obsDefaultPrecisionOrientation, 0, 1, 1, 1)
+        self.label_8 = QtGui.QLabel(self.groupBox_3)
+        self.label_8.setObjectName(_fromUtf8("label_8"))
+        self.gridLayout_8.addWidget(self.label_8, 1, 0, 1, 1)
+        self.obsProlongationLength = QtGui.QDoubleSpinBox(self.groupBox_3)
+        self.obsProlongationLength.setDecimals(1)
+        self.obsProlongationLength.setProperty("value", 8.0)
+        self.obsProlongationLength.setObjectName(_fromUtf8("obsProlongationLength"))
+        self.gridLayout_8.addWidget(self.obsProlongationLength, 1, 1, 1, 1)
         self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.groupBox_3)
         self.line_2 = QtGui.QFrame(self.observationTab)
         self.line_2.setMinimumSize(QtCore.QSize(30, 0))
@@ -224,6 +232,7 @@ class Ui_Settings(object):
         self.label_3.setText(QtGui.QApplication.translate("Settings", "Default precision for distances [1/1000 units]", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Settings", "Prolongations", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Settings", "Default precision for prolongations [°]", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_8.setText(QtGui.QApplication.translate("Settings", "Length of drawn line", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.observationTab), QtGui.QApplication.translate("Settings", "Observations", None, QtGui.QApplication.UnicodeUTF8))
         self.selectGroup.setTitle(QtGui.QApplication.translate("Settings", "Selection of observations", None, QtGui.QApplication.UnicodeUTF8))
         self.pixels.setText(QtGui.QApplication.translate("Settings", "pixels", None, QtGui.QApplication.UnicodeUTF8))

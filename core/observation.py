@@ -27,22 +27,24 @@
 #
 #---------------------------------------------------------------------
 
-from PyQt4.QtCore import QVariant
 from qgis.core import QgsPoint, QgsGeometry, QgsFeature
 
-import math
+from math import cos, sin, pi
 from datetime import datetime
+
 from memorylayers import MemoryLayers
+from mysettings import MySettings
 
 
 class Observation():
     def __init__(self, iface, obsType, point, observation, precision):
         memoryLayers = MemoryLayers(iface)
-        lineLayer = memoryLayers.lineLayer()
-        pointLayer = memoryLayers.pointLayer()
+        self.lineLayer = memoryLayers.lineLayer()
+        self.pointLayer = memoryLayers.pointLayer()
+        self.settings = MySettings()
 
-        # generate ID
-        id = datetime.now().strftime("%Y%m%d%H%M%S%f")
+        # generate ID;
+        self.id = datetime.now().strftime("%Y%m%d%H%M%S%f")
 
         # obsservations are stored in the lineLayer layer attributes:
         #   0: id
@@ -52,39 +54,49 @@ class Observation():
         #   4: observation
         #   5: precision
 
+        self.obsType = obsType
+        self.point = point
+        self.observation = observation
+        self.precision = precision
+
+    def geometry(self):
+        if self.obsType == "distance":
+            # trace circle at distance from point
+            geom = QgsGeometry().fromPolyline([QgsPoint(self.point.x()+self.observation*cos(pi/180*a),
+                                                        self.point.y()+self.observation*sin(pi/180*a))
+                                               for a in range(0, 361, 3)])
+        elif self.obsType == "prolongation":
+            length = self.settings.value("obsProlongationLength")
+
+            geom = 1
+        return geom
+
+    def save(self):
         # save info in feature
         f = QgsFeature()
-        # todo: check this
-        f.setAttributes([QVariant(id),
-                         QVariant(obsType),
-                         QVariant(point.x()),
-                         QVariant(point.y()),
-                         QVariant(observation),
-                         QVariant(precision)])
-
-        # draw observation
-        if obsType == "distance":
-            # trace circle at distance from point
-            geom = QgsGeometry.fromPolyline([QgsPoint(point.x()+observation*math.cos(math.pi/180*a),
-                                                      point.y()+observation*math.sin(math.pi/180*a))
-                                             for a in range(0,361,3)])
-        f.setGeometry(geom)
-        lineLayer.dataProvider().addFeatures([f])
-        lineLayer.updateExtents()
-        lineLayer.setCacheImage(None)
+        fields = self.lineLayer.dataProvider().fields()
+        f.setFields(fields)
+        f["id"] = self.id
+        f["type"] = self.obsType
+        f["x"] = self.x
+        f["y"] = self.y
+        f["observation"] = self.observation
+        f["precision"] = self.precision
+        f.setGeometry(self.geometry())
+        self.lineLayer.dataProvider().addFeatures([f])
+        self.lineLayer.updateExtents()
+        self.lineLayer.setCacheImage(None)
 
         # draw center
         f = QgsFeature()
-        f.setAttributes([QVariant(id)])
-        f.setGeometry(QgsGeometry.fromPoint(point))
-        pointLayer.dataProvider().addFeatures([f])
-        pointLayer.updateExtents()
-        pointLayer.setCacheImage(None)
+        f["id"] = self.id
+        f.setGeometry(QgsGeometry().fromPoint(self.point))
+        self.pointLayer.dataProvider().addFeatures([f])
+        self.pointLayer.updateExtents()
+        self.pointLayer.setCacheImage(None)
 
 
 #     def delete(self):
 #          self.pointLayer().dataProvider().deleteFeatures([self.point_id])
 #          self.lineLayer().dataProvider().deleteFeatures([self.line_id])
 #          self.canvas.refresh()
-          
-          

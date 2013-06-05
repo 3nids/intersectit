@@ -31,17 +31,21 @@ from PyQt4.QtCore import Qt
 from qgis.core import  QGis, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint
 
+from ..core.observation import Observation
+from ..core.mysettings import MySettings
+
 
 class PlaceProlongationOnMap(QgsMapToolEmitPoint):
     def __init__(self, iface, obsType):
         self.iface = iface
+        self.settings = MySettings()
         self.obsType = obsType
         self.canvas = iface.mapCanvas()
         self.rubber = QgsRubberBand(self.canvas)
         QgsMapToolEmitPoint.__init__(self, self.canvas)
 
     def canvasMoveEvent(self, mouseEvent):
-        prolong = self.snapToVerte(mouseEvent.pos())
+        prolong = self.getProlongation(mouseEvent.pos())
         #if snappedPoint is None:
         #    self.rubber.reset()
         #else:
@@ -51,10 +55,10 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
         if mouseEvent.button() != Qt.LeftButton:
             return
         self.rubber.reset()
-        prolong = self.snapToVerte(mouseEvent.pos())
+        prolong = self.getProlongation(mouseEvent.pos())
         self.iface.mapCanvas().refresh()
 
-    def snapToVerte(self, pixPoint):
+    def getProlongation(self, pixPoint):
         snapperList = []
         for layer in self.iface.mapCanvas().layers():
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
@@ -78,12 +82,13 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
             for result in snappingResults:
                 if result.layer.geometryType() in (QGis.Line, QGis.Polygon):
                     vertices = (result.afterVertex, result.beforeVertex)
-                    point = result.snappedVertex
-                    dist = (point.sqrDist(vertices[0]), point.sqrDist(vertices[1]))
+                    po = result.snappedVertex
+                    dist = (po.sqrDist(vertices[0]), po.sqrDist(vertices[1]))
                     i = dist.index(min(dist))
-                    az = point.azimuth(vertices[i])
-                    print az
-            return None
+                    ve = vertices[i]
+                    az = po.azimuth(ve)
+                    precision = self.settings.value("obsDefaultPrecisionProlongation")
+                    return Observation(self.iface, "prolongation", ve, az, precision)
         else:
             return None
 
