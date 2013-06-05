@@ -45,8 +45,8 @@ class MemoryLayers():
             epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
             layer = QgsVectorLayer("LineString?crs=%s&field=id:string&field=type:string&field=x:double&field=y:double&field=measure:double&field=precision:double&index=yes" % epsg, "IntersectIt Lines", "memory")
             QgsMapLayerRegistry.instance().addMapLayer(layer)
-            QObject.connect(layer, SIGNAL("layerDeleted()"), self.__lineLayerDeleted)
-            QObject.connect(layer, SIGNAL("featureDeleted(int)"), self.__lineLayerFeatureDeleted)
+            layer.layerDeleted.connect(self.__lineLayerDeleted)
+            layer.featureDeleted.connect(self.__lineLayerFeatureDeleted)
             self.settings.setValue("memoryLineLayer", layer.id())
         else:
             self.iface.legendInterface().setLayerVisible(layer, True)
@@ -65,7 +65,7 @@ class MemoryLayers():
             epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
             layer = QgsVectorLayer("Point?crs=%s&field=id:string&index=yes" % epsg, "IntersectIt Points", "memory")
             QgsMapLayerRegistry.instance().addMapLayer(layer)
-            QObject.connect(layer, SIGNAL("layerDeleted()"), self.__pointLayerDeleted)
+            layer.layerDeleted.connect(self.__pointLayerDeleted)
             self.settings.setValue("memoryPointLayer", layer.id())
         else:
             self.iface.legendInterface().setLayerVisible(layer, True)
