@@ -41,7 +41,7 @@ class MySettings(SettingManager):
         # global settings
         self.addSetting("obsSnapping", "bool", "global", True)
         self.addSetting("obsDefaultPrecisionDistance", "double", "global", 25)
-        self.addSetting("obsDefaultPrecisionOrientation", "double", "global", .01)
+        self.addSetting("obsDefaultPrecisionProlongation", "double", "global", .5)
         self.addSetting("intersecResultConfirm", "bool", "global", True)
         self.addSetting("intersecSelectTolerance", "double", "global", 0.3)
         self.addSetting("intersecSelectUnits", "string", "global", "map")
