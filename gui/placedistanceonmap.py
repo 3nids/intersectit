@@ -37,7 +37,7 @@ from ..core.observation import Observation
 from placedistancedialog import PlaceDistanceDialog
 
 
-class PlaceObservationOnMap(QgsMapToolEmitPoint):
+class PlaceDistanceOnMap(QgsMapToolEmitPoint):
     def __init__(self, iface, obsType):
         self.iface = iface
         self.obsType = obsType

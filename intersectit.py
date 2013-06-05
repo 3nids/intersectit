@@ -35,7 +35,7 @@ from qgis.core import QgsFeature, QgsMapLayerRegistry
 from core.memorylayers import MemoryLayers
 
 from gui.mysettingsdialog import MySettingsDialog
-from gui.placeobservationonmap import PlaceObservationOnMap
+from gui.placedistanceonmap import PlaceDistanceOnMap
 from gui.placeintersectiononmap import placeIntersectionOnMap
 
 import resources
@@ -110,7 +110,7 @@ class IntersectIt ():
             canvas.unsetMapTool(self.placeDistancePoint)
             return
         self.distanceAction.setChecked(True)
-        self.placeDistancePoint = PlaceObservationOnMap(self.iface, "distance")
+        self.placeDistancePoint = PlaceDistanceOnMap(self.iface, "distance")
         canvas.setMapTool(self.placeDistancePoint)
         canvas.mapToolSet.connect(self.distanceToolChanged)
 
