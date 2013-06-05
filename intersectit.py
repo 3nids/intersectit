@@ -144,17 +144,17 @@ class IntersectIt ():
     def intersectionInitTool(self):
         canvas = self.canvas
         if self.intersectAction.isChecked() is False:
-            canvas.unsetMapTool(self.placeInitialIntersectionPoint)
+            canvas.unsetMapTool(self.placeInitialIntersectionTool)
             return
         self.intersectAction.setChecked(True)
-        self.placeInitialIntersectionPoint = placeIntersectionOnMap(self.iface)
-        canvas.setMapTool(self.placeInitialIntersectionPoint)
+        self.placeInitialIntersectionTool = placeIntersectionOnMap(self.iface)
+        canvas.setMapTool(self.placeInitialIntersectionTool)
         canvas.mapToolSet.connect(self.intersectionToolChanged)
 
     def intersectionToolChanged(self, tool):
         self.canvas.mapToolSet.disconnect(self.intersectionToolChanged)
         self.intersectAction.setChecked(False)
-        self.canvas.unsetMapTool(self.placeInitialIntersectionPoint)
+        self.canvas.unsetMapTool(self.placeInitialIntersectionTool)
 
     def showSettings(self):
         MySettingsDialog().exec_()
