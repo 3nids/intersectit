@@ -28,7 +28,7 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import  QGis, QgsMapLayer, QgsTolerance, QgsSnapper
+from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint
 
 from ..core.observation import Observation
@@ -56,6 +56,9 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
             return
         self.rubber.reset()
         prolong = self.getProlongation(mouseEvent.pos())
+        if prolong is None:
+            return
+
         self.iface.mapCanvas().refresh()
 
     def getProlongation(self, pixPoint):
@@ -65,10 +68,9 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
                 if layer.geometryType() in (QGis.Line, QGis.Polygon):
                     snapLayer = QgsSnapper.SnapLayer()
                     snapLayer.mLayer = layer
-                    snapLayer.mSnapto = QgsSnapper.SnapToSegment
+                    snapLayer.mSnapTo = QgsSnapper.SnapToSegment
                     snapLayer.mTolerance = 7
                     snapLayer.mUnitType = QgsTolerance.Pixels
-                    print layer.id()
                     snapperList.append(snapLayer)
         if len(snapperList) == 0:
             return None
@@ -79,15 +81,17 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
         ok, snappingResults = snapper.snapPoint(pixPoint, [])
         if ok == 0:
             for result in snappingResults:
-                if result.layer.geometryType() in (QGis.Line, QGis.Polygon):
-                    vertices = (result.afterVertex, result.beforeVertex)
-                    po = result.snappedVertex
-                    dist = (po.sqrDist(vertices[0]), po.sqrDist(vertices[1]))
-                    i = dist.index(min(dist))
-                    ve = vertices[i]
-                    az = po.azimuth(ve)
-                    precision = self.settings.value("obsDefaultPrecisionProlongation")
-                    return Observation(self.iface, "prolongation", ve, az, precision)
+                vertices = (result.afterVertex, result.beforeVertex)
+                po = result.snappedVertex
+                dist = (po.sqrDist(vertices[0]), po.sqrDist(vertices[1]))
+                mindist = min(dist)
+                if mindist == 0:
+                    return None
+                i = dist.index(mindist)
+                ve = vertices[i]
+                az = po.azimuth(ve)
+                precision = self.settings.value("obsDefaultPrecisionProlongation")
+                return Observation(self.iface, "prolongation", ve, az, precision)
         else:
             return None
 

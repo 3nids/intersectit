@@ -55,11 +55,9 @@ class Observation():
         #   5: precision
 
         self.obsType = obsType
-        self.point = point
+        self.point = QgsPoint(point)
         self.observation = observation
         self.precision = precision
-
-        print "kkkk", self.point.x()
 
     def geometry(self):
         if self.obsType == "distance":
@@ -71,7 +69,7 @@ class Observation():
             length = self.settings.value("obsProlongationLength")
             x = self.point.x() + length * cos((90-self.observation)*pi/180)
             y = self.point.y() + length * sin((90-self.observation)*pi/180)
-            print "lol", x, y, self.point.x(), self.point.y()
+            print x,y
             return QgsGeometry().fromPolyline([self.point, QgsPoint(x, y)])
         raise NameError("Unknown observation type")
 
