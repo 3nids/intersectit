@@ -69,12 +69,11 @@ class Observation():
             length = self.settings.value("obsProlongationLength")
             x = self.point.x() + length * cos((90-self.observation)*pi/180)
             y = self.point.y() + length * sin((90-self.observation)*pi/180)
-            print x,y
             return QgsGeometry().fromPolyline([self.point, QgsPoint(x, y)])
         raise NameError("Unknown observation type")
 
     def save(self):
-        # save info in feature
+        # observation
         f = QgsFeature()
         fields = self.lineLayer.dataProvider().fields()
         f.setFields(fields)
@@ -89,7 +88,7 @@ class Observation():
         self.lineLayer.updateExtents()
         self.lineLayer.setCacheImage(None)
 
-        # draw center
+        # center
         f = QgsFeature()
         f["id"] = self.id
         f.setGeometry(QgsGeometry().fromPoint(self.point))

@@ -36,10 +36,9 @@ from ..core.mysettings import MySettings
 
 
 class PlaceProlongationOnMap(QgsMapToolEmitPoint):
-    def __init__(self, iface, obsType):
+    def __init__(self, iface):
         self.iface = iface
         self.settings = MySettings()
-        self.obsType = obsType
         self.canvas = iface.mapCanvas()
         self.rubber = QgsRubberBand(self.canvas)
         QgsMapToolEmitPoint.__init__(self, self.canvas)
@@ -58,6 +57,7 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
         prolong = self.getProlongation(mouseEvent.pos())
         if prolong is None:
             return
+
 
         self.iface.mapCanvas().refresh()
 

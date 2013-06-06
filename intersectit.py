@@ -119,7 +119,7 @@ class IntersectIt ():
             canvas.unsetMapTool(self.placeDistanceTool)
             return
         self.distanceAction.setChecked(True)
-        self.placeDistanceTool = PlaceDistanceOnMap(self.iface, "distance")
+        self.placeDistanceTool = PlaceDistanceOnMap(self.iface)
         canvas.setMapTool(self.placeDistanceTool)
         canvas.mapToolSet.connect(self.distanceToolChanged)
 
@@ -134,7 +134,7 @@ class IntersectIt ():
             canvas.unsetMapTool(self.placeProlongationTool)
             return
         self.prolongationAction.setChecked(True)
-        self.placeProlongationTool = PlaceProlongationOnMap(self.iface, "prolongation")
+        self.placeProlongationTool = PlaceProlongationOnMap(self.iface)
         canvas.setMapTool(self.placeProlongationTool)
         canvas.mapToolSet.connect(self.prolongationToolChanged)
 
