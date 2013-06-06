@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -69,7 +69,7 @@ class Dimension():
         f.setGeometry(self.geometry())
         # dimension and precision fields
         if self.settings.value("dimenPlaceMeasure"):
-            dimFieldName = self.settings.value("measureField")
+            dimFieldName = self.settings.value("observationField")
             idx = self.provider.fieldNameIndex(dimFieldName)
             if idx != -1:
                 f[dimFieldName] = QVariant("%.4f" % self.distance)

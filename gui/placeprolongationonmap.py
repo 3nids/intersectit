@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -46,10 +46,10 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
 
     def canvasMoveEvent(self, mouseEvent):
         prolong = self.getProlongation(mouseEvent.pos())
-        #if snappedPoint is None:
-        #    self.rubber.reset()
-        #else:
-        #    self.rubber.setToGeometry(QgsGeometry.fromPoint(snappedPoint), None)
+        if prolong is None:
+            self.rubber.reset()
+        else:
+            self.rubber.setToGeometry(prolong.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
@@ -77,7 +77,6 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
         snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
 
         ok, snappingResults = snapper.snapPoint(pixPoint, [])
-        print "results", ok, len(snappingResults)
         if ok == 0:
             for result in snappingResults:
                 if result.layer.geometryType() in (QGis.Line, QGis.Polygon):

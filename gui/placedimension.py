@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -62,11 +62,11 @@ class PlaceDimension(QDialog, Ui_placeDimension):
 
         # check dimension and precision fields
         if self.settings.value("dimenPlaceMeasure"):
-            dimFieldName = self.settings.value("measureField")
+            dimFieldName = self.settings.value("observationField")
             idx = self.layer.dataProvider().fieldNameIndex(dimFieldName)
             if idx == -1:
                 if QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                        "The field to save the measure could not be found."
+                                        "The field to save the observation could not be found."
                                         " Would you like to open settings?" % QMessageBox.Yes, QMessageBox.No
                                         ) == QMessageBox.Yes:
                     MySettingsDialog().exec_()
@@ -91,7 +91,7 @@ class PlaceDimension(QDialog, Ui_placeDimension):
             self.dimension.append(Dimension(self.layer,
                                             intersectedPoint,
                                             QgsPoint(obs["x"], obs["y"]),
-                                            obs["measure"],
+                                            obs["observation"],
                                             obs["precision"],
                                             defaultRadius))
         # above line must be placed after the combobox population

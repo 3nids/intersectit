@@ -368,7 +368,7 @@
        <item row="1" column="0">
         <widget class="QCheckBox" name="dimenPlaceMeasure">
          <property name="text">
-          <string>place measure in field</string>
+          <string>place observation in field</string>
          </property>
          <property name="checked">
           <bool>true</bool>
@@ -376,7 +376,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="measureField"/>
+        <widget class="QComboBox" name="observationField"/>
        </item>
        <item row="2" column="0">
         <widget class="QCheckBox" name="dimenPlacePrecision">

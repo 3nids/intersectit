@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -59,17 +59,21 @@ class Observation():
         self.observation = observation
         self.precision = precision
 
+        print "kkkk", self.point.x()
+
     def geometry(self):
         if self.obsType == "distance":
             # trace circle at distance from point
-            geom = QgsGeometry().fromPolyline([QgsPoint(self.point.x()+self.observation*cos(pi/180*a),
-                                                        self.point.y()+self.observation*sin(pi/180*a))
+            return QgsGeometry().fromPolyline([QgsPoint(self.point.x() + self.observation * cos(pi/180*a),
+                                                        self.point.y() + self.observation * sin(pi/180*a))
                                                for a in range(0, 361, 3)])
         elif self.obsType == "prolongation":
             length = self.settings.value("obsProlongationLength")
-
-            geom = 1
-        return geom
+            x = self.point.x() + length * cos((90-self.observation)*pi/180)
+            y = self.point.y() + length * sin((90-self.observation)*pi/180)
+            print "lol", x, y, self.point.x(), self.point.y()
+            return QgsGeometry().fromPolyline([self.point, QgsPoint(x, y)])
+        raise NameError("Unknown observation type")
 
     def save(self):
         # save info in feature
@@ -78,8 +82,8 @@ class Observation():
         f.setFields(fields)
         f["id"] = self.id
         f["type"] = self.obsType
-        f["x"] = self.x
-        f["y"] = self.y
+        f["x"] = self.point.x()
+        f["y"] = self.point.y()
         f["observation"] = self.observation
         f["precision"] = self.precision
         f.setGeometry(self.geometry())

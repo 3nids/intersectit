@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -47,7 +47,7 @@ class LeastSquares():
         dx = np.array([[2*threshold], [2*threshold]])
         it = 0
         # global observations vector
-        l = np.array([[obs["measure"]] for obs in observations])  # brackets needed to create column and not row vector
+        l = np.array([[obs["observation"]] for obs in observations])  # brackets needed to create column and not row vector
         # adjustment main loop
         while max(np.abs(dx)) > threshold:
             it += 1
@@ -66,12 +66,12 @@ class LeastSquares():
                     # jacobian for parameters
                     A.append([2*x0[0][0]-2*obs["x"], 2*x0[1][0]-2*obs["y"]])
                     # jacobian for observations
-                    B.append(-2*obs["measure"])
+                    B.append(-2*obs["observation"])
                     # stochastic model
                     Qll.append(math.pow(obs["precision"]/1000, 2))
                     # misclosure
                     # brackets needed to create column and not row vector
-                    w.append([math.pow(x0[0]-obs["x"], 2) + math.pow(x0[1]-obs["y"], 2) - math.pow(obs["measure"], 2)])
+                    w.append([math.pow(x0[0]-obs["x"], 2) + math.pow(x0[1]-obs["y"], 2) - math.pow(obs["observation"], 2)])
             # generate matrices
             A = np.array(A)
             B = np.diag(B)
@@ -101,7 +101,7 @@ class LeastSquares():
         report += "  \n              |  [map units]  |  [map units]  | [map units] |  [1/1000] | [1/1000]"
         for i, obs in enumerate(observations):
             report += "\n%13s | %13.3f | %13.3f | %11.3f | %9.1f | %7.1f" % (obs["type"], obs["x"], obs["y"],
-                                                                             obs["measure"], obs["precision"],
+                                                                             obs["observation"], obs["precision"],
                                                                              1000*v[i][0])
         sigmapos = np.dot(v.T, np.dot(P, v)) / (nObs - 2)  # vTPv / r
         if sigmapos > 1.8:

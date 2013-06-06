@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -37,10 +37,10 @@ class TwoCirclesIntersection():
         # see http://www.mathpages.com/home/kmath396/kmath396.htm
         x1 = observations[0]["x"]
         y1 = observations[0]["y"]
-        r1 = observations[0]["measure"]
+        r1 = observations[0]["observation"]
         x2 = observations[1]["x"]
         y2 = observations[1]["y"]
-        r2 = observations[1]["measure"]
+        r2 = observations[1]["observation"]
         d = math.sqrt(math.pow(x1-x2, 2) + math.pow(y1-y2, 2))
         if d < math.fabs(r1-r2):
             # circle is within the other

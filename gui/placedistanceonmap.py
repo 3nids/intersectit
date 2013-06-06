@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -73,7 +73,8 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
                     return
             else:
                 return
-        Observation(self.iface, self.obsType, mapPoint, radius, precision)
+        # todo: create obs before, draw in rubber band with dialog, save when dialog accepted
+        Observation(self.iface, self.obsType, mapPoint, radius, precision).save()
         self.iface.mapCanvas().refresh()
 
     def snapToLayers(self, pixPoint, dfltPoint=None):

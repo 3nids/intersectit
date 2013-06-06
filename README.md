@@ -1,5 +1,5 @@
 ## What?
-Intersect It is a QGIS plugin to place measures (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer to produce maps.
+Intersect It is a QGIS plugin to place observations (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer to produce maps.
 
 A demo is available on [youtube](http://www.youtube.com/watch?v=IJQvIe1CLD0&hd=1).
 

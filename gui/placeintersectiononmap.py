@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -75,7 +75,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
             observations.append({"type": f["type"].toString(),
                                  "x": f["x"].toDouble()[0],
                                  "y": f["y"].toDouble()[0],
-                                 "measure": f["measure"].toDouble()[0],
+                                 "observation": f["observation"].toDouble()[0],
                                  "precision": f["precision"].toDouble()[0]})
         self.doIntersection(point, observations)
 
@@ -169,11 +169,11 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                     return
                 continue
             if self.settings.value("dimenPlaceMeasure"):
-                measureField = next((True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("measureField")), None)
-                if measureField is None:
+                observationField = next((True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("observationField")), None)
+                if observationField is None:
                     ok = False
                     reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                                 "To save the measured distance, please select a field for tit."
+                                                 "To save the observed distance, please select a field for tit."
                                                  " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
                     if reply == QMessageBox.No:
                         return
@@ -185,7 +185,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                 if precisionField is None:
                     ok = False
                     reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                                 "To save the measure precision, please select a field for it."
+                                                 "To save the observation precision, please select a field for it."
                                                  " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
                     if reply == QMessageBox.No:
                         return

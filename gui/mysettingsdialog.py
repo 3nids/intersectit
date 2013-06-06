@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -47,8 +47,8 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
         self.dimensionLayerCombo = VectorLayerCombo(self.dimensionLayer,
                                                     lambda: self.settings.value("dimensionLayer"),
                                                     {"groupLayers": False, "hasGeometry": True})
-        self.measureFieldCombo = FieldCombo(self.measureField, self.dimensionLayerCombo,
-                                            lambda: self.settings.value("measureField"))
+        self.observationFieldCombo = FieldCombo(self.observationField, self.dimensionLayerCombo,
+                                            lambda: self.settings.value("observationField"))
         self.precisionFieldCombo = FieldCombo(self.precisionField, self.dimensionLayerCombo,
                                               lambda: self.settings.value("precisionField"))
 

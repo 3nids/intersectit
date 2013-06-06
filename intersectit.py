@@ -1,6 +1,6 @@
 #-----------------------------------------------------------
 #
-# Intersect It is a QGIS plugin to place measures (distance or orientation)
+# Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
 # and save dimensions in a dedicated layer to produce maps.
 #
@@ -90,11 +90,13 @@ class IntersectIt ():
 
     def unload(self):
         self.iface.removePluginMenu("&Intersect It", self.distanceAction)
+        self.iface.removePluginMenu("&Intersect It", self.prolongationAction)
         self.iface.removePluginMenu("&Intersect It", self.intersectAction)
         self.iface.removePluginMenu("&Intersect It", self.uisettingsAction)
         self.iface.removePluginMenu("&Intersect It", self.cleanerAction)
         self.iface.removePluginMenu("&Intersect It", self.helpAction)
         self.iface.removeToolBarIcon(self.distanceAction)
+        self.iface.removeToolBarIcon(self.prolongationAction)
         self.iface.removeToolBarIcon(self.intersectAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
         try:
