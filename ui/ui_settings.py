@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Wed Jun  5 15:48:57 2013
+# Created: Thu Jun  6 07:59:43 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -213,6 +213,7 @@ class Ui_Settings(object):
         self.dimenPlacePrecision.setObjectName(_fromUtf8("dimenPlacePrecision"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.dimenPlacePrecision)
         self.precisionField = QtGui.QComboBox(self.dimensionTab)
+        self.precisionField.setEnabled(False)
         self.precisionField.setObjectName(_fromUtf8("precisionField"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.FieldRole, self.precisionField)
         self.tabWidget.addTab(self.dimensionTab, _fromUtf8(""))
@@ -222,6 +223,9 @@ class Ui_Settings(object):
         self.tabWidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Settings.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), Settings.reject)
+        QtCore.QObject.connect(self.dimenPlaceDimension, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.dimensionLayer.setEnabled)
+        QtCore.QObject.connect(self.dimenPlaceMeasure, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.observationField.setEnabled)
+        QtCore.QObject.connect(self.dimenPlacePrecision, QtCore.SIGNAL(_fromUtf8("toggled(bool)")), self.precisionField.setEnabled)
         QtCore.QMetaObject.connectSlotsByName(Settings)
         Settings.setTabOrder(self.pixels, self.buttonBox)
 

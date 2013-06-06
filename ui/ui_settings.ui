@@ -386,7 +386,11 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="precisionField"/>
+        <widget class="QComboBox" name="precisionField">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -407,8 +411,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>236</x>
-     <y>241</y>
+     <x>245</x>
+     <y>462</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -423,12 +427,60 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>257</x>
-     <y>241</y>
+     <x>266</x>
+     <y>462</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
      <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dimenPlaceDimension</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dimensionLayer</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>266</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dimenPlaceMeasure</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>observationField</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>133</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>292</x>
+     <y>98</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dimenPlacePrecision</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>precisionField</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>149</x>
+     <y>119</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>131</y>
     </hint>
    </hints>
   </connection>
