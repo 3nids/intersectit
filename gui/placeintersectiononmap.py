@@ -39,6 +39,7 @@ from ..core.twocirclesintersection import TwoCirclesIntersection
 
 from placedimension import PlaceDimension
 from lsreport import LSreport
+from mysettingsdialog import MySettingsDialog
 
 
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
@@ -88,8 +89,8 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                            point.y()+self.tolerance)
         featReq.setFilterRect(box)
         f = QgsFeature()
-        iter = self.lineLayer().getFeatures(featReq)
-        while iter.nextFeature(f):
+        vliter = self.lineLayer().getFeatures(featReq)
+        while vliter.nextFeature(f):
             features.append(QgsFeature(f))
         return features
 
@@ -129,7 +130,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                                              QMessageBox.Yes, QMessageBox.No)
                 if reply == QMessageBox.No:
                     return
-                if self.uisettings.exec_() == 0:
+                if MySettingsDialog().exec_() == 0:
                     return
                 continue
             if self.settings.value("intersecResultPlaceReport"):
@@ -140,7 +141,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                                                  " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
                     if reply == QMessageBox.No:
                         return
-                    if self.uisettings.exec_() == 0:
+                    if MySettingsDialog().exec_() == 0:
                         return
                     continue
             break
@@ -165,31 +166,29 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                                              " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
                 if reply == QMessageBox.No:
                     return
-                if self.uisettings.exec_() == 0:
+                if MySettingsDialog().exec_() == 0:
                     return
                 continue
             if self.settings.value("dimenPlaceMeasure"):
                 observationField = next((True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("observationField")), None)
                 if observationField is None:
-                    ok = False
                     reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                                  "To save the observed distance, please select a field for tit."
                                                  " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
                     if reply == QMessageBox.No:
                         return
-                    if self.uisettings.exec_() == 0:
+                    if MySettingsDialog().exec_() == 0:
                         return
                     continue
             if self.settings.value("dimenPlacePrecision"):
                 precisionField = next((True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("precisionField")), None)
                 if precisionField is None:
-                    ok = False
                     reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                                  "To save the observation precision, please select a field for it."
                                                  " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
                     if reply == QMessageBox.No:
                         return
-                    if self.uisettings.exec_() == 0:
+                    if MySettingsDialog().exec_() == 0:
                         return
                     continue
             break
