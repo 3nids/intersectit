@@ -59,7 +59,7 @@ class Observation():
         self.precision = precision
 
     def geometry(self):
-        pass
+        return QgsGeometry()
 
     def save(self):
         # observation
@@ -76,6 +76,7 @@ class Observation():
         self.lineLayer.dataProvider().addFeatures([f])
         self.lineLayer.updateExtents()
         self.lineLayer.setCacheImage(None)
+        self.lineLayer.triggerRepaint()
 
         # center
         f = QgsFeature()
@@ -84,12 +85,7 @@ class Observation():
         self.pointLayer.dataProvider().addFeatures([f])
         self.pointLayer.updateExtents()
         self.pointLayer.setCacheImage(None)
-
-
-#     def delete(self):
-#          self.pointLayer().dataProvider().deleteFeatures([self.point_id])
-#          self.lineLayer().dataProvider().deleteFeatures([self.line_id])
-#          self.canvas.refresh()
+        self.pointLayer.triggerRepaint()
 
 
 class Distance(Observation):
