@@ -62,10 +62,9 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
             return
         dlg = PlaceProlongationDialog(prolong, self.rubber)
         if dlg.exec_():
-            pass
-        else:
-            self.rubber.reset()
-            return
+            if prolong.length != 0:
+                prolong.save()
+        self.rubber.reset()
 
     def getProlongation(self, pixPoint):
         snapperList = []
@@ -96,8 +95,7 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
                 i = dist.index(mindist)
                 ve = vertices[i]
                 az = po.azimuth(ve)
-                precision = self.settings.value("obsDefaultPrecisionProlongation")
-                return Prolongation(self.iface, ve, az, precision)
+                return Prolongation(self.iface, ve, az)
         else:
             return None
 

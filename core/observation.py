@@ -41,7 +41,6 @@ class Observation():
         memoryLayers = MemoryLayers(iface)
         self.lineLayer = memoryLayers.lineLayer()
         self.pointLayer = memoryLayers.pointLayer()
-        self.settings = MySettings()
 
         # generate ID;
         self.id = datetime.now().strftime("%Y%m%d%H%M%S%f")
@@ -94,7 +93,8 @@ class Observation():
 
 
 class Distance(Observation):
-    def __init__(self, iface, point, observation, precision):
+    def __init__(self, iface, point, observation):
+        precision = MySettings().value("obsDefaultPrecisionDistance")
         Observation.__init__(self, iface, "distance", point, observation, precision)
 
     def geometry(self):
@@ -105,9 +105,11 @@ class Distance(Observation):
 
 
 class Prolongation(Observation):
-    def __init__(self, iface, point, observation, precision):
+    def __init__(self, iface, point, observation):
+        settings = MySettings()
+        self.length = settings.value("obsProlongationLength")
+        precision = settings.value("obsDefaultPrecisionProlongation")
         Observation.__init__(self, iface, "prolongation", point, observation, precision)
-        self.length = self.settings.value("obsProlongationLength")
 
     def geometry(self):
         x = self.point.x() + self.length * cos((90-self.observation)*pi/180)

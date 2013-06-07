@@ -51,29 +51,22 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
             if snappedPoint is None:
                 self.rubber.reset()
             else:
-                self.rubber.setToGeometry(QgsGeometry.fromPoint(snappedPoint), None)
+                self.rubber.setToGeometry(QgsGeometry().fromPoint(snappedPoint), None)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
             return
-        self.rubber.reset()
         pixPoint = mouseEvent.pos()
         mapPoint = self.toMapCoordinates(pixPoint)
         #snap to layers
         if self.snapping:
             mapPoint = self.snapToLayers(pixPoint, mapPoint)
-        # creates ditance with dialog
-        dlg = PlaceDistanceDialog(mapPoint)
+        self.rubber.setToGeometry(QgsGeometry().fromPoint(mapPoint), None)
+        distance = Distance(self.iface, mapPoint, 1)
+        dlg = PlaceDistanceDialog(distance, self.canvas)
         if dlg.exec_():
-            radius = dlg.distance.value()
-            precision = dlg.precision.value()
-            if radius == 0:
-                return
-        else:
-            return
-        # todo: create obs before, draw in rubber band with dialog, save when dialog accepted
-        Distance(self.iface, mapPoint, radius, precision).save()
-        self.iface.mapCanvas().refresh()
+            distance.save()
+        self.rubber.reset()
 
     def snapToLayers(self, pixPoint, dfltPoint=None):
         if not self.snapping:

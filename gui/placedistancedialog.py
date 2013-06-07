@@ -27,16 +27,34 @@
 #
 #---------------------------------------------------------------------
 
+from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QDialog
+from qgis.gui import QgsRubberBand
 
 from ..ui.ui_place_distance import Ui_place_distance
 
 
 class PlaceDistanceDialog(QDialog, Ui_place_distance):
-    def __init__(self, point):
+    def __init__(self, distance, canvas):
         QDialog.__init__(self)
         self.setupUi(self)
 
-        self.x.setText("%.3f" % point.x())
-        self.y.setText("%.3f" % point.y())
-        self.distance.selectAll()
+        self.distance = distance
+
+        self.rubber = QgsRubberBand(canvas)
+
+        self.x.setText("%.3f" % distance.point.x())
+        self.y.setText("%.3f" % distance.point.y())
+        self.observation.setValue(distance.observation)
+        self.observation.selectAll()
+
+
+    @pyqtSignature("on_observation_valueChanged(double)")
+    def on_observation_valueChanged(self, v):
+        self.distance.observation = v
+        self.rubber.setToGeometry(self.distance.geometry(), None)
+
+    def closeEvent(self, e):
+        self.rubber.reset()
+
+
