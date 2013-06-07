@@ -103,7 +103,52 @@ class TwoDirectionIntersection():
         self.intersection = QgsPoint(x, y)
 
 
-
 class CircleDirectionIntersection():
     def __init__(self, observations, initPoint):
-        pass
+        self.intersection = None
+        if observations[0]["type"] == "distance":
+            distance = observations[0]
+            direction = observations[1]
+        else:
+            direction = observations[0]
+            distance = observations[1]
+
+        # distance:: (x1-x)^2 + (y1-y)^2 + d^2 = 0
+        # direction:: y - x/tan(az) - y2 + x2/tan(az)
+        #
+        # => y = x/tan(az) + y2 - x2/tan(az)
+        #
+        # (1) becomes:
+        # 0 = x1^2 -2x1x + x^2 + y1^2 -2y1(x/tan(az)+y2-x2/tan(az)) + x^2/tan^2(a)
+        #   + 2x(y2-x2/tan(az))/tan(az) + (y2-x2/tan(az))^2
+        #
+        # 0 = x^2 (1+1/tan^2(az)) + x (-2x1-2y1/tan(az)+2(y2-x2/tan(az))/tan(az))
+        #   + x1^2 + y1^2 - 2y1y2 + 2x2y1/tan(az) + (y2-x2/tan(az))^2 + d^2
+        #
+        # => quadratic equation
+
+        x1 = distance["x"]
+        y1 = distance["y"]
+        d = distance["observation"]
+        x2 = direction["x"]
+        y2 = direction["y"]
+        az = direction["observation"]
+
+        a = 1 + 1/pow(tan(az), 2)
+        b = -2*x1 - 2*y1/tan(az) + 2*(y2-x2/tan(az))/tan(az)
+        c = pow(x1, 2) + pow(y1, 2) - 2*y1*y2 + 2*x2*y1/tan(az) + pow(y2-x2/tan(az), 2) + pow(d, 2)
+
+        delta = pow(b, 2) - 4*a*c
+
+        x_1 = (-b + sqrt(delta)) / a
+        x_2 = (-b - sqrt(delta)) / a
+        y_1 = x_1/tan(az) + y2 - x2/tan(az)
+        y_2 = x_2/tan(az) + y2 - x2/tan(az)
+
+        P1 = QgsPoint(x_1, y_1)
+        P2 = QgsPoint(x_2, y_2)
+
+
+
+
+
