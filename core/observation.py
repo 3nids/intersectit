@@ -60,17 +60,7 @@ class Observation():
         self.precision = precision
 
     def geometry(self):
-        if self.obsType == "distance":
-            # trace circle at distance from point
-            return QgsGeometry().fromPolyline([QgsPoint(self.point.x() + self.observation * cos(pi/180*a),
-                                                        self.point.y() + self.observation * sin(pi/180*a))
-                                               for a in range(0, 361, 3)])
-        elif self.obsType == "prolongation":
-            length = self.settings.value("obsProlongationLength")
-            x = self.point.x() + length * cos((90-self.observation)*pi/180)
-            y = self.point.y() + length * sin((90-self.observation)*pi/180)
-            return QgsGeometry().fromPolyline([self.point, QgsPoint(x, y)])
-        raise NameError("Unknown observation type")
+        pass
 
     def save(self):
         # observation
@@ -101,3 +91,27 @@ class Observation():
 #          self.pointLayer().dataProvider().deleteFeatures([self.point_id])
 #          self.lineLayer().dataProvider().deleteFeatures([self.line_id])
 #          self.canvas.refresh()
+
+
+class Distance(Observation):
+    def __init__(self, iface, point, observation, precision):
+        Observation.__init__(self, iface, "distance", point, observation, precision)
+
+    def geometry(self):
+        # trace circle at distance from point
+        return QgsGeometry().fromPolyline([QgsPoint(self.point.x() + self.observation * cos(pi/180*a),
+                                                    self.point.y() + self.observation * sin(pi/180*a))
+                                           for a in range(0, 361, 3)])
+
+
+class Prolongation(Observation):
+    def __init__(self, iface, point, observation, precision):
+        Observation.__init__(self, iface, "prolongation", point, observation, precision)
+        self.length = self.settings.value("obsProlongationLength")
+
+    def geometry(self):
+        x = self.point.x() + self.length * cos((90-self.observation)*pi/180)
+        y = self.point.y() + self.length * sin((90-self.observation)*pi/180)
+        return QgsGeometry().fromPolyline([self.point, QgsPoint(x, y)])
+
+

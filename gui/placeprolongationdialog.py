@@ -27,16 +27,28 @@
 #
 #---------------------------------------------------------------------
 
+from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QDialog
 
-from ..ui.ui_place_distance import Ui_place_distance
+from ..core.mysettings import MySettings
+
+from ..ui.ui_place_prolongation import Ui_PlaceProlongation
 
 
-class PlaceDistanceDialog(QDialog, Ui_place_distance):
-    def __init__(self, point):
+class PlaceProlongationDialog(QDialog, Ui_PlaceProlongation):
+    def __init__(self, prolongation, rubber):
         QDialog.__init__(self)
         self.setupUi(self)
 
-        self.x.setText("%.3f" % point.x())
-        self.y.setText("%.3f" % point.y())
-        self.distance.selectAll()
+        self.prolongation = prolongation
+        self.rubber = rubber
+
+        settings = MySettings()
+        self.length.setValue(settings.value("obsProlongationLength"))
+        self.precision.setValue(settings.value("obsDefaultPrecisionProlongation"))
+
+
+    @pyqtSignature("on_length_valueChanged(double)")
+    def on_length_valueChanged(self, v):
+        self.prolongation.length = v
+        self.rubber.setToGeometry(self.prolongation.geometry(), None)

@@ -31,8 +31,10 @@ from PyQt4.QtCore import Qt
 from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint
 
-from ..core.observation import Observation
+from ..core.observation import Prolongation
 from ..core.mysettings import MySettings
+
+from placeprolongationdialog import PlaceProlongationDialog
 
 
 class PlaceProlongationOnMap(QgsMapToolEmitPoint):
@@ -52,14 +54,18 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
+            self.rubber.reset()
             return
-        self.rubber.reset()
         prolong = self.getProlongation(mouseEvent.pos())
         if prolong is None:
+            self.rubber.reset()
             return
-
-
-        self.iface.mapCanvas().refresh()
+        dlg = PlaceProlongationDialog(prolong, self.rubber)
+        if dlg.exec_():
+            pass
+        else:
+            self.rubber.reset()
+            return
 
     def getProlongation(self, pixPoint):
         snapperList = []
@@ -91,7 +97,7 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
                 ve = vertices[i]
                 az = po.azimuth(ve)
                 precision = self.settings.value("obsDefaultPrecisionProlongation")
-                return Observation(self.iface, "prolongation", ve, az, precision)
+                return Prolongation(self.iface, ve, az, precision)
         else:
             return None
 

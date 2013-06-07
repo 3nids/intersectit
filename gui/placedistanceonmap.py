@@ -32,7 +32,7 @@ from qgis.core import QgsGeometry, QgsPoint
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint, QgsMapCanvasSnapper
 
 from ..core.mysettings import MySettings
-from ..core.observation import Observation
+from ..core.observation import Distance
 
 from placedistancedialog import PlaceDistanceDialog
 
@@ -72,7 +72,7 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
         else:
             return
         # todo: create obs before, draw in rubber band with dialog, save when dialog accepted
-        Observation(self.iface, "distance", mapPoint, radius, precision).save()
+        Distance(self.iface, mapPoint, radius, precision).save()
         self.iface.mapCanvas().refresh()
 
     def snapToLayers(self, pixPoint, dfltPoint=None):
