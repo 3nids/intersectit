@@ -140,6 +140,10 @@ class CircleDirectionIntersection():
 
         delta = pow(b, 2) - 4*a*c
 
+        # no intersection
+        if delta < 0:
+            return
+
         x_1 = (-b + sqrt(delta)) / a
         x_2 = (-b - sqrt(delta)) / a
         y_1 = x_1/tan(az) + y2 - x2/tan(az)
