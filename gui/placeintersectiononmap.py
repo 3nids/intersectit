@@ -35,7 +35,7 @@ from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 from ..core.mysettings import MySettings
 from ..core.memorylayers import MemoryLayers
 from ..core.leastsquares import LeastSquares
-from ..core.twocirclesintersection import TwoCirclesIntersection
+from ..core.intersections import TwoCirclesIntersection, TwoDirectionIntersection, CircleDirectionIntersection
 
 from placedimension import PlaceDimension
 from lsreport import LSreport
@@ -73,11 +73,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         observations = []
         point = self.toMapCoordinates(mouseEvent.pos())
         for f in self.getFeatures(point):
-            observations.append({"type": f["type"].toString(),
-                                 "x": f["x"].toDouble()[0],
-                                 "y": f["y"].toDouble()[0],
-                                 "observation": f["observation"].toDouble()[0],
-                                 "precision": f["precision"].toDouble()[0]})
+            observations.append(QgsFeature(f))
         self.doIntersection(point, observations)
 
     def getFeatures(self, point):
@@ -100,12 +96,17 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         if nObs < 2:
             return
         if nObs == 2:
-            intersectedPoint = TwoCirclesIntersection(observations, initPoint).intersection
+            if observations[0]["type"] == "distance" and observations[1]["type"] == "distance":
+                intersectedPoint = TwoCirclesIntersection(observations, initPoint).intersection
+            elif observations[0]["type"] == "prolongation" and observations[1]["type"] == "prolongation":
+                intersectedPoint = TwoDirectionIntersection(observations).intersection
+            else:
+                intersectedPoint = CircleDirectionIntersection(observations, initPoint).intersection
             if intersectedPoint is None:
                 return
             if self.settings.value("intersecResultConfirm"):
                 reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                             "A perfect intersection has been found using two circles."
+                                             "A perfect intersection has been found using two elements."
                                              " Use this solution?", QMessageBox.Yes, QMessageBox.No)
                 if reply == QMessageBox.No:
                     return
