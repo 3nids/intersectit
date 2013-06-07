@@ -90,9 +90,9 @@ class PlaceDimension(QDialog, Ui_placeDimension):
             self.dimensionCombo.addItem("%u/%u" % (i+1, nn))
             self.dimension.append(Dimension(self.layer,
                                             intersectedPoint,
-                                            QgsPoint(obs["x"], obs["y"]),
-                                            obs["observation"],
-                                            obs["precision"],
+                                            QgsPoint(obs["x"].toDouble()[0], obs["y"].toDouble()[0]),
+                                            obs["observation"].toDouble()[0],
+                                            obs["precision"].toDouble()[0],
                                             defaultRadius))
         # above line must be placed after the combobox population
         self.dimensionCombo.currentIndexChanged.connect(self.dimensionSelected)
