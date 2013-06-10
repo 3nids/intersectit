@@ -68,7 +68,6 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
             self.rubber.addGeometry(f.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
-        self.rubber.reset()
         observations = []
         point = self.toMapCoordinates(mouseEvent.pos())
         for f in self.getFeatures(point):
@@ -116,6 +115,9 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
             if self.settings.value("intersecResultConfirm"):
                 if not LSreport(report).exec_():
                     return
+
+        # reset rubber as intersection has been found
+        self.rubber.reset()
 
         # save the intersection result (point) and its report
         # check first
