@@ -53,7 +53,7 @@ class MySettings(SettingManager):
         # project settings
         self.addSetting("intersecResultPlacePoint", "bool", "project", False)
         self.addSetting("intersecResultPlaceReport", "bool", "project", False)
-        self.addSetting("dimenPlaceDimension", "bool", "project", True)
+        self.addSetting("dimenPlaceDimension", "bool", "project", False)
         self.addSetting("dimenPlaceMeasure", "bool", "project", True)
         self.addSetting("dimenPlacePrecision", "bool", "project", False)
         # fields and layers
