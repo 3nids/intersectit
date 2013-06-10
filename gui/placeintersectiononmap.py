@@ -180,7 +180,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                 if status == 3:
                     return
             break
-        dlg = PlaceDimension(self.iface, intersectedPoint, observations, [self.lineLayer(), self.pointLayer()])
+        dlg = PlaceDimension(self.iface, intersectedPoint, observations)
         dlg.exec_()
 
     def checkLayerExists(self, layerid, message):

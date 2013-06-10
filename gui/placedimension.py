@@ -34,6 +34,7 @@ from qgis.gui import QgsRubberBand
 
 from ..core.mysettings import MySettings
 from ..core.dimension import Dimension
+from ..core.memorylayers import MemoryLayers
 
 from mysettingsdialog import MySettingsDialog
 
@@ -41,12 +42,12 @@ from ..ui.ui_place_dimension import Ui_placeDimension
 
 
 class PlaceDimension(QDialog, Ui_placeDimension):
-    def __init__(self, iface, intersectedPoint, observations, distanceLayers):
-        print "q3"
+    def __init__(self, iface, intersectedPoint, observations):
         QDialog.__init__(self)
         self.setupUi(self)
-        self.distanceLayers = distanceLayers
-        # load settings
+        self.iface = iface
+        self.lineLayer = MemoryLayers(iface).lineLayer
+        self.pointLayer = MemoryLayers(iface).pointLayer
         self.settings = MySettings()
         self.layer = next((layer for layer in iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer")), None)
         self.rubber = QgsRubberBand(iface.mapCanvas())
@@ -58,8 +59,8 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         self.radiusSlider.valueChanged.connect(self.radiusSpin.setValue)
         self.radiusSlider.valueChanged.connect(self.radiusChanged)
 
-        # init state for distance layer visibility
-        self.displayLayersBox.stateChanged.connect(self.toggleDistanceLayers)
+        # init state for observation layers visibility
+        self.displayLayersBox.stateChanged.connect(self.toggleMemoryLayerVisibility)
 
         # check dimension and precision fields
         if self.settings.value("dimenPlaceMeasure"):
@@ -82,7 +83,6 @@ class PlaceDimension(QDialog, Ui_placeDimension):
                                         ) == QMessageBox.Yes:
                     MySettingsDialog().exec_()
 
-        print "q4"
         # create the observations
         self.observations = observations
         self.dimension = []
@@ -100,10 +100,10 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         self.dimensionCombo.currentIndexChanged.connect(self.dimensionSelected)
         self.dimensionSelected(0)
 
-    def toggleDistanceLayers(self, i):
+    def toggleMemoryLayerVisibility(self, i):
         self.displayLayersBox.setTristate(False)
-        self.iface.legendInterface().setLayerVisible(self.distanceLayers[0], bool(i))
-        self.iface.legendInterface().setLayerVisible(self.distanceLayers[1], bool(i))
+        self.iface.legendInterface().setLayerVisible(self.lineLayer(), bool(i))
+        self.iface.legendInterface().setLayerVisible(self.pointLayer(), bool(i))
 
     def currentDimension(self):
         return self.dimension[self.dimensionCombo.currentIndex()]
