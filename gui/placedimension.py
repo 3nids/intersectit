@@ -29,7 +29,7 @@
 
 from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QDialog, QMessageBox
-from qgis.core import QgsPoint
+from qgis.core import QgsPoint, QgsMapLayerRegistry
 from qgis.gui import QgsRubberBand
 
 from ..core.mysettings import MySettings
@@ -49,7 +49,7 @@ class PlaceDimension(QDialog, Ui_placeDimension):
         self.lineLayer = MemoryLayers(iface).lineLayer
         self.pointLayer = MemoryLayers(iface).pointLayer
         self.settings = MySettings()
-        self.layer = next((layer for layer in iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer")), None)
+        self.layer = QgsMapLayerRegistry.instance().mapLayer(self.settings.value("dimensionLayer"))
         self.rubber = QgsRubberBand(iface.mapCanvas())
         self.rubber.setWidth(2)
         defaultRadius = self.radiusSlider.value()
