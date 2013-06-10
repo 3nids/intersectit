@@ -57,4 +57,7 @@ class PlaceDistanceDialog(QDialog, Ui_place_distance):
     def closeEvent(self, e):
         self.rubber.reset()
 
+    def accept(self):
+        self.rubber.reset()
+        QDialog.accept(self)
 
