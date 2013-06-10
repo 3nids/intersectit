@@ -56,6 +56,7 @@ class MemoryLayers():
         self.settings.setValue("memoryLineLayer", "")
 
     def __lineLayerFeatureDeleted(self, fid):
+        # todo: delete corresponding feature in other layer
         print "hay"
 
     def pointLayer(self):
