@@ -63,6 +63,7 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
         dlg = PlaceProlongationDialog(prolong, self.rubber)
         if dlg.exec_():
             if prolong.length != 0:
+                print prolong.precision
                 prolong.save()
         self.rubber.reset()
 

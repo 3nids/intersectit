@@ -47,8 +47,12 @@ class PlaceProlongationDialog(QDialog, Ui_PlaceProlongation):
         self.length.setValue(settings.value("obsProlongationLength"))
         self.precision.setValue(settings.value("obsDefaultPrecisionProlongation"))
 
-
     @pyqtSignature("on_length_valueChanged(double)")
     def on_length_valueChanged(self, v):
         self.prolongation.length = v
         self.rubber.setToGeometry(self.prolongation.geometry(), None)
+
+    @pyqtSignature("on_precision_valueChanged(int)")
+    def on_precision_valueChanged(self, v):
+        self.prolongation.precision = v
+        print self.prolongation.precision
