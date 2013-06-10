@@ -35,12 +35,12 @@ class TwoCirclesIntersection():
     def __init__(self, observations, initPoint):
         self.intersection = None
         # see http://www.mathpages.com/home/kmath396/kmath396.htm
-        x1 = observations[0]["x"].toDouble()[0]
-        y1 = observations[0]["y"].toDouble()[0]
-        r1 = observations[0]["observation"].toDouble()[0]
-        x2 = observations[1]["x"].toDouble()[0]
-        y2 = observations[1]["y"].toDouble()[0]
-        r2 = observations[1]["observation"].toDouble()[0]
+        x1 = observations[0]["x"]
+        y1 = observations[0]["y"]
+        r1 = observations[0]["observation"]
+        x2 = observations[1]["x"]
+        y2 = observations[1]["y"]
+        r2 = observations[1]["observation"]
         d = sqrt(pow(x1-x2, 2) + pow(y1-y2, 2))
         if d < fabs(r1-r2):
             # circle is within the other
@@ -85,12 +85,12 @@ class TwoDirectionIntersection():
         # k = ( x2 - x1 + l sin(a2) ) / sin(a2)
         # l = ( y1 - y2 + k cos(a1) ) / cos(a2)
         # => solve k
-        x1 = observations[0]["x"].toDouble()[0]
-        y1 = observations[0]["y"].toDouble()[0]
-        a1 = pi/180 * observations[0]["observation"].toDouble()[0]
-        x2 = observations[1]["x"].toDouble()[0]
-        y2 = observations[1]["y"].toDouble()[0]
-        a2 = pi/180 * observations[1]["observation"].toDouble()[0]
+        x1 = observations[0]["x"]
+        y1 = observations[0]["y"]
+        a1 = pi/180 * observations[0]["observation"]
+        x2 = observations[1]["x"]
+        y2 = observations[1]["y"]
+        a2 = pi/180 * observations[1]["observation"]
 
         if fabs(a1) == fabs(a2):
             # parralell

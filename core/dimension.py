@@ -29,7 +29,6 @@
 
 import math
 
-from PyQt4.QtCore import QVariant
 from qgis.core import QgsFeature, QgsGeometry, QgsPoint
 
 from mysettings import MySettings
@@ -72,12 +71,12 @@ class Dimension():
             dimFieldName = self.settings.value("observationField")
             idx = self.provider.fieldNameIndex(dimFieldName)
             if idx != -1:
-                f[dimFieldName] = QVariant("%.4f" % self.distance)
+                f[dimFieldName] = "%.4f" % self.distance
         if self.settings.value("dimenPlacePrecision"):
             preFieldName = self.settings.value("precisionField")
             idx = self.provider.fieldNameIndex(preFieldName)
             if idx != -1:
-                f[preFieldName] = QVariant("%.4f" % self.precision)
+                f[preFieldName] = "%.4f" % self.precision
         ans, fz = self.provider.addFeatures([f])
         self.f_id = fz[0].id()
         self.layer.updateExtents()

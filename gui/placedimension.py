@@ -42,6 +42,7 @@ from ..ui.ui_place_dimension import Ui_placeDimension
 
 class PlaceDimension(QDialog, Ui_placeDimension):
     def __init__(self, iface, intersectedPoint, observations, distanceLayers):
+        print "q3"
         QDialog.__init__(self)
         self.setupUi(self)
         self.distanceLayers = distanceLayers
@@ -81,6 +82,7 @@ class PlaceDimension(QDialog, Ui_placeDimension):
                                         ) == QMessageBox.Yes:
                     MySettingsDialog().exec_()
 
+        print "q4"
         # create the observations
         self.observations = observations
         self.dimension = []
@@ -90,9 +92,9 @@ class PlaceDimension(QDialog, Ui_placeDimension):
             self.dimensionCombo.addItem("%u/%u" % (i+1, nn))
             self.dimension.append(Dimension(self.layer,
                                             intersectedPoint,
-                                            QgsPoint(obs["x"].toDouble()[0], obs["y"].toDouble()[0]),
-                                            obs["observation"].toDouble()[0],
-                                            obs["precision"].toDouble()[0],
+                                            QgsPoint(obs["x"], obs["y"]),
+                                            obs["observation"],
+                                            obs["precision"],
                                             defaultRadius))
         # above line must be placed after the combobox population
         self.dimensionCombo.currentIndexChanged.connect(self.dimensionSelected)

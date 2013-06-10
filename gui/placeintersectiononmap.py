@@ -27,9 +27,8 @@
 #
 #---------------------------------------------------------------------
 
-from PyQt4.QtCore import QVariant
 from PyQt4.QtGui import QMessageBox
-from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry
+from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 
 from ..core.mysettings import MySettings
@@ -119,39 +118,34 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                     return
 
         # save the intersection result (point) and its report
+        # check first
         while True:
             if not self.settings.value("intersecResultPlacePoint"):
                 break  # if we do not place any point, skip
-            intLayer = next((layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("intersectionLayer")), None)
-            if intLayer is None:
-                reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                             "To place the intersection solution, "
-                                             "you must select a layer in the settings. "
-                                             "Would you like to open settings?",
-                                             QMessageBox.Yes, QMessageBox.No)
-                if reply == QMessageBox.No:
-                    return
-                if MySettingsDialog().exec_() == 0:
-                    return
+            layerid = self.settings.value("intersectionLayer")
+            message = "To place the intersection solution, you must select a layer in the settings."
+            status, intLayer = self.checkLayerExists(layerid, message)
+            if status == 2:
                 continue
+            if status == 3:
+                return
             if self.settings.value("intersecResultPlaceReport"):
-                reportField = next((field for field in intLayer.dataProvider().fieldNameMap() if field == self.settings.value("reportField")), None)
-                if reportField is None:
-                    reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                                 "To save the intersection report, please select a field for tit."
-                                                 " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
-                    if reply == QMessageBox.No:
-                        return
-                    if MySettingsDialog().exec_() == 0:
-                        return
+                reportField = self.settings.value("reportField")
+                message = "To save the intersection report, please select a field for it."
+                status = self.checkFieldExists(intLayer, reportField, message)
+                if status == 2:
                     continue
+                if status == 3:
+                    return
             break
+
+        # save the intersection results
         if self.settings.value("intersecResultPlacePoint"):
             f = QgsFeature()
             f.setGeometry(QgsGeometry.fromPoint(intersectedPoint))
             if self.settings.value("intersecResultPlaceReport"):
                 irep = intLayer.dataProvider().fieldNameIndex(reportField)
-                f.addAttribute(irep, QVariant(report))
+                f.addAttribute(irep, report)
             intLayer.dataProvider().addFeatures([f])
             intLayer.updateExtents()
             self.canvas.refresh()
@@ -160,38 +154,60 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         while True:
             if not self.settings.value("dimenPlaceDimension"):
                 return  # if we do not place any dimension, skip
-            dimLayer = next((layer for layer in self.iface.mapCanvas().layers() if layer.id() == self.settings.value("dimensionLayer")), None)
-            if dimLayer is None:
-                reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                             "To place dimension arcs, you must select a layer in the settings."
-                                             " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
-                if reply == QMessageBox.No:
-                    return
-                if MySettingsDialog().exec_() == 0:
-                    return
+            layerid = self.settings.value("dimensionLayer")
+            message = "To place dimension arcs, you must select a layer in the settings."
+            status, dimLayer = self.checkLayerExists(layerid, message)
+            if status == 2:
                 continue
+            if status == 3:
+                return
             if self.settings.value("dimenPlaceMeasure"):
-                observationField = next((True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("observationField")), None)
-                if observationField is None:
-                    reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                                 "To save the observed distance, please select a field for tit."
-                                                 " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
-                    if reply == QMessageBox.No:
-                        return
-                    if MySettingsDialog().exec_() == 0:
-                        return
+                field = self.settings.value("observationField")
+                message = "To save the observed distance, please select a field for it."
+                status = self.checkFieldExists(dimLayer, field, message)
+                if status == 2:
                     continue
+                if status == 3:
+                    return
             if self.settings.value("dimenPlacePrecision"):
-                precisionField = next((True for field in dimLayer.dataProvider().fieldNameMap() if field == self.settings.value("precisionField")), None)
-                if precisionField is None:
-                    reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                                 "To save the observation precision, please select a field for it."
-                                                 " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
-                    if reply == QMessageBox.No:
-                        return
-                    if MySettingsDialog().exec_() == 0:
-                        return
+                field = self.settings.value("precisionField")
+                message = "To save the observation precision, please select a field for it."
+                status = self.checkFieldExists(dimLayer, field, message)
+                if status == 2:
                     continue
+                if status == 3:
+                    return
             break
         dlg = PlaceDimension(self.iface, intersectedPoint, observations, [self.lineLayer(), self.pointLayer()])
         dlg.exec_()
+
+    def checkLayerExists(self, layerid, message):
+        # returns:
+        # 1: layer exists
+        # 2: does not exist, settings has been open, so loop once more (i.e. continue)
+        # 3: does not exist, settings not edited, so cancel
+        layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
+        if layer is not None:
+            return 1, layer
+
+        reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
+                                     message + " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            if MySettingsDialog().exec_():
+                return 2
+        return 3
+
+    def checkFieldExists(self, layer, field, message):
+        # returns:
+        # 1: field exists
+        # 2: does not exist, settings has been open, so loop once more (i.e. continue)
+        # 3: does not exist, settings not edited, so cancel
+        if layer.dataProvider().fieldNameIndex(field) != -1:
+            return 1
+
+        reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
+                                     message + " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            if MySettingsDialog().exec_():
+                return 2
+        return 3
