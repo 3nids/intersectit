@@ -27,8 +27,7 @@
 #
 #---------------------------------------------------------------------
 
-import math
-
+from math import sqrt
 from qgis.core import QgsFeature, QgsGeometry, QgsPoint
 
 from mysettings import MySettings
@@ -41,7 +40,7 @@ class Dimension():
         self.radius = radius
         self.distance = distance
         self.precision = precision
-        self.length = math.sqrt(intersectedPoint.sqrDist(distancePoint))
+        self.length = sqrt(intersectedPoint.sqrDist(distancePoint))
         self.isActive = True
         self.intersectedPoint = intersectedPoint
         self.distancePoint = distancePoint
@@ -93,7 +92,6 @@ class Dimension():
     def draw(self):
         if self.isActive:
             # can also do on layer: startEditing, changeGeometry, rollBack, updateExtents
-            print self.f_id
             self.provider.changeGeometryValues({self.f_id: self.geometry()})
             self.layer.setCacheImage(None)
             self.layer.triggerRepaint()
