@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_distance.ui'
 #
-# Created: Fri Jun  7 10:19:09 2013
+# Created: Tue Jun 11 07:57:14 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,9 +36,10 @@ class Ui_place_distance(object):
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.gridLayout.addWidget(self.label_2, 3, 1, 1, 1)
         self.precision = QtGui.QDoubleSpinBox(place_distance)
-        self.precision.setDecimals(1)
-        self.precision.setMaximum(1000.0)
-        self.precision.setProperty("value", 25.0)
+        self.precision.setDecimals(4)
+        self.precision.setMaximum(100.0)
+        self.precision.setSingleStep(0.05)
+        self.precision.setProperty("value", 0.025)
         self.precision.setObjectName(_fromUtf8("precision"))
         self.gridLayout.addWidget(self.precision, 3, 2, 1, 1)
         self.label_4 = QtGui.QLabel(place_distance)
@@ -72,9 +73,9 @@ class Ui_place_distance(object):
     def retranslateUi(self, place_distance):
         place_distance.setWindowTitle(QtGui.QApplication.translate("place_distance", "IntersectIt :: Place Distance", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("place_distance", "Distance", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("place_distance", "map units", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("place_distance", "m", None, QtGui.QApplication.UnicodeUTF8))
         self.label_2.setText(QtGui.QApplication.translate("place_distance", "Precision", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("place_distance", "1/1000", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("place_distance", "m", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("place_distance", "y", None, QtGui.QApplication.UnicodeUTF8))
         self.label_6.setText(QtGui.QApplication.translate("place_distance", "x", None, QtGui.QApplication.UnicodeUTF8))
 

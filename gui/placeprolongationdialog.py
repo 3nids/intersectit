@@ -40,6 +40,7 @@ class PlaceProlongationDialog(QDialog, Ui_PlaceProlongation):
         QDialog.__init__(self)
         self.setupUi(self)
 
+        # this is a reference, direction observation is modified in outer class
         self.prolongation = prolongation
         self.rubber = rubber
 
@@ -55,4 +56,3 @@ class PlaceProlongationDialog(QDialog, Ui_PlaceProlongation):
     @pyqtSignature("on_precision_valueChanged(int)")
     def on_precision_valueChanged(self, v):
         self.prolongation.precision = v
-        print self.prolongation.precision

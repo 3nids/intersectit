@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_place_prolongation.ui'
 #
-# Created: Fri Jun  7 07:26:16 2013
+# Created: Tue Jun 11 07:57:19 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,13 +31,6 @@ class Ui_PlaceProlongation(object):
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
         self.gridLayout.addWidget(self.buttonBox, 4, 0, 1, 5)
-        self.precision = QtGui.QDoubleSpinBox(PlaceProlongation)
-        self.precision.setEnabled(True)
-        self.precision.setMaximum(2.0)
-        self.precision.setSingleStep(0.1)
-        self.precision.setProperty("value", 0.5)
-        self.precision.setObjectName(_fromUtf8("precision"))
-        self.gridLayout.addWidget(self.precision, 2, 4, 1, 1)
         self.label_8 = QtGui.QLabel(PlaceProlongation)
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.gridLayout.addWidget(self.label_8, 1, 0, 1, 1)
@@ -54,6 +47,14 @@ class Ui_PlaceProlongation(object):
         self.gridLayout.addWidget(self.length, 1, 2, 1, 3)
         spacerItem4 = QtGui.QSpacerItem(20, 40, QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Expanding)
         self.gridLayout.addItem(spacerItem4, 0, 1, 1, 1)
+        self.precision = QtGui.QDoubleSpinBox(PlaceProlongation)
+        self.precision.setEnabled(True)
+        self.precision.setDecimals(4)
+        self.precision.setMaximum(10.0)
+        self.precision.setSingleStep(0.05)
+        self.precision.setProperty("value", 0.5)
+        self.precision.setObjectName(_fromUtf8("precision"))
+        self.gridLayout.addWidget(self.precision, 2, 4, 1, 1)
 
         self.retranslateUi(PlaceProlongation)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), PlaceProlongation.accept)

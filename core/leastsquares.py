@@ -65,6 +65,7 @@ class LeastSquares():
             for i, obs in enumerate(observations):
                 px = obs["x"]
                 py = obs["y"]
+                precision = obs["precision"]
                 if obs["type"] == "distance":
                     r = obs["observation"]
                     # distance equation: (xc - px)^2 + (yc - py)^2 - r^2 = 0 (obs: r, param: xc,yc, fixed: px,py)
@@ -73,7 +74,7 @@ class LeastSquares():
                     # jacobian for observations
                     B.append(-2*r)
                     # stochastic model
-                    Qll.append(pow(obs["precision"]/1000, 2))
+                    Qll.append(pow(precision, 2))
                     # misclosure
                     # brackets needed to create column and not row vector
                     w.append([pow(x0[0][0]-px, 2) + pow(x0[1][0]-py, 2) - pow(r, 2)])
@@ -87,7 +88,7 @@ class LeastSquares():
                     # jacobian for observations
                     B.append((x0[0][0]-px)*deg2rad*cosaz/pow(sinaz, 2) - (x0[1][0]-py)*-deg2rad*sinaz/pow(cosaz, 2))
                     # stochastic model
-                    Qll.append(pow(obs["precision"]/1000, 2))
+                    Qll.append(pow(precision, 2))
                     # misclosure
                     # brackets needed to create column and not row vector
                     w.append([(x0[0][0]-px)/sinaz - (x0[1][0]-py)/cosaz])
@@ -117,14 +118,11 @@ class LeastSquares():
         report += "\nSolution:\t%13.3f\t%13.3f" % (x0[0], x0[1])
         report += "\nPrecision:\t%13.3f\t%13.3f" % (p1, p2)
         report += "\n\n Observation  |       x       |       y       |   Measure   | Precision | Residual"
-        report += "  \n              |  [map units]  |  [map units]  | [map units] |  [1/1000] | [1/1000]"
+        report += "  \n              |  [map units]  |  [map units]  |   [deg/m]   |  [1/1000] | [1/1000]"
         for i, obs in enumerate(observations):
-            resi = 1000*v[i][0]
-            if obs["type"] == "prolongation":
-                resi *= deg2rad
             report += "\n%13s | %13.3f | %13.3f | %11.3f | %9.1f | %7.1f" % (obs["type"], obs["x"], obs["y"],
-                                                                             obs["observation"], obs["precision"],
-                                                                             resi)
+                                                                             obs["observation"], obs["precision"]*1000,
+                                                                             1000*v[i][0])
         sigmapos = np.dot(v.T, np.dot(P, v)) / (nObs - 2)  # vTPv / r
         if sigmapos > 1.8:
             sigmapos_comment = "precision is too optimistic"

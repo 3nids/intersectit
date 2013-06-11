@@ -39,6 +39,7 @@ class PlaceDistanceDialog(QDialog, Ui_place_distance):
         QDialog.__init__(self)
         self.setupUi(self)
 
+        # this is a reference, distance observation is modified in outer class
         self.distance = distance
 
         self.rubber = QgsRubberBand(canvas)
@@ -46,8 +47,8 @@ class PlaceDistanceDialog(QDialog, Ui_place_distance):
         self.x.setText("%.3f" % distance.point.x())
         self.y.setText("%.3f" % distance.point.y())
         self.observation.setValue(distance.observation)
+        self.precision.setValue(distance.precision)
         self.observation.selectAll()
-
 
     @pyqtSignature("on_observation_valueChanged(double)")
     def on_observation_valueChanged(self, v):

@@ -53,20 +53,23 @@
           <item row="1" column="0">
            <widget class="QLabel" name="label_3">
             <property name="text">
-             <string>Default precision for distances [1/1000 units]</string>
+             <string>Default precision for distances [m]</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
            <widget class="QDoubleSpinBox" name="obsDefaultPrecisionDistance">
             <property name="decimals">
-             <number>1</number>
+             <number>4</number>
             </property>
             <property name="maximum">
-             <double>1000.000000000000000</double>
+             <double>100.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>0.005000000000000</double>
             </property>
             <property name="value">
-             <double>25.000000000000000</double>
+             <double>0.025000000000000</double>
             </property>
            </widget>
           </item>
@@ -268,7 +271,7 @@
           <item row="1" column="0">
            <widget class="QCheckBox" name="intersecResultPlacePoint">
             <property name="text">
-             <string>place point in layer</string>
+             <string>draw point in layer</string>
             </property>
            </widget>
           </item>
@@ -324,7 +327,7 @@
           <item row="0" column="2">
            <widget class="QLabel" name="label_6">
             <property name="text">
-             <string>map units</string>
+             <string>m</string>
             </property>
            </widget>
           </item>
@@ -355,7 +358,7 @@
        <item row="0" column="0">
         <widget class="QCheckBox" name="dimenPlaceDimension">
          <property name="text">
-          <string>place dimension arc in layer</string>
+          <string>draw dimension arc in layer</string>
          </property>
          <property name="checked">
           <bool>true</bool>

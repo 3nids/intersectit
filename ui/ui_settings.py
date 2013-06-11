@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Thu Jun  6 07:59:43 2013
+# Created: Tue Jun 11 07:57:49 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -43,9 +43,10 @@ class Ui_Settings(object):
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.gridLayout_7.addWidget(self.label_3, 1, 0, 1, 1)
         self.obsDefaultPrecisionDistance = QtGui.QDoubleSpinBox(self.groupBox)
-        self.obsDefaultPrecisionDistance.setDecimals(1)
-        self.obsDefaultPrecisionDistance.setMaximum(1000.0)
-        self.obsDefaultPrecisionDistance.setProperty("value", 25.0)
+        self.obsDefaultPrecisionDistance.setDecimals(4)
+        self.obsDefaultPrecisionDistance.setMaximum(100.0)
+        self.obsDefaultPrecisionDistance.setSingleStep(0.005)
+        self.obsDefaultPrecisionDistance.setProperty("value", 0.025)
         self.obsDefaultPrecisionDistance.setObjectName(_fromUtf8("obsDefaultPrecisionDistance"))
         self.gridLayout_7.addWidget(self.obsDefaultPrecisionDistance, 1, 1, 1, 1)
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.groupBox)
@@ -233,7 +234,7 @@ class Ui_Settings(object):
         Settings.setWindowTitle(QtGui.QApplication.translate("Settings", "IntersectIt :: settings", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox.setTitle(QtGui.QApplication.translate("Settings", "Distances", None, QtGui.QApplication.UnicodeUTF8))
         self.obsSnapping.setText(QtGui.QApplication.translate("Settings", "Snap to layers", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("Settings", "Default precision for distances [1/1000 units]", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("Settings", "Default precision for distances [m]", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_3.setTitle(QtGui.QApplication.translate("Settings", "Prolongations", None, QtGui.QApplication.UnicodeUTF8))
         self.label_4.setText(QtGui.QApplication.translate("Settings", "Default precision for prolongations [°]", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Settings", "Length of drawn line", None, QtGui.QApplication.UnicodeUTF8))
@@ -246,13 +247,13 @@ class Ui_Settings(object):
         self.resultGroup.setTitle(QtGui.QApplication.translate("Settings", "Result", None, QtGui.QApplication.UnicodeUTF8))
         self.intersecResultConfirm.setText(QtGui.QApplication.translate("Settings", "ask to validate intersection results", None, QtGui.QApplication.UnicodeUTF8))
         self.intersecResultPlaceReport.setText(QtGui.QApplication.translate("Settings", "place LS report in field", None, QtGui.QApplication.UnicodeUTF8))
-        self.intersecResultPlacePoint.setText(QtGui.QApplication.translate("Settings", "place point in layer", None, QtGui.QApplication.UnicodeUTF8))
+        self.intersecResultPlacePoint.setText(QtGui.QApplication.translate("Settings", "draw point in layer", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("Settings", "Least-squares", None, QtGui.QApplication.UnicodeUTF8))
         self.label_5.setText(QtGui.QApplication.translate("Settings", "Convergence threshold", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_6.setText(QtGui.QApplication.translate("Settings", "map units", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("Settings", "m", None, QtGui.QApplication.UnicodeUTF8))
         self.label_7.setText(QtGui.QApplication.translate("Settings", "Maximum iterations", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.intersectionTab), QtGui.QApplication.translate("Settings", "Intersection", None, QtGui.QApplication.UnicodeUTF8))
-        self.dimenPlaceDimension.setText(QtGui.QApplication.translate("Settings", "place dimension arc in layer", None, QtGui.QApplication.UnicodeUTF8))
+        self.dimenPlaceDimension.setText(QtGui.QApplication.translate("Settings", "draw dimension arc in layer", None, QtGui.QApplication.UnicodeUTF8))
         self.dimenPlaceMeasure.setText(QtGui.QApplication.translate("Settings", "place observation in field", None, QtGui.QApplication.UnicodeUTF8))
         self.dimenPlacePrecision.setText(QtGui.QApplication.translate("Settings", "place precision in field", None, QtGui.QApplication.UnicodeUTF8))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.dimensionTab), QtGui.QApplication.translate("Settings", "Dimensions", None, QtGui.QApplication.UnicodeUTF8))
