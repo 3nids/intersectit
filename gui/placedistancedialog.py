@@ -54,6 +54,10 @@ class PlaceDistanceDialog(QDialog, Ui_place_distance):
         self.distance.observation = v
         self.rubber.setToGeometry(self.distance.geometry(), None)
 
+    @pyqtSignature("on_precision_valueChanged(double)")
+    def on_precision_valueChanged(self, v):
+        self.distance.precision = v
+
     def accept(self):
         self.rubber.reset()
         QDialog.accept(self)
