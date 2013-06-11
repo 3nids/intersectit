@@ -52,7 +52,7 @@ class TwoCirclesIntersection():
         r2 = observations[1]["observation"]
         d = sqrt(pow(x1-x2, 2) + pow(y1-y2, 2))
         if d < fabs(r1-r2):
-            # circle is within the other
+            self.report = "No solution found using two distances intersection since circle are within each others."
             return
         if d > r1+r2:
             # circles are not intersecting, scaling their radius to get intersection"
@@ -70,12 +70,20 @@ class TwoCirclesIntersection():
         yb = ylt + yrt
         P1 = QgsPoint(xa, ya)
         P2 = QgsPoint(xb, yb)
-        self.intersection = closestPoint(initPoint, [P1, P2])
+        self.solution = closestPoint(initPoint, [P1, P2])
+        self.report = "A solution using two distances has been found.\n\n"
+        self.report += "         |       x       |       y       |   radius   |\n"
+        self.report += "-------- | ------------- | ------------- | ---------- |\n"
+        self.report += "Circle 1 | %13.3f | %13.3f | %10.3f |\n" % (x1, y1, r1)
+        self.report += "Circle 2 | %13.3f | %13.3f | %10.3f |\n" % (x2, y2, r2)
+        self.report += "-------- | ------------- | ------------- |\n"
+        self.report += "Solution | %13.3f | %13.3f |\n" % (self.solution.x(), self.solution.y())
 
 
 class TwoDirectionIntersection():
     def __init__(self, observations):
         self.intersection = None
+
         # x = x1+k*cos(90-a1) = x2+l*cos(90-a2)
         # y = y1+k*sin(90-a1) = y2+l*sin(90-a2)
         #
@@ -95,12 +103,19 @@ class TwoDirectionIntersection():
         y2 = observations[1]["y"]
         a2 = pi/180 * observations[1]["observation"]
         if fabs(a1) == fabs(a2):
-            # parralell
+            self.report = "No solution found using two directions intersection since directions are parralell."
             return
         k = (x2-x1+(y1-y2)*tan(a2)) / (sin(a1)*(1-tan(a2)/tan(a1)))
         x = x1 + k * sin(a1)
         y = y1 + k * cos(a1)
-        self.intersection = QgsPoint(x, y)
+        self.solution = QgsPoint(x, y)
+        self.report = "A solution using two directions has been found.\n\n"
+        self.report += "            |       x       |       y       | azimut |\n"
+        self.report += " ---------- | ------------- | ------------- | ------ |\n"
+        self.report += "Direction 1 | %13.3f | %13.3f | %8.3f |\n" % (x1, y1, a1)
+        self.report += "Direction 2 | %13.3f | %13.3f | %8.3f |\n" % (x2, y2, a2)
+        self.report += "----------- | ------------- | ------------- |\n"
+        self.report += "Solution    | %13.3f | %13.3f |\n" % (x, y)
 
 
 class CircleDirectionIntersection():
@@ -138,6 +153,7 @@ class CircleDirectionIntersection():
         delta = pow(b, 2) - 4*a*c
         # no intersection
         if delta < 0:
+            self.report = "No solution found using a direction and a distance intersection."
             return
         # compute solutions
         k_1 = (-b + sqrt(delta)) / a
@@ -148,9 +164,14 @@ class CircleDirectionIntersection():
         y_2 = y2 + k_2*cos(az)
         P1 = QgsPoint(x_1, y_1)
         P2 = QgsPoint(x_2, y_2)
-        self.intersection = closestPoint(initPoint, [P1, P2])
-
-
+        self.solution = closestPoint(initPoint, [P1, P2])
+        self.report = "A solution using a direction and a distance has been found.\n\n"
+        self.report += "          |       x       |       y       | observation |\n"
+        self.report += "--------- | ------------- | ------------- | ----------- |\n"
+        self.report += "Direction | %13.3f | %13.3f |   %9.3f |\n" % (x1, y1, a1)
+        self.report += "Circle    | %13.3f | %13.3f |   %9.3f |\n" % (x2, y2, r2)
+        self.report += "--------- | ------------- | ------------- |\n"
+        self.report += "Solution  | %13.3f | %13.3f |\n" % (self.solution.x(), self.solution.y())
 
 
 

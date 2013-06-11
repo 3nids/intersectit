@@ -33,12 +33,10 @@ from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 
 from ..core.mysettings import MySettings
 from ..core.memorylayers import MemoryLayers
-from ..core.leastsquares import LeastSquares
-from ..core.intersections import TwoCirclesIntersection, TwoDirectionIntersection, CircleDirectionIntersection
 
 from placedimension import PlaceDimension
-from lsreport import LSreport
 from mysettingsdialog import MySettingsDialog
+from intersectiondialog import IntersectionDialog
 
 
 class placeIntersectionOnMap(QgsMapToolEmitPoint):
@@ -93,31 +91,16 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         report = ""
         if nObs < 2:
             return
-        if nObs == 2:
-            if observations[0]["type"] == "distance" and observations[1]["type"] == "distance":
-                intersectedPoint = TwoCirclesIntersection(observations, initPoint).intersection
-            elif observations[0]["type"] == "prolongation" and observations[1]["type"] == "prolongation":
-                intersectedPoint = TwoDirectionIntersection(observations).intersection
-            else:
-                intersectedPoint = CircleDirectionIntersection(observations, initPoint).intersection
-            if intersectedPoint is None:
-                return
-            if self.settings.value("intersecResultConfirm"):
-                reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
-                                             "A perfect intersection has been found using two elements."
-                                             " Use this solution?", QMessageBox.Yes, QMessageBox.No)
-                if reply == QMessageBox.No:
-                    return
-        else:
-            LS = LeastSquares(observations, initPoint)
-            intersectedPoint = LS.solution
-            report = LS.report
-            if self.settings.value("intersecResultConfirm"):
-                if not LSreport(report).exec_():
-                    return
 
-        # reset rubber as intersection has been found
         self.rubber.reset()
+
+        self.dlg = IntersectionDialog(observations, initPoint)
+        if not self.dlg.exec_() or self.dlg.solution is None:
+            return
+
+        intersectedPoint = self.dlg.solution
+        observations = self.dlg.observations
+        report = self.dlg.report
 
         # save the intersection result (point) and its report
         # check first

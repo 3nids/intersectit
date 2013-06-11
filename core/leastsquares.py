@@ -33,19 +33,16 @@ from numpy import linalg as la
 
 from qgis.core import QgsPoint
 
-from mysettings import MySettings
+deg2rad = pi/180
 
 
 class LeastSquares():
-    def __init__(self, observations, initPoint):
-        deg2rad = pi/180
-        settings = MySettings()
-        threshold = settings.value("intersecLSconvergeThreshold")
-        maxIter = settings.value("intersecLSmaxIter")
+    def __init__(self, observations, initPoint, maxIter, threshold):
+        self.solution = None
         nObs = len(observations)
         # initial parameters (position x,y)
         x0 = np.array([[initPoint.x()], [initPoint.y()]])  # brackets needed to create column and not row vector
-        report = "Initial position: %13.3f %13.3f\n" % (x0[0], x0[1])
+        self.report = "Initial position: %13.3f %13.3f\n" % (x0[0], x0[1])
         dx = np.array([[2*threshold], [2*threshold]])
         it = 0
         # global observations vector
@@ -55,7 +52,7 @@ class LeastSquares():
             it += 1
             if it > maxIter:
                 x0 = [None, None]
-                report += "\n!!! Maximum iterations reached (%u)" % (it-1)
+                self.report += "\n!!! Maximum iterations reached (%u)" % (it-1)
                 break
             # init matrices
             A = []
@@ -108,21 +105,24 @@ class LeastSquares():
             p = np.dot(q.T, u)
             dx = np.dot(la.inv(r), p)
             x0 -= dx
-            report += "\nCorrection %u: %10.4f %10.4f" % (it, dx[0], dx[1])
+            self.report += "\nCorrection %u: %10.4f %10.4f" % (it, dx[0], dx[1])
         Qxx = la.inv(N)
         p1 = sqrt(Qxx[0][0])
         p2 = sqrt(Qxx[1][1])
         # residuals -Qll*B'*(P * (A* dx(iN)+w)) !!! ToBeChecked todo !!!
         v = np.dot(-Qll, np.dot(B.T, np.dot(P, np.dot(A, dx) + w)))
-        report += "\n"
-        report += "\nSolution:\t%13.3f\t%13.3f" % (x0[0], x0[1])
-        report += "\nPrecision:\t%13.3f\t%13.3f" % (p1, p2)
-        report += "\n\n Observation  |       x       |       y       |   Measure   | Precision | Residual"
-        report += "  \n              |  [map units]  |  [map units]  |   [deg/m]   |  [1/1000] | [1/1000]"
+        self.solution = QgsPoint(x0[0], x0[1])
+
+        self.report += "\n"
+        self.report += "\nSolution:\t%13.3f\t%13.3f" % (x0[0], x0[1])
+        self.report += "\nPrecision:\t%13.3f\t%13.3f" % (p1, p2)
+        self.report += "\n\n Observation  |       x       |       y       |   Measure   | Precision | Residual"
+        self.report += "  \n              |  [map units]  |  [map units]  |   [deg/m]   |  [1/1000] | [1/1000]"
         for i, obs in enumerate(observations):
-            report += "\n%13s | %13.3f | %13.3f | %11.3f | %9.1f | %7.1f" % (obs["type"], obs["x"], obs["y"],
-                                                                             obs["observation"], obs["precision"]*1000,
-                                                                             1000*v[i][0])
+            self.report += "\n%13s | %13.3f | %13.3f | %11.3f | %9.1f | %7.1f" % (obs["type"], obs["x"], obs["y"],
+                                                                                  obs["observation"],
+                                                                                  obs["precision"]*1000,
+                                                                                  1000*v[i][0])
         sigmapos = np.dot(v.T, np.dot(P, v)) / (nObs - 2)  # vTPv / r
         if sigmapos > 1.8:
             sigmapos_comment = "precision is too optimistic"
@@ -130,9 +130,4 @@ class LeastSquares():
             sigmapos_comment = "precision is too pessimistc"
         else:
             sigmapos_comment = "precision seems realistic"
-        report += "\n\nSigma a posteriori: %5.2f \t (%s)" % (sigmapos, sigmapos_comment)
-
-        self.solution = QgsPoint(x0[0], x0[1])
-        self.report = report
-
-
+        self.report += "\n\nSigma a posteriori: %5.2f \t (%s)" % (sigmapos, sigmapos_comment)

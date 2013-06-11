@@ -101,8 +101,8 @@ class IntersectIt ():
         self.iface.removeToolBarIcon(self.cleanerAction)
         try:
             print "IntersecIt :: Removing temporary layer"
-            QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
-            QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer().id())
+            #QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
+            #QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer().id())
         except AttributeError:
             return
 

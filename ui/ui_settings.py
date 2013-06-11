@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'ui_settings.ui'
 #
-# Created: Tue Jun 11 07:57:49 2013
+# Created: Tue Jun 11 15:52:27 2013
 #      by: PyQt4 UI code generator 4.9.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_Settings(object):
     def setupUi(self, Settings):
         Settings.setObjectName(_fromUtf8("Settings"))
-        Settings.resize(459, 472)
+        Settings.resize(422, 444)
         self.gridLayout = QtGui.QGridLayout(Settings)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.buttonBox = QtGui.QDialogButtonBox(Settings)
@@ -139,22 +139,18 @@ class Ui_Settings(object):
         self.resultGroup.setObjectName(_fromUtf8("resultGroup"))
         self.gridLayout_6 = QtGui.QGridLayout(self.resultGroup)
         self.gridLayout_6.setObjectName(_fromUtf8("gridLayout_6"))
-        self.intersecResultConfirm = QtGui.QCheckBox(self.resultGroup)
-        self.intersecResultConfirm.setChecked(True)
-        self.intersecResultConfirm.setObjectName(_fromUtf8("intersecResultConfirm"))
-        self.gridLayout_6.addWidget(self.intersecResultConfirm, 0, 0, 1, 2)
         self.intersecResultPlaceReport = QtGui.QCheckBox(self.resultGroup)
         self.intersecResultPlaceReport.setObjectName(_fromUtf8("intersecResultPlaceReport"))
-        self.gridLayout_6.addWidget(self.intersecResultPlaceReport, 2, 0, 1, 1)
+        self.gridLayout_6.addWidget(self.intersecResultPlaceReport, 1, 0, 1, 1)
         self.reportField = QtGui.QComboBox(self.resultGroup)
         self.reportField.setObjectName(_fromUtf8("reportField"))
-        self.gridLayout_6.addWidget(self.reportField, 2, 1, 1, 1)
+        self.gridLayout_6.addWidget(self.reportField, 1, 1, 1, 1)
         self.intersecResultPlacePoint = QtGui.QCheckBox(self.resultGroup)
         self.intersecResultPlacePoint.setObjectName(_fromUtf8("intersecResultPlacePoint"))
-        self.gridLayout_6.addWidget(self.intersecResultPlacePoint, 1, 0, 1, 1)
+        self.gridLayout_6.addWidget(self.intersecResultPlacePoint, 0, 0, 1, 1)
         self.intersectionLayer = QtGui.QComboBox(self.resultGroup)
         self.intersectionLayer.setObjectName(_fromUtf8("intersectionLayer"))
-        self.gridLayout_6.addWidget(self.intersectionLayer, 1, 1, 1, 1)
+        self.gridLayout_6.addWidget(self.intersectionLayer, 0, 1, 1, 1)
         self.gridLayout_4.addWidget(self.resultGroup, 4, 0, 1, 1)
         self.line_4 = QtGui.QFrame(self.intersectionTab)
         self.line_4.setFrameShape(QtGui.QFrame.HLine)
@@ -245,7 +241,6 @@ class Ui_Settings(object):
         self.label_2.setText(QtGui.QApplication.translate("Settings", "highlighting", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("Settings", "select observations within", None, QtGui.QApplication.UnicodeUTF8))
         self.resultGroup.setTitle(QtGui.QApplication.translate("Settings", "Result", None, QtGui.QApplication.UnicodeUTF8))
-        self.intersecResultConfirm.setText(QtGui.QApplication.translate("Settings", "ask to validate intersection results", None, QtGui.QApplication.UnicodeUTF8))
         self.intersecResultPlaceReport.setText(QtGui.QApplication.translate("Settings", "place LS report in field", None, QtGui.QApplication.UnicodeUTF8))
         self.intersecResultPlacePoint.setText(QtGui.QApplication.translate("Settings", "draw point in layer", None, QtGui.QApplication.UnicodeUTF8))
         self.groupBox_2.setTitle(QtGui.QApplication.translate("Settings", "Least-squares", None, QtGui.QApplication.UnicodeUTF8))
