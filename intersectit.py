@@ -36,7 +36,7 @@ from core.memorylayers import MemoryLayers
 
 from gui.mysettingsdialog import MySettingsDialog
 from gui.placedistanceonmap import PlaceDistanceOnMap
-from gui.placeprolongationonmap import PlaceProlongationOnMap
+from gui.placedirectiononmap import PlaceDirectionOnMap
 from gui.placeintersectiononmap import placeIntersectionOnMap
 
 import resources
@@ -60,11 +60,11 @@ class IntersectIt ():
         self.toolBar.addAction(self.distanceAction)
         self.iface.addPluginToMenu("&Intersect It", self.distanceAction)
         # prlongation
-        self.prolongationAction = QAction(QIcon(":/plugins/intersectit/icons/prolongation.png"), "place prolongation", self.iface.mainWindow())
-        self.prolongationAction.setCheckable(True)
-        self.prolongationAction.triggered.connect(self.prolongationInitTool)
-        self.toolBar.addAction(self.prolongationAction)
-        self.iface.addPluginToMenu("&Intersect It", self.prolongationAction)
+        self.directionAction = QAction(QIcon(":/plugins/intersectit/icons/direction.png"), "place direction", self.iface.mainWindow())
+        self.directionAction.setCheckable(True)
+        self.directionAction.triggered.connect(self.directionInitTool)
+        self.toolBar.addAction(self.directionAction)
+        self.iface.addPluginToMenu("&Intersect It", self.directionAction)
         # intersection
         self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersection.png"), "intersection", self.iface.mainWindow())
         self.intersectAction.setCheckable(True)
@@ -90,13 +90,13 @@ class IntersectIt ():
 
     def unload(self):
         self.iface.removePluginMenu("&Intersect It", self.distanceAction)
-        self.iface.removePluginMenu("&Intersect It", self.prolongationAction)
+        self.iface.removePluginMenu("&Intersect It", self.directionAction)
         self.iface.removePluginMenu("&Intersect It", self.intersectAction)
         self.iface.removePluginMenu("&Intersect It", self.uisettingsAction)
         self.iface.removePluginMenu("&Intersect It", self.cleanerAction)
         self.iface.removePluginMenu("&Intersect It", self.helpAction)
         self.iface.removeToolBarIcon(self.distanceAction)
-        self.iface.removeToolBarIcon(self.prolongationAction)
+        self.iface.removeToolBarIcon(self.directionAction)
         self.iface.removeToolBarIcon(self.intersectAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
         try:
@@ -128,20 +128,20 @@ class IntersectIt ():
         self.distanceAction.setChecked(False)
         self.canvas.unsetMapTool(self.placeDistanceTool)
 
-    def prolongationInitTool(self):
+    def directionInitTool(self):
         canvas = self.canvas
-        if self.prolongationAction.isChecked() is False:
-            canvas.unsetMapTool(self.placeProlongationTool)
+        if self.directionAction.isChecked() is False:
+            canvas.unsetMapTool(self.placeDirectionTool)
             return
-        self.prolongationAction.setChecked(True)
-        self.placeProlongationTool = PlaceProlongationOnMap(self.iface)
-        canvas.setMapTool(self.placeProlongationTool)
-        canvas.mapToolSet.connect(self.prolongationToolChanged)
+        self.directionAction.setChecked(True)
+        self.placeDirectionTool = PlaceDirectionOnMap(self.iface)
+        canvas.setMapTool(self.placeDirectionTool)
+        canvas.mapToolSet.connect(self.directionToolChanged)
 
-    def prolongationToolChanged(self, tool):
-        self.canvas.mapToolSet.disconnect(self.prolongationToolChanged)
-        self.prolongationAction.setChecked(False)
-        self.canvas.unsetMapTool(self.placeProlongationTool)
+    def directionToolChanged(self, tool):
+        self.canvas.mapToolSet.disconnect(self.directionToolChanged)
+        self.directionAction.setChecked(False)
+        self.canvas.unsetMapTool(self.placeDirectionTool)
 
     def intersectionInitTool(self):
         canvas = self.canvas

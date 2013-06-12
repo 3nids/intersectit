@@ -79,7 +79,7 @@
        <item row="2" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>Prolongations</string>
+          <string>Directions</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
           <item row="0" column="0">
@@ -88,7 +88,7 @@
              <bool>true</bool>
             </property>
             <property name="text">
-             <string>Default precision for prolongations [°]</string>
+             <string>Default precision for directions [°]</string>
             </property>
            </widget>
           </item>
@@ -116,7 +116,7 @@
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="obsProlongationLength">
+           <widget class="QDoubleSpinBox" name="obsDirectionLength">
             <property name="decimals">
              <number>1</number>
             </property>

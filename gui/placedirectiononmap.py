@@ -31,13 +31,13 @@ from PyQt4.QtCore import Qt
 from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint
 
-from ..core.observation import Prolongation
+from ..core.observation import Direction
 from ..core.mysettings import MySettings
 
-from placeprolongationdialog import PlaceProlongationDialog
+from placedirectiondialog import PlaceDirectionDialog
 
 
-class PlaceProlongationOnMap(QgsMapToolEmitPoint):
+class PlaceDirectionOnMap(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.settings = MySettings()
@@ -46,28 +46,28 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
         QgsMapToolEmitPoint.__init__(self, self.canvas)
 
     def canvasMoveEvent(self, mouseEvent):
-        prolong = self.getProlongation(mouseEvent.pos())
-        if prolong is None:
+        direction = self.getDirection(mouseEvent.pos())
+        if direction is None:
             self.rubber.reset()
         else:
-            self.rubber.setToGeometry(prolong.geometry(), None)
+            self.rubber.setToGeometry(direction.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
             self.rubber.reset()
             return
-        prolong = self.getProlongation(mouseEvent.pos())
-        if prolong is None:
+        direction = self.getDirection(mouseEvent.pos())
+        if direction is None:
             self.rubber.reset()
             return
-        dlg = PlaceProlongationDialog(prolong, self.rubber)
+        dlg = PlaceDirectionDialog(direction, self.rubber)
         if dlg.exec_():
-            if prolong.length != 0:
-                print prolong.precision
-                prolong.save()
+            if direction.length != 0:
+                print direction.precision
+                direction.save()
         self.rubber.reset()
 
-    def getProlongation(self, pixPoint):
+    def getDirection(self, pixPoint):
         snapperList = []
         for layer in self.iface.mapCanvas().layers():
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
@@ -96,7 +96,7 @@ class PlaceProlongationOnMap(QgsMapToolEmitPoint):
                 i = dist.index(mindist)
                 ve = vertices[i]
                 az = po.azimuth(ve)
-                return Prolongation(self.iface, ve, az)
+                return Direction(self.iface, ve, az)
         else:
             return None
 

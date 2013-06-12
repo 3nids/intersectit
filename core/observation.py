@@ -100,12 +100,12 @@ class Distance(Observation):
                                            for a in range(0, 361, 3)])
 
 
-class Prolongation(Observation):
+class Direction(Observation):
     def __init__(self, iface, point, observation):
         settings = MySettings()
-        self.length = settings.value("obsProlongationLength")
-        precision = settings.value("obsDefaultPrecisionProlongation")
-        Observation.__init__(self, iface, "prolongation", point, observation, precision)
+        self.length = settings.value("obsDirectionLength")
+        precision = settings.value("obsDefaultPrecisionDirection")
+        Observation.__init__(self, iface, "direction", point, observation, precision)
 
     def geometry(self):
         x = self.point.x() + self.length * cos((90-self.observation)*pi/180)

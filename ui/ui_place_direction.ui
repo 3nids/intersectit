@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PlaceProlongation</class>
- <widget class="QDialog" name="PlaceProlongation">
+ <class>PlaceDirection</class>
+ <widget class="QDialog" name="PlaceDirection">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Place prolongation</string>
+   <string>Place direction</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="2" column="0" colspan="3">
@@ -20,7 +20,7 @@
       <bool>true</bool>
      </property>
      <property name="text">
-      <string>Precision of prolongation [°]</string>
+      <string>Precision of direction [°]</string>
      </property>
     </widget>
    </item>
@@ -142,7 +142,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>PlaceProlongation</receiver>
+   <receiver>PlaceDirection</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -158,7 +158,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>PlaceProlongation</receiver>
+   <receiver>PlaceDirection</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

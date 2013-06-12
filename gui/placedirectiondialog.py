@@ -32,27 +32,27 @@ from PyQt4.QtGui import QDialog
 
 from ..core.mysettings import MySettings
 
-from ..ui.ui_place_prolongation import Ui_PlaceProlongation
+from ..ui.ui_place_direction import Ui_PlaceDirection
 
 
-class PlaceProlongationDialog(QDialog, Ui_PlaceProlongation):
-    def __init__(self, prolongation, rubber):
+class PlaceDirectionDialog(QDialog, Ui_PlaceDirection):
+    def __init__(self, direction, rubber):
         QDialog.__init__(self)
         self.setupUi(self)
 
         # this is a reference, direction observation is modified in outer class
-        self.prolongation = prolongation
+        self.direction = direction
         self.rubber = rubber
 
         settings = MySettings()
-        self.length.setValue(settings.value("obsProlongationLength"))
-        self.precision.setValue(settings.value("obsDefaultPrecisionProlongation"))
+        self.length.setValue(settings.value("obsDirectionLength"))
+        self.precision.setValue(settings.value("obsDefaultPrecisionDirection"))
 
     @pyqtSignature("on_length_valueChanged(double)")
     def on_length_valueChanged(self, v):
-        self.prolongation.length = v
-        self.rubber.setToGeometry(self.prolongation.geometry(), None)
+        self.direction.length = v
+        self.rubber.setToGeometry(self.direction.geometry(), None)
 
     @pyqtSignature("on_precision_valueChanged(int)")
     def on_precision_valueChanged(self, v):
-        self.prolongation.precision = v
+        self.direction.precision = v

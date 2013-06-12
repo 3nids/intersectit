@@ -68,7 +68,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         if nObs == 2:
             if observations[0]["type"] == "distance" and observations[1]["type"] == "distance":
                 intersection = TwoCirclesIntersection(observations, self.initPoint)
-            elif observations[0]["type"] == "prolongation" and observations[1]["type"] == "prolongation":
+            elif observations[0]["type"] == "direction" and observations[1]["type"] == "direction":
                 intersection = TwoDirectionIntersection(observations)
             else:
                 intersection = CircleDirectionIntersection(observations, self.initPoint)

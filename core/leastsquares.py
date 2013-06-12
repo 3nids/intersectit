@@ -75,7 +75,7 @@ class LeastSquares():
                     # misclosure
                     # brackets needed to create column and not row vector
                     w.append([pow(x0[0][0]-px, 2) + pow(x0[1][0]-py, 2) - pow(r, 2)])
-                if obs["type"] == "prolongation":
+                if obs["type"] == "direction":
                     az = obs["observation"]
                     sinaz = sin(az*deg2rad)
                     cosaz = cos(az*deg2rad)
