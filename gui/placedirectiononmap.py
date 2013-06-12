@@ -45,6 +45,9 @@ class PlaceDirectionOnMap(QgsMapToolEmitPoint):
         self.rubber = QgsRubberBand(self.canvas)
         QgsMapToolEmitPoint.__init__(self, self.canvas)
 
+    def deactivate(self):
+        self.rubber.reset()
+
     def canvasMoveEvent(self, mouseEvent):
         direction = self.getDirection(mouseEvent.pos())
         if direction is None:

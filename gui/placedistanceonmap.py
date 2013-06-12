@@ -56,6 +56,9 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
                 snapLayer.mUnitType = QgsTolerance.Pixels
                 self.snapperList.append(snapLayer)
 
+    def deactivate(self):
+        self.rubber.reset()
+
     def canvasMoveEvent(self, mouseEvent):
         if self.snapping:
             snappedPoint = self.snapToLayers(mouseEvent.pos())
