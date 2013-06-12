@@ -45,14 +45,21 @@ class PlaceDirectionDialog(QDialog, Ui_PlaceDirection):
         self.rubber = rubber
 
         settings = MySettings()
+        self.observation.setValue(direction.observation)
         self.length.setValue(settings.value("obsDirectionLength"))
         self.precision.setValue(settings.value("obsDefaultPrecisionDirection"))
 
-    @pyqtSignature("on_length_valueChanged(double)")
-    def on_length_valueChanged(self, v):
+        self.precision.valueChanged.connect(self.changePrecision)
+        self.observation.valueChanged.connect(self.changeObservation)
+        self.length.valueChanged.connect(self.changeLength)
+
+    def changeLength(self, v):
         self.direction.length = v
         self.rubber.setToGeometry(self.direction.geometry(), None)
 
-    @pyqtSignature("on_precision_valueChanged(int)")
-    def on_precision_valueChanged(self, v):
+    def changeObservation(self, v):
+        self.direction.observation = v
+        self.rubber.setToGeometry(self.direction.geometry(), None)
+
+    def changePrecision(self, v):
         self.direction.precision = v
