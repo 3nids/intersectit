@@ -91,6 +91,7 @@ class SpinBoxDelegate(QItemDelegate):
     def createEditor(self, parent, option, index):
         editor = QDoubleSpinBox(parent)
         editor.setDecimals(4)
+        editor.setSingleStep(0.005)
         return editor
 
     def setEditorData(self, spinBox, index):
