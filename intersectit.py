@@ -53,6 +53,10 @@ class IntersectIt ():
     def initGui(self):
         self.toolBar = self.iface.addToolBar("IntersectIt")
         self.toolBar.setObjectName("IntersectIt")
+        # settings
+        self.uisettingsAction = QAction("settings", self.iface.mainWindow())
+        self.uisettingsAction.triggered.connect(self.showSettings)
+        self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)
         # distance
         self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.png"), "place distance", self.iface.mainWindow())
         self.distanceAction.setCheckable(True)
@@ -76,10 +80,6 @@ class IntersectIt ():
         self.cleanerAction.triggered.connect(self.cleanMemoryLayers)
         self.toolBar.addAction(self.cleanerAction)
         self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)
-        # settings
-        self.uisettingsAction = QAction("settings", self.iface.mainWindow())
-        self.uisettingsAction.triggered.connect(self.showSettings)
-        self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)
         # help
         self.helpAction = QAction("help", self.iface.mainWindow())
         self.helpAction.triggered.connect(self.help)
