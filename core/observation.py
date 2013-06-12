@@ -80,6 +80,8 @@ class Observation():
 
         # center
         f = QgsFeature()
+        fields = self.pointLayer.dataProvider().fields()
+        f.setFields(fields)
         f["id"] = self.id
         f.setGeometry(QgsGeometry().fromPoint(self.point))
         self.pointLayer.dataProvider().addFeatures([f])
