@@ -86,7 +86,7 @@ class IntersectIt ():
         self.iface.addPluginToMenu("&Intersect It", self.helpAction)
           
     def help(self):
-        QDesktopServices.openUrl(QUrl("https://github.com/3nids/intersectit/wiki"))
+        QDesktopServices().openUrl(QUrl("https://github.com/3nids/intersectit/wiki"))
 
     def unload(self):
         self.iface.removePluginMenu("&Intersect It", self.distanceAction)

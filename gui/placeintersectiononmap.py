@@ -88,7 +88,6 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 
     def doIntersection(self, initPoint, observations):
         nObs = len(observations)
-        report = ""
         if nObs < 2:
             return
 
@@ -127,7 +126,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         # save the intersection results
         if self.settings.value("intersecResultPlacePoint"):
             f = QgsFeature()
-            f.setGeometry(QgsGeometry.fromPoint(intersectedPoint))
+            f.setGeometry(QgsGeometry().fromPoint(intersectedPoint))
             if self.settings.value("intersecResultPlaceReport"):
                 irep = intLayer.dataProvider().fieldNameIndex(reportField)
                 f.addAttribute(irep, report)

@@ -27,7 +27,6 @@
 #
 #---------------------------------------------------------------------
 
-from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QDialog
 
 from ..core.mysettings import MySettings

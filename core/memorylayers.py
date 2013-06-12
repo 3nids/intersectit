@@ -27,7 +27,6 @@
 #
 #---------------------------------------------------------------------
 
-from PyQt4.QtCore import SIGNAL, QObject
 from qgis.core import QgsMapLayerRegistry, QgsVectorLayer
 
 from mysettings import MySettings

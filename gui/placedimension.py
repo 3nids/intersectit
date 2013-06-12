@@ -69,7 +69,7 @@ class PlaceDimension(QDialog, Ui_placeDimension):
             if idx == -1:
                 if QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                         "The field to save the observation could not be found."
-                                        " Would you like to open settings?" % QMessageBox.Yes, QMessageBox.No
+                                        " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No
                                         ) == QMessageBox.Yes:
                     MySettingsDialog().exec_()
 
@@ -79,7 +79,7 @@ class PlaceDimension(QDialog, Ui_placeDimension):
             if idx == -1:
                 if QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
                                         "The field to save the precision could not be found."
-                                        " Would you like to open settings?" % QMessageBox.Yes, QMessageBox.No
+                                        " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No
                                         ) == QMessageBox.Yes:
                     MySettingsDialog().exec_()
 

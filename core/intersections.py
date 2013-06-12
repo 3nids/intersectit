@@ -168,8 +168,8 @@ class CircleDirectionIntersection():
         self.report = "A solution using a direction and a distance has been found.\n\n"
         self.report += "          |       x       |       y       | observation |\n"
         self.report += "--------- | ------------- | ------------- | ----------- |\n"
-        self.report += "Direction | %13.3f | %13.3f |   %9.3f |\n" % (x1, y1, a1)
-        self.report += "Circle    | %13.3f | %13.3f |   %9.3f |\n" % (x2, y2, r2)
+        self.report += "Direction | %13.3f | %13.3f |   %9.3f |\n" % (x2, y2, az)
+        self.report += "Circle    | %13.3f | %13.3f |   %9.3f |\n" % (x1, y1, r)
         self.report += "--------- | ------------- | ------------- |\n"
         self.report += "Solution  | %13.3f | %13.3f |\n" % (self.solution.x(), self.solution.y())
 
