@@ -27,7 +27,7 @@
 #
 #---------------------------------------------------------------------
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QAbstractItemView
+from PyQt4.QtGui import QTableWidget, QTableWidgetItem, QAbstractItemView, QDoubleSpinBox, QItemDelegate
 
 
 class ObservationTable(QTableWidget):
@@ -45,18 +45,31 @@ class ObservationTable(QTableWidget):
             item = QTableWidgetItem(headerText)
             self.setHorizontalHeaderItem(c, item)
 
+        spinDelegate = SpinBoxDelegate()
+        self.setItemDelegateForColumn(2, spinDelegate)
+
     def displayRows(self, observations):
         self.clearContents()
         for r in range(self.rowCount() - 1, -1, -1):
             self.removeRow(r)
-        cols = ("type", "observation", "precision")
         for r, obs in enumerate(observations):
+            # obs is a QgsFeature, translate it to a dict
+            dataDict = {"type": obs["type"], "x": obs["x"], "y": obs["y"],
+                        "observation": obs["observation"], "precision": obs["precision"]}
             self.insertRow(r)
-            item = TypeTableWidgetItem(obs)
+            # type
+            item = QTableWidgetItem(obs["type"])
+            item.setData(Qt.UserRole, dataDict)
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
+            item.setCheckState(Qt.Checked)
             self.setItem(r, 0, item)
-            item = ValueTableWidgetItem(obs["observation"])
+            # observation
+            item = QTableWidgetItem("%.4f" % obs["observation"])
+            item.setFlags(Qt.ItemIsEnabled)
             self.setItem(r, 1, item)
-            item = ValueTableWidgetItem(obs["precision"])
+            # precision
+            item = QTableWidgetItem("%.4f" % obs["precision"])
+            item.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable)
             self.setItem(r, 2, item)
         self.adjustSize()
 
@@ -66,22 +79,28 @@ class ObservationTable(QTableWidget):
             item = self.item(r, 0)
             if item.checkState() == Qt.Checked:
                 obs = item.data(Qt.UserRole)
+                obs["precision"] = float(self.item(r, 2).text())
                 observations.append(obs)
         return observations
 
 
-class TypeTableWidgetItem(QTableWidgetItem):
-    def __init__(self, obs):
-        QTableWidgetItem.__init__(self, obs["type"])
-        # obs is a QgsFeature, translate it to a dict
-        dataDict = {"type": obs["type"], "x": obs["x"], "y": obs["y"],
-                    "observation": obs["observation"], "precision": obs["precision"]}
-        self.setData(Qt.UserRole, dataDict)
-        self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsUserCheckable)
-        self.setCheckState(Qt.Checked)
+class SpinBoxDelegate(QItemDelegate):
+    def __init__(self):
+        QItemDelegate.__init__(self)
 
+    def createEditor(self, parent, option, index):
+        editor = QDoubleSpinBox(parent)
+        editor.setDecimals(4)
+        return editor
 
-class ValueTableWidgetItem(QTableWidgetItem):
-    def __init__(self, value):
-        QTableWidgetItem.__init__(self, "%f" % value)
-        self.setFlags(Qt.ItemIsEnabled | Qt.ItemIsEditable)
+    def setEditorData(self, spinBox, index):
+        value = index.model().data(index, Qt.EditRole)
+        spinBox.setValue(float(value or 0))
+
+    def setModelData(self, spinBox, model, index):
+        #spinBox.interpretText()
+        value = spinBox.value()
+        model.setData(index, value, Qt.EditRole)
+
+    def updateEditorGeometry(self, editor, option, index):
+        editor.setGeometry(option.rect)
