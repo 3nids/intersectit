@@ -80,6 +80,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                            point.x()+self.tolerance,
                            point.y()+self.tolerance)
         featReq.setFilterRect(box)
+        featReq.setFlags(QgsFeatureRequest.ExactIntersect)
         f = QgsFeature()
         vliter = self.lineLayer().getFeatures(featReq)
         while vliter.nextFeature(f):
