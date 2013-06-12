@@ -41,7 +41,7 @@ from mysettingsdialog import MySettingsDialog
 from ..ui.ui_place_dimension import Ui_placeDimension
 
 
-class PlaceDimension(QDialog, Ui_placeDimension):
+class PlaceDimensionDialog(QDialog, Ui_placeDimension):
     def __init__(self, iface, intersectedPoint, observations):
         QDialog.__init__(self)
         self.setupUi(self)

@@ -34,7 +34,7 @@ from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 from ..core.mysettings import MySettings
 from ..core.memorylayers import MemoryLayers
 
-from placedimension import PlaceDimension
+from placedimensiondialog import PlaceDimensionDialog
 from mysettingsdialog import MySettingsDialog
 from intersectiondialog import IntersectionDialog
 
@@ -163,7 +163,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                 if status == 3:
                     return
             break
-        dlg = PlaceDimension(self.iface, intersectedPoint, observations)
+        dlg = PlaceDimensionDialog(self.iface, intersectedPoint, observations)
         dlg.exec_()
 
     def checkLayerExists(self, layerid, message):
