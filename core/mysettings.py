@@ -38,7 +38,7 @@ class MySettings(SettingManager):
         SettingManager.__init__(self, pluginName)
          
         # global settings
-        self.addSetting("obsSnapping", "bool", "global", True)
+        self.addSetting("obsDistanceSnapping", "string", "global", "all")
         self.addSetting("obsDefaultPrecisionDistance", "double", "global", .025)
         self.addSetting("obsDefaultPrecisionDirection", "double", "global", .5)
         self.addSetting("obsDirectionLength", "double", "global", 4)

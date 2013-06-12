@@ -41,23 +41,39 @@
          </property>
          <layout class="QGridLayout" name="gridLayout_7">
           <item row="0" column="0">
-           <widget class="QCheckBox" name="obsSnapping">
+           <widget class="QLabel" name="label_9">
             <property name="text">
-             <string>Snap to layers</string>
-            </property>
-            <property name="checked">
-             <bool>true</bool>
+             <string>Snapping</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item row="0" column="1" colspan="2">
+           <widget class="QComboBox" name="obsDistanceSnapping">
+            <item>
+             <property name="text">
+              <string>no</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>according to project settings</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>on vertex of all layers</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
            <widget class="QLabel" name="label_3">
             <property name="text">
              <string>Default precision for distances [m]</string>
             </property>
            </widget>
           </item>
-          <item row="1" column="1">
+          <item row="1" column="2">
            <widget class="QDoubleSpinBox" name="obsDefaultPrecisionDistance">
             <property name="decimals">
              <number>4</number>
@@ -92,6 +108,23 @@
             </property>
            </widget>
           </item>
+          <item row="1" column="1">
+           <widget class="QDoubleSpinBox" name="obsDirectionLength">
+            <property name="decimals">
+             <number>1</number>
+            </property>
+            <property name="value">
+             <double>8.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>Length of drawn line</string>
+            </property>
+           </widget>
+          </item>
           <item row="0" column="1">
            <widget class="QDoubleSpinBox" name="obsDirectionDefaultPrecision">
             <property name="enabled">
@@ -105,23 +138,6 @@
             </property>
             <property name="value">
              <double>0.500000000000000</double>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Length of drawn line</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="obsDirectionLength">
-            <property name="decimals">
-             <number>1</number>
-            </property>
-            <property name="value">
-             <double>8.000000000000000</double>
             </property>
            </widget>
           </item>

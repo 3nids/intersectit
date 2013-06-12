@@ -28,7 +28,7 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QgsGeometry, QgsPoint
+from qgis.core import QGis, QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint, QgsMapCanvasSnapper
 
 from ..core.mysettings import MySettings
@@ -42,8 +42,19 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
         self.iface = iface
         self.canvas = iface.mapCanvas()
         self.rubber = QgsRubberBand(self.canvas)
-        self.snapping = MySettings().value("obsSnapping")
+        self.rubber.setIconSize(8)
+        self.snapping = MySettings().value("obsDistanceSnapping")
         QgsMapToolEmitPoint.__init__(self, self.canvas)
+
+        self.snapperList = []
+        for layer in self.iface.mapCanvas().layers():
+            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
+                snapLayer = QgsSnapper.SnapLayer()
+                snapLayer.mLayer = layer
+                snapLayer.mSnapTo = QgsSnapper.SnapToVertex
+                snapLayer.mTolerance = 7
+                snapLayer.mUnitType = QgsTolerance.Pixels
+                self.snapperList.append(snapLayer)
 
     def canvasMoveEvent(self, mouseEvent):
         if self.snapping:
@@ -59,8 +70,7 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
         pixPoint = mouseEvent.pos()
         mapPoint = self.toMapCoordinates(pixPoint)
         #snap to layers
-        if self.snapping:
-            mapPoint = self.snapToLayers(pixPoint, mapPoint)
+        mapPoint = self.snapToLayers(pixPoint, mapPoint)
         self.rubber.setToGeometry(QgsGeometry().fromPoint(mapPoint), None)
         distance = Distance(self.iface, mapPoint, 1)
         dlg = PlaceDistanceDialog(distance, self.canvas)
@@ -68,11 +78,26 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
             distance.save()
         self.rubber.reset()
 
-    def snapToLayers(self, pixPoint, dfltPoint=None):
-        if not self.snapping:
-            return None
-        ok, snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint, [])
-        if ok == 0 and len(snappingResults) > 0:
-            return QgsPoint(snappingResults[0].snappedVertex)
-        else:
-            return dfltPoint
+    def snapToLayers(self, pixPoint, initPoint=None):
+        if self.snapping == "no":
+            return initPoint
+
+        if self.snapping == "project":
+            ok, snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint, [])
+            if ok == 0 and len(snappingResults) > 0:
+                return QgsPoint(snappingResults[0].snappedVertex)
+            else:
+                return initPoint
+
+        if self.snapping == "all":
+            if len(self.snapperList) == 0:
+                return initPoint
+            snapper = QgsSnapper(self.canvas.mapRenderer())
+            snapper.setSnapLayers(self.snapperList)
+            snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
+
+            ok, snappingResults = snapper.snapPoint(pixPoint, [])
+            if ok == 0 and len(snappingResults) > 0:
+                return QgsPoint(snappingResults[0].snappedVertex)
+            else:
+                return initPoint
