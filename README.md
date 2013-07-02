@@ -1,4 +1,5 @@
 ## What?
+
 Intersect It is a QGIS plugin to place observations (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer to produce maps.
 
 A demo is available on [youtube](http://www.youtube.com/watch?v=IJQvIe1CLD0&hd=1).
@@ -33,13 +34,3 @@ If defined in settings, the least-squares report is displayed for confirmation. 
 Once the intersection is found, if defined in settings, the dimensions can be place in layers. These are stored in a multipoint layer: three points are saved. From this, you can use a view in postgis to draw dimension arcs.
 The SQL creation code of these two layers can be found [here](https://github.com/3nids/intersectit/wiki/Dimension-layers).
 
-
-## Changelog
-### 1.0.3 26.03.2012
-* Increased max length for distances to 999km
-
-### 1.0.2 23.03.2012
-* Added one digit in place distance UI
-
-###1.0.1 21.03.2012
-* Added help in menu
