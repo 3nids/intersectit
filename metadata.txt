@@ -1,20 +1,17 @@
-# This file contains metadata for your plugin. Beginning
-# with version 1.8 this is the preferred way to supply information about a
-# plugin. The current method of embedding metadata in __init__.py will
-# be supported until version 2.0
-
-# This file should be included when you package your plugin.
 
 [general]
 name=Intersect It
-description=Intersect It is a QGIS plugin to place observations (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer to produce maps.
+description=Intersect It is a QGIS plugin to place observations (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer.
 version=2.0
 qgisMinimumVersion=2.0
 
-tags=distance,orientation,observation,least-squares,intersection,dimension
+experimental=True
+icon=icons/intersectit-128.png
+
+tags=distance,orientation,observation,least-squares,intersection,dimension,cad
 homepage=https://github.com/3nids/intersectit/wiki
 tracker=https://github.com/3nids/intersectit/issues
 repository=https://github.com/3nids/intersectit
-[author]
-name=Denis Rouzaud
+
+author=Denis Rouzaud
 email=denis.rouzaud@gmail.com
