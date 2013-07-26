@@ -65,6 +65,9 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
 
         observations = self.observationTableWidget.getObservations()
         nObs = len(observations)
+        if nObs < 2:
+            self.reportBrowser.setText("No intersection can be done with less than 2 observations.")
+            return
         if nObs == 2:
             if observations[0]["type"] == "distance" and observations[1]["type"] == "distance":
                 intersection = TwoCirclesIntersection(observations, self.initPoint)
