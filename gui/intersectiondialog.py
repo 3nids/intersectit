@@ -28,6 +28,8 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtGui import QDialog
+from qgis.core import QGis, QgsGeometry
+from qgis.gui import QgsRubberBand
 
 from ..qgissettingmanager import SettingDialog
 
@@ -39,7 +41,7 @@ from ..ui.ui_intersection import Ui_Intersection
 
 
 class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
-    def __init__(self, observations, initPoint):
+    def __init__(self, iface, observations, initPoint):
         QDialog.__init__(self)
         self.setupUi(self)
         SettingDialog.__init__(self, MySettings(), False, False)
@@ -51,9 +53,14 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         self.solution = None
         self.report = ""
 
+        self.rubberBand = QgsRubberBand(iface.mapCanvas(), QGis.Point)
+
         self.observationTableWidget.displayRows(observations)
         self.observationTableWidget.itemChanged.connect(self.disbaleOKbutton)
         self.doIntersection()
+
+    def closeEvent(self, e):
+        self.rubberBand.reset()
 
     def disbaleOKbutton(self):
         self.okButton.setDisabled(True)
@@ -62,6 +69,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         self.observations = []
         self.solution = None
         self.report = ""
+        self.rubberBand.reset()
 
         observations = self.observationTableWidget.getObservations()
         nObs = len(observations)
@@ -87,6 +95,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
             self.observations = observations
             self.report = intersection.report
             self.okButton.setEnabled(True)
+            self.rubberBand.setToGeometry(QgsGeometry().fromPoint(self.solution), None)
 
 
 

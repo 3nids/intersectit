@@ -94,7 +94,7 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
 
         self.rubber.reset()
 
-        self.dlg = IntersectionDialog(observations, initPoint)
+        self.dlg = IntersectionDialog(self.iface, observations, initPoint)
         if not self.dlg.exec_() or self.dlg.solution is None:
             return
 
