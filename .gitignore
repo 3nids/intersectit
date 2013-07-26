@@ -1,3 +1,5 @@
 tmp/
 .idea
 *.qgs
+ui_*.py
+resources.py
