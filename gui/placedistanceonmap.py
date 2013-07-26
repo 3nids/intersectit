@@ -28,6 +28,7 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
+from PyQt4.QtGui import QTextEdit
 from qgis.core import QGis, QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint, QgsMapCanvasSnapper
 
@@ -47,17 +48,45 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
         QgsMapToolEmitPoint.__init__(self, self.canvas)
 
         self.snapperList = []
-        for layer in self.iface.mapCanvas().layers():
-            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                snapLayer = QgsSnapper.SnapLayer()
-                snapLayer.mLayer = layer
-                snapLayer.mSnapTo = QgsSnapper.SnapToVertex
-                snapLayer.mTolerance = 7
-                snapLayer.mUnitType = QgsTolerance.Pixels
-                self.snapperList.append(snapLayer)
+        if self.snapping == "all":
+            for layer in self.iface.mapCanvas().layers():
+                if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
+                    snapLayer = QgsSnapper.SnapLayer()
+                    snapLayer.mLayer = layer
+                    snapLayer.mSnapTo = QgsSnapper.SnapToVertex
+                    snapLayer.mTolerance = 7
+                    snapLayer.mUnitType = QgsTolerance.Pixels
+                    self.snapperList.append(snapLayer)
+
+        self.messageWidget = self.iface.messageBar().createMessage("Not snapped.")
+        self.messageWidgetExist = True
+        self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
+        if self.snapping != "no":
+            self.iface.messageBar().pushWidget(self.messageWidget)
 
     def deactivate(self):
+        self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
+
+    def messageWidgetRemoved(self):
+        self.messageWidgetExist = False
+
+    def displaySnapInfo(self, snappingResults):
+        if not self.messageWidgetExist:
+            return
+        nSnappingResults = len(snappingResults)
+        if nSnappingResults == 0:
+            message = "No snap"
+        else:
+            message = "<b>Snapped to: %s" % snappingResults[0].layer.name() + "</b>"
+            if nSnappingResults > 1:
+                message += "<br>Other layers: "
+                for res in snappingResults[1:]:
+                    message += res.layer.name() + ", "
+                message = message[:-2]
+        messageTextEdit = self.messageWidget.findChild(QTextEdit, "mMsgText")
+        if messageTextEdit is not None:
+            messageTextEdit.setText(message)
 
     def canvasMoveEvent(self, mouseEvent):
         if self.snapping:
@@ -87,10 +116,12 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
 
         if self.snapping == "project":
             ok, snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint, [])
+            self.displaySnapInfo(snappingResults)
             if ok == 0 and len(snappingResults) > 0:
                 return QgsPoint(snappingResults[0].snappedVertex)
             else:
                 return initPoint
+
 
         if self.snapping == "all":
             if len(self.snapperList) == 0:
@@ -100,6 +131,7 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
             snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
 
             ok, snappingResults = snapper.snapPoint(pixPoint, [])
+            self.displaySnapInfo(snappingResults)
             if ok == 0 and len(snappingResults) > 0:
                 return QgsPoint(snappingResults[0].snappedVertex)
             else:
