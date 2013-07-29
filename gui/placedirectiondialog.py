@@ -62,3 +62,6 @@ class PlaceDirectionDialog(QDialog, Ui_PlaceDirection):
 
     def changePrecision(self, v):
         self.direction.precision = v
+
+    def closeEvent(self, e):
+        self.rubber.reset()
