@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/plugins/intersectit" >
         <file>icons/distance.svg</file>
+        <file>icons/help.svg</file>
+        <file>icons/settings.svg</file>
         <file>icons/prolongation.svg</file>
         <file>icons/eraser.svg</file>
         <file>icons/intersectit.svg</file>
