@@ -53,7 +53,7 @@ class IntersectIt ():
         self.toolBar = self.iface.addToolBar("IntersectIt")
         self.toolBar.setObjectName("IntersectIt")
         # settings
-        self.uisettingsAction = QAction("settings", self.iface.mainWindow())
+        self.uisettingsAction = QAction(QIcon(":/plugins/quickfinder/icons/settings.svg"), "settings", self.iface.mainWindow())
         self.uisettingsAction.triggered.connect(self.showSettings)
         self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)
         # distance
@@ -80,7 +80,7 @@ class IntersectIt ():
         self.toolBar.addAction(self.cleanerAction)
         self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)
         # help
-        self.helpAction = QAction("help", self.iface.mainWindow())
+        self.helpAction = QAction(QIcon(":/plugins/quickfinder/icons/help.svg"), "help", self.iface.mainWindow())
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToMenu("&Intersect It", self.helpAction)
           
