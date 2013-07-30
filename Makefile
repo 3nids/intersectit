@@ -13,7 +13,7 @@
 
 # global
 PLUGINNAME = intersectit
-PY_FILES = __init__.py qwat.py
+PY_FILES = __init__.py $(PLUGINAME).py
 EXTRAS = metadata.txt resources.qrc
 TOOL_DIR = gui core ui qgiscombomanager qgissettingmanager
 ICONS_DIR = icons
