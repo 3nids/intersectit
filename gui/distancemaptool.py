@@ -42,12 +42,13 @@ class DistanceMapTool(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        self.rubber = QgsRubberBand(self.canvas)
-        self.rubber.setIconSize(8)
-        self.snapping = MySettings().value("obsDistanceSnapping")
         QgsMapToolEmitPoint.__init__(self, self.canvas)
 
+    def activate(self):
+        self.rubber = QgsRubberBand(self.canvas)
+        self.rubber.setIconSize(8)
         self.snapperList = []
+        self.snapping = MySettings().value("obsDistanceSnapping")
         if self.snapping == "all":
             for layer in self.iface.mapCanvas().layers():
                 if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
@@ -63,10 +64,12 @@ class DistanceMapTool(QgsMapToolEmitPoint):
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
         if self.snapping != "no":
             self.iface.messageBar().pushWidget(self.messageWidget)
+        QgsMapToolEmitPoint.activate(self)
 
     def deactivate(self):
         self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
+        QgsMapToolEmitPoint.deactivate(self)
 
     def messageWidgetRemoved(self):
         self.messageWidgetExist = False

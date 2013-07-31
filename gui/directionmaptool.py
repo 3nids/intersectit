@@ -47,6 +47,7 @@ class DirectionMapTool(QgsMapToolEmitPoint):
 
     def deactivate(self):
         self.rubber.reset()
+        QgsMapToolEmitPoint.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
         direction = self.getDirection(mouseEvent.pos())

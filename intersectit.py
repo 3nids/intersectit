@@ -34,6 +34,7 @@ from PyQt4.QtGui import QAction, QIcon, QDesktopServices
 from core.memorylayers import MemoryLayers
 
 from gui.mysettingsdialog import MySettingsDialog
+from gui.dimensionmaptool import DimensionMapTool
 from gui.distancemaptool import DistanceMapTool
 from gui.directionmaptool import DirectionMapTool
 from gui.intersectionmaptool import IntersectionMapTool
@@ -52,6 +53,7 @@ class IntersectIt ():
     def initGui(self):
         self.toolBar = self.iface.addToolBar("IntersectIt")
         self.toolBar.setObjectName("IntersectIt")
+
         # settings
         self.uisettingsAction = QAction(QIcon(":/plugins/quickfinder/icons/settings.svg"), "settings", self.iface.mainWindow())
         self.uisettingsAction.triggered.connect(self.showSettings)
@@ -67,7 +69,7 @@ class IntersectIt ():
         self.directionAction = QAction(QIcon(":/plugins/intersectit/icons/prolongation.svg"), "place direction", self.iface.mainWindow())
         self.directionAction.setCheckable(True)
         self.directionMapTool = DirectionMapTool(self.iface)
-        self.directionMapTool.setAction(self.directionMapTool)
+        self.directionMapTool.setAction(self.directionAction)
         self.toolBar.addAction(self.directionAction)
         self.iface.addPluginToMenu("&Intersect It", self.directionAction)
         # intersection
@@ -77,6 +79,13 @@ class IntersectIt ():
         self.intersectionMapTool.setAction(self.intersectionAction)
         self.toolBar.addAction(self.intersectionAction)
         self.iface.addPluginToMenu("&Intersect It", self.intersectionAction)
+        # dimension edit
+        self.dimensionAction = QAction(QIcon(":/plugins/intersectit/icons/dimension.svg"), "dimension", self.iface.mainWindow())
+        self.dimensionAction.setCheckable(True)
+        self.dimensionMapTool = DimensionMapTool(self.mapCanvas)
+        self.dimensionMapTool.setAction(self.dimensionAction)
+        self.toolBar.addAction(self.dimensionAction)
+        self.iface.addPluginToMenu("&Intersect It", self.dimensionAction)
         # cleaner
         self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/eraser.svg"), "clean points and circles", self.iface.mainWindow())
         self.cleanerAction.triggered.connect(self.cleanMemoryLayers)
@@ -86,7 +95,9 @@ class IntersectIt ():
         self.helpAction = QAction(QIcon(":/plugins/quickfinder/icons/help.svg"), "help", self.iface.mainWindow())
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToMenu("&Intersect It", self.helpAction)
-          
+
+        self.toolBar.actionTriggered.connect(self.setMapTool)
+
     def help(self):
         QDesktopServices().openUrl(QUrl("https://github.com/3nids/intersectit/wiki"))
 
@@ -94,19 +105,32 @@ class IntersectIt ():
         self.iface.removePluginMenu("&Intersect It", self.distanceAction)
         self.iface.removePluginMenu("&Intersect It", self.directionAction)
         self.iface.removePluginMenu("&Intersect It", self.intersectionAction)
+        self.iface.removePluginMenu("&Intersect It", self.dimensionAction)
         self.iface.removePluginMenu("&Intersect It", self.uisettingsAction)
         self.iface.removePluginMenu("&Intersect It", self.cleanerAction)
         self.iface.removePluginMenu("&Intersect It", self.helpAction)
         self.iface.removeToolBarIcon(self.distanceAction)
         self.iface.removeToolBarIcon(self.directionAction)
         self.iface.removeToolBarIcon(self.intersectionAction)
+        self.iface.removeToolBarIcon(self.dimensionAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
+        del self.toolBar
         try:
             print "IntersecIt :: Removing temporary layer"
             #QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
             #QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer().id())
         except AttributeError:
             return
+
+    def setMapTool(self, action):
+        if action == self.distanceAction:
+            self.mapCanvas.setMapTool(self.distanceMapTool)
+        if action == self.directionAction:
+            self.mapCanvas.setMapTool(self.directionMapTool)
+        if action == self.intersectionAction:
+            self.mapCanvas.setMapTool(self.intersectionMapTool)
+        if action == self.dimensionAction:
+            self.mapCanvas.setMapTool(self.dimensionMapTool)
 
     def cleanMemoryLayers(self):
         for layer in (self.lineLayer(), self.pointLayer()):
