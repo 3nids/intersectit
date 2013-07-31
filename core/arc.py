@@ -47,7 +47,8 @@ class Arc():
                         (p1.y()+p3.y())/2 + direction[1] * .2 * length)
 
     def geometry(self):
-        # see cadtools
+        # code taken from cadtools/circulararc.py
+        # credits to Stefan Ziegler
         coords = [self.p1]
         featurePitch = 2
         featureAngle = 5

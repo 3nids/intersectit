@@ -29,7 +29,7 @@
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTextEdit
-from qgis.core import QGis, QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper
+from qgis.core import QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint, QgsMapCanvasSnapper
 
 from ..core.mysettings import MySettings

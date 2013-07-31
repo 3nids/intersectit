@@ -1,7 +1,15 @@
 
-###2.1
+### 3.0 in dev
 
-
+* Distance
+    * display snap info in the message bar
+    * correctly remove rubber band if canceling
+* Intersection dialog
+    * prevent intersection from only one element
+    * add solution in rubber band
+* Dimensions
+    * now use a standard linestring for dimensions
+    * tool to edit arcs for dimensions of distances (like in cadtools plugin)
 
 ### 2.0 01.07.2013 _experimental_
 
@@ -11,7 +19,6 @@
     * edit precision of obsevations
     * validate results
 * updated to new API
-
 
 ### 1.0.3 26.03.2012
 * Increased max length for distances to 999km
