@@ -41,9 +41,9 @@ class DimensionMapTool(QgsMapTool):
     def __init__(self, canvas):
         QgsMapTool.__init__(self, canvas)
 
+    def activate(self):
         layerid = MySettings().value("dimensionLayer")
         layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
-
 
         snapLayer = QgsSnapper.SnapLayer()
         snapLayer.mLayer = layer
@@ -51,6 +51,7 @@ class DimensionMapTool(QgsMapTool):
         snapLayer.mTolerance = 7
         snapLayer.mUnitType = QgsTolerance.Pixels
 
+        QgsMapTool.activate(self)
 
 
     def canvasMoveEvent(self, e):

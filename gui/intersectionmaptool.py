@@ -57,6 +57,7 @@ class IntersectionMapTool(QgsMapToolEmitPoint):
 
     def deactivate(self):
         self.rubber.reset()
+        QgsMapToolEmitPoint.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
         # put the observations within tolerance in the rubber band
