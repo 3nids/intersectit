@@ -53,6 +53,8 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
                                                     {"groupLayers": False, "hasGeometry": True})
         self.observationFieldCombo = FieldCombo(self.observationField, self.dimensionLayerCombo,
                                                 lambda: self.settings.value("observationField"))
+        self.typeFieldCombo = FieldCombo(self.typeField, self.dimensionLayerCombo,
+                                         lambda: self.settings.value("typeField"))
         self.precisionFieldCombo = FieldCombo(self.precisionField, self.dimensionLayerCombo,
                                               lambda: self.settings.value("precisionField"))
 

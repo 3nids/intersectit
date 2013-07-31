@@ -54,10 +54,12 @@ class MySettings(SettingManager):
         self.addSetting("intersecResultPlaceReport", "bool", "project", False)
         self.addSetting("dimenPlaceDimension", "bool", "project", False)
         self.addSetting("dimenPlaceMeasure", "bool", "project", True)
+        self.addSetting("dimenPlaceType", "bool", "project", False)
         self.addSetting("dimenPlacePrecision", "bool", "project", False)
         # fields and layers
         self.addSetting("dimensionLayer", "string", "project", "")
         self.addSetting("observationField", "string", "project", "")
+        self.addSetting("typeField", "string", "project", "")
         self.addSetting("precisionField", "string", "project", "")
         self.addSetting("intersectionLayer", "string", "project", "")
         self.addSetting("reportField", "string", "project", "")

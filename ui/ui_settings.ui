@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>422</width>
-    <height>444</height>
+    <height>486</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -27,7 +27,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <widget class="QWidget" name="observationTab">
       <attribute name="title">
@@ -360,21 +360,28 @@
       <attribute name="title">
        <string>Dimensions</string>
       </attribute>
-      <layout class="QFormLayout" name="formLayout">
-       <item row="0" column="0">
-        <widget class="QCheckBox" name="dimenPlaceDimension">
+      <layout class="QGridLayout" name="gridLayout_9">
+       <item row="0" column="2">
+        <widget class="QComboBox" name="dimensionLayer"/>
+       </item>
+       <item row="1" column="2">
+        <widget class="QComboBox" name="observationField"/>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="dimenPlacePrecision">
          <property name="text">
-          <string>draw dimension arc in layer</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
+          <string>place precision in field</string>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="dimensionLayer"/>
+       <item row="3" column="2">
+        <widget class="QComboBox" name="precisionField">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
-       <item row="1" column="0">
+       <item row="1" column="1">
         <widget class="QCheckBox" name="dimenPlaceMeasure">
          <property name="text">
           <string>place observation in field</string>
@@ -384,18 +391,54 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="observationField"/>
+       <item row="1" column="0">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
-       <item row="2" column="0">
-        <widget class="QCheckBox" name="dimenPlacePrecision">
+       <item row="0" column="0" colspan="2">
+        <widget class="QCheckBox" name="dimenPlaceDimension">
          <property name="text">
-          <string>place precision in field</string>
+          <string>place dimensions in layer</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
+       <item row="5" column="1">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="precisionField">
+        <widget class="QCheckBox" name="dimenPlaceType">
+         <property name="text">
+          <string>place observation type in field</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2">
+        <widget class="QComboBox" name="typeField">
          <property name="enabled">
           <bool>false</bool>
          </property>
@@ -420,8 +463,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>245</x>
-     <y>462</y>
+     <x>254</x>
+     <y>476</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -436,8 +479,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>266</x>
-     <y>462</y>
+     <x>275</x>
+     <y>476</y>
     </hint>
     <hint type="destinationlabel">
      <x>257</x>
@@ -456,7 +499,7 @@
      <y>61</y>
     </hint>
     <hint type="destinationlabel">
-     <x>266</x>
+     <x>325</x>
      <y>61</y>
     </hint>
    </hints>
@@ -484,12 +527,28 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>149</x>
-     <y>119</y>
+     <x>175</x>
+     <y>154</y>
     </hint>
     <hint type="destinationlabel">
-     <x>337</x>
-     <y>131</y>
+     <x>395</x>
+     <y>164</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dimenPlaceType</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>typeField</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>241</x>
+     <y>124</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>133</y>
     </hint>
    </hints>
   </connection>

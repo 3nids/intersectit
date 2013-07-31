@@ -28,13 +28,13 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtGui import QMessageBox
-from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry
+from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint
 from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
 
 from ..core.mysettings import MySettings
 from ..core.memorylayers import MemoryLayers
+from ..core.arc import Arc
 
-from placedimensiondialog import PlaceDimensionDialog
 from mysettingsdialog import MySettingsDialog
 from intersectiondialog import IntersectionDialog
 
@@ -91,17 +91,15 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
         nObs = len(observations)
         if nObs < 2:
             return
-
         self.rubber.reset()
-
         self.dlg = IntersectionDialog(self.iface, observations, initPoint)
         if not self.dlg.exec_() or self.dlg.solution is None:
             return
-
         intersectedPoint = self.dlg.solution
-        observations = self.dlg.observations
-        report = self.dlg.report
+        self.saveIntersectionResult(self.dlg.report, intersectedPoint)
+        self.saveDimension(intersectedPoint, self.dlg.observations)
 
+    def saveIntersectionResult(self, report, intersectedPoint):
         # save the intersection result (point) and its report
         # check first
         while True:
@@ -123,7 +121,6 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
                 if status == 3:
                     return
             break
-
         # save the intersection results
         if self.settings.value("intersecResultPlacePoint"):
             f = QgsFeature()
@@ -135,36 +132,75 @@ class placeIntersectionOnMap(QgsMapToolEmitPoint):
             intLayer.updateExtents()
             self.canvas.refresh()
 
+    def saveDimension(self, intersectedPoint, observations):
          # check that dimension layer and fields have been set correctly
         while True:
+            # check layer
             if not self.settings.value("dimenPlaceDimension"):
                 return  # if we do not place any dimension, skip
-            layerid = self.settings.value("dimensionLayer")
+            dimensionLayerId = self.settings.value("dimensionLayer")
             message = "To place dimension arcs, you must select a layer in the settings."
-            status, dimLayer = self.checkLayerExists(layerid, message)
+            status, dimLayer = self.checkLayerExists(dimensionLayerId, message)
             if status == 2:
                 continue
             if status == 3:
                 return
+            # check fields
             if self.settings.value("dimenPlaceMeasure"):
-                field = self.settings.value("observationField")
+                measureField = self.settings.value("observationField")
                 message = "To save the observed distance, please select a field for it."
-                status = self.checkFieldExists(dimLayer, field, message)
+                status = self.checkFieldExists(dimLayer, measureField, message)
+                if status == 2:
+                    continue
+                if status == 3:
+                    return
+            if self.settings.value("dimenPlaceType"):
+                typeField = self.settings.value("typeField")
+                message = "To save the type of observaton, please select a field for it."
+                status = self.checkFieldExists(dimLayer, typeField, message)
                 if status == 2:
                     continue
                 if status == 3:
                     return
             if self.settings.value("dimenPlacePrecision"):
-                field = self.settings.value("precisionField")
-                message = "To save the observation precision, please select a field for it."
-                status = self.checkFieldExists(dimLayer, field, message)
+                precisionField = self.settings.value("precisionField")
+                message = "To save the precision of observation, please select a field for it."
+                status = self.checkFieldExists(dimLayer, precisionField, message)
                 if status == 2:
                     continue
                 if status == 3:
                     return
             break
-        dlg = PlaceDimensionDialog(self.iface, intersectedPoint, observations)
-        dlg.exec_()
+        # save the intersection results
+        if self.settings.value("dimenPlaceDimension"):
+            layer = QgsMapLayerRegistry.instance().mapLayer(dimensionLayerId)
+            initFields = layer.dataProvider().fields()
+            features = []
+            for obs in observations:
+                f = QgsFeature()
+                f.setFields(initFields)
+                f.initAttributes(initFields.size())
+                if self.settings.value("dimenPlaceMeasure"):
+                    f[self.settings.value("observationField")] = obs["observation"]
+                if self.settings.value("dimenPlaceType"):
+                    f[self.settings.value("typeField")] = obs["type"]
+                if self.settings.value("dimenPlacePrecision"):
+                    f[self.settings.value("precisionField")] = obs["precision"]
+                p0 = QgsPoint(obs["x"], obs["y"])
+                p1 = intersectedPoint
+                if obs["type"] == "distance":
+                    geom = Arc(p0, p1).geometry()
+                elif obs["type"] == "direction":
+                    geom = QgsGeometry().fromPolyline([p0, p1])
+                else:
+                    raise NameError("Invalid observation %s" % obs["type"])
+                f.setGeometry(geom)
+                features.append(f)
+            print layer.id()
+            print features
+            print layer.dataProvider().addFeatures(features)
+            layer.updateExtents()
+            self.canvas.refresh()
 
     def checkLayerExists(self, layerid, message):
         # returns:
