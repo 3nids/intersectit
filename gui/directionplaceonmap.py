@@ -34,10 +34,10 @@ from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint
 from ..core.observation import Direction
 from ..core.mysettings import MySettings
 
-from placedirectiondialog import PlaceDirectionDialog
+from directiondialog import DirectionDialog
 
 
-class PlaceDirectionOnMap(QgsMapToolEmitPoint):
+class DirectionOnMap(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.settings = MySettings()
@@ -63,7 +63,7 @@ class PlaceDirectionOnMap(QgsMapToolEmitPoint):
         if direction is None:
             self.rubber.reset()
             return
-        dlg = PlaceDirectionDialog(direction, self.rubber)
+        dlg = DirectionDialog(direction, self.rubber)
         if dlg.exec_():
             if direction.length != 0:
                 print direction.precision

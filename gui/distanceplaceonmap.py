@@ -35,10 +35,10 @@ from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint, QgsMapCanvasSnapper
 from ..core.mysettings import MySettings
 from ..core.observation import Distance
 
-from placedistancedialog import PlaceDistanceDialog
+from distancedialog import DistanceDialog
 
 
-class PlaceDistanceOnMap(QgsMapToolEmitPoint):
+class DistanceOnMap(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
@@ -105,7 +105,7 @@ class PlaceDistanceOnMap(QgsMapToolEmitPoint):
         mapPoint = self.snapToLayers(pixPoint, mapPoint)
         self.rubber.setToGeometry(QgsGeometry().fromPoint(mapPoint), None)
         distance = Distance(self.iface, mapPoint, 1)
-        dlg = PlaceDistanceDialog(distance, self.canvas)
+        dlg = DistanceDialog(distance, self.canvas)
         if dlg.exec_():
             distance.save()
         self.rubber.reset()

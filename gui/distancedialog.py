@@ -34,7 +34,7 @@ from qgis.gui import QgsRubberBand
 from ..ui.ui_place_distance import Ui_place_distance
 
 
-class PlaceDistanceDialog(QDialog, Ui_place_distance):
+class DistanceDialog(QDialog, Ui_place_distance):
     def __init__(self, distance, canvas):
         QDialog.__init__(self)
         self.setupUi(self)

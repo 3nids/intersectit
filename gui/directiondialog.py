@@ -34,7 +34,7 @@ from ..core.mysettings import MySettings
 from ..ui.ui_place_direction import Ui_PlaceDirection
 
 
-class PlaceDirectionDialog(QDialog, Ui_PlaceDirection):
+class DirectionDialog(QDialog, Ui_PlaceDirection):
     def __init__(self, direction, rubber):
         QDialog.__init__(self)
         self.setupUi(self)
