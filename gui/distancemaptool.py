@@ -38,7 +38,7 @@ from ..core.observation import Distance
 from distancedialog import DistanceDialog
 
 
-class DistanceOnMap(QgsMapToolEmitPoint):
+class DistanceMapTool(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
@@ -121,7 +121,6 @@ class DistanceOnMap(QgsMapToolEmitPoint):
                 return QgsPoint(snappingResults[0].snappedVertex)
             else:
                 return initPoint
-
 
         if self.snapping == "all":
             if len(self.snapperList) == 0:

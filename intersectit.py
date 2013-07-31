@@ -34,9 +34,9 @@ from PyQt4.QtGui import QAction, QIcon, QDesktopServices
 from core.memorylayers import MemoryLayers
 
 from gui.mysettingsdialog import MySettingsDialog
-from gui.placedistanceonmap import PlaceDistanceOnMap
-from gui.placedirectiononmap import PlaceDirectionOnMap
-from gui.placeintersectiononmap import placeIntersectionOnMap
+from gui.distancemaptool import DistanceMapTool
+from gui.directionmaptool import DirectionMapTool
+from gui.intersectionmaptool import IntersectionMapTool
 
 import resources
 
@@ -44,7 +44,7 @@ import resources
 class IntersectIt ():
     def __init__(self, iface):
         self.iface = iface
-        self.canvas = iface.mapCanvas()
+        self.mapCanvas = iface.mapCanvas()
         memLay = MemoryLayers(iface)
         self.lineLayer = memLay.lineLayer
         self.pointLayer = memLay.pointLayer
@@ -59,21 +59,24 @@ class IntersectIt ():
         # distance
         self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.svg"), "place distance", self.iface.mainWindow())
         self.distanceAction.setCheckable(True)
-        self.distanceAction.triggered.connect(self.distanceInitTool)
+        self.distanceMapTool = DistanceMapTool(self.iface)
+        self.distanceMapTool.setAction(self.distanceAction)
         self.toolBar.addAction(self.distanceAction)
         self.iface.addPluginToMenu("&Intersect It", self.distanceAction)
-        # prlongation
+        # prolongation
         self.directionAction = QAction(QIcon(":/plugins/intersectit/icons/prolongation.svg"), "place direction", self.iface.mainWindow())
         self.directionAction.setCheckable(True)
-        self.directionAction.triggered.connect(self.directionInitTool)
+        self.directionMapTool = DirectionMapTool(self.iface)
+        self.directionMapTool.setAction(self.directionMapTool)
         self.toolBar.addAction(self.directionAction)
         self.iface.addPluginToMenu("&Intersect It", self.directionAction)
         # intersection
-        self.intersectAction = QAction(QIcon(":/plugins/intersectit/icons/intersectit.svg"), "intersection", self.iface.mainWindow())
-        self.intersectAction.setCheckable(True)
-        self.intersectAction.triggered.connect(self.intersectionInitTool)
-        self.toolBar.addAction(self.intersectAction)
-        self.iface.addPluginToMenu("&Intersect It", self.intersectAction)
+        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersectit.svg"), "intersection", self.iface.mainWindow())
+        self.intersectionAction.setCheckable(True)
+        self.intersectionMapTool = IntersectionMapTool(self.iface)
+        self.intersectionMapTool.setAction(self.intersectionAction)
+        self.toolBar.addAction(self.intersectionAction)
+        self.iface.addPluginToMenu("&Intersect It", self.intersectionAction)
         # cleaner
         self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/eraser.svg"), "clean points and circles", self.iface.mainWindow())
         self.cleanerAction.triggered.connect(self.cleanMemoryLayers)
@@ -90,13 +93,13 @@ class IntersectIt ():
     def unload(self):
         self.iface.removePluginMenu("&Intersect It", self.distanceAction)
         self.iface.removePluginMenu("&Intersect It", self.directionAction)
-        self.iface.removePluginMenu("&Intersect It", self.intersectAction)
+        self.iface.removePluginMenu("&Intersect It", self.intersectionAction)
         self.iface.removePluginMenu("&Intersect It", self.uisettingsAction)
         self.iface.removePluginMenu("&Intersect It", self.cleanerAction)
         self.iface.removePluginMenu("&Intersect It", self.helpAction)
         self.iface.removeToolBarIcon(self.distanceAction)
         self.iface.removeToolBarIcon(self.directionAction)
-        self.iface.removeToolBarIcon(self.intersectAction)
+        self.iface.removeToolBarIcon(self.intersectionAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
         try:
             print "IntersecIt :: Removing temporary layer"
@@ -110,52 +113,7 @@ class IntersectIt ():
             layer.selectAll()
             ids = layer.selectedFeaturesIds()
             layer.dataProvider().deleteFeatures(ids)
-        self.canvas.refresh()
-
-    def distanceInitTool(self):
-        canvas = self.canvas
-        if self.distanceAction.isChecked() is False:
-            canvas.unsetMapTool(self.placeDistanceTool)
-            return
-        self.distanceAction.setChecked(True)
-        self.placeDistanceTool = PlaceDistanceOnMap(self.iface)
-        canvas.setMapTool(self.placeDistanceTool)
-        canvas.mapToolSet.connect(self.distanceToolChanged)
-
-    def distanceToolChanged(self, tool):
-        self.canvas.mapToolSet.disconnect(self.distanceToolChanged)
-        self.distanceAction.setChecked(False)
-        self.canvas.unsetMapTool(self.placeDistanceTool)
-
-    def directionInitTool(self):
-        canvas = self.canvas
-        if self.directionAction.isChecked() is False:
-            canvas.unsetMapTool(self.placeDirectionTool)
-            return
-        self.directionAction.setChecked(True)
-        self.placeDirectionTool = PlaceDirectionOnMap(self.iface)
-        canvas.setMapTool(self.placeDirectionTool)
-        canvas.mapToolSet.connect(self.directionToolChanged)
-
-    def directionToolChanged(self, tool):
-        self.canvas.mapToolSet.disconnect(self.directionToolChanged)
-        self.directionAction.setChecked(False)
-        self.canvas.unsetMapTool(self.placeDirectionTool)
-
-    def intersectionInitTool(self):
-        canvas = self.canvas
-        if self.intersectAction.isChecked() is False:
-            canvas.unsetMapTool(self.placeInitialIntersectionTool)
-            return
-        self.intersectAction.setChecked(True)
-        self.placeInitialIntersectionTool = placeIntersectionOnMap(self.iface)
-        canvas.setMapTool(self.placeInitialIntersectionTool)
-        canvas.mapToolSet.connect(self.intersectionToolChanged)
-
-    def intersectionToolChanged(self, tool):
-        self.canvas.mapToolSet.disconnect(self.intersectionToolChanged)
-        self.intersectAction.setChecked(False)
-        self.canvas.unsetMapTool(self.placeInitialIntersectionTool)
+        self.mapCanvas.refresh()
 
     def showSettings(self):
         MySettingsDialog().exec_()

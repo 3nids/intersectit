@@ -39,7 +39,7 @@ from mysettingsdialog import MySettingsDialog
 from intersectiondialog import IntersectionDialog
 
 
-class placeIntersectionOnMap(QgsMapToolEmitPoint):
+class IntersectionMapTool(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()

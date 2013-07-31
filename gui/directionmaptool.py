@@ -37,7 +37,7 @@ from ..core.mysettings import MySettings
 from directiondialog import DirectionDialog
 
 
-class DirectionOnMap(QgsMapToolEmitPoint):
+class DirectionMapTool(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.settings = MySettings()
