@@ -38,15 +38,17 @@ class DimensionMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
         self.mapCanvas = iface.mapCanvas()
+        self.settings = MySettings()
         self.lineRubber = QgsRubberBand(self.mapCanvas)
-        self.lineRubber.setWidth(4)
+        self.lineRubber.setWidth(self.settings.value("rubberWidth"))
+        self.lineRubber.setColor(self.settings.value("rubberColor"))
         self.editing = False
         self.snapLayer = None
         QgsMapTool.__init__(self, self.mapCanvas)
 
     def activate(self):
         QgsMapTool.activate(self)
-        layerid = MySettings().value("dimensionLayer")
+        layerid = self.settings.value("dimensionLayer")
         layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
         if layer is None:
             self.iface.messageBar().pushMessage("Intersect It", "Dimension layer must defined.",
@@ -58,11 +60,17 @@ class DimensionMapTool(QgsMapTool):
                                                 QgsMessageBar.WARNING, 3)
             self.mapCanvas.unsetMapTool(self)
             return
+        # unset this tool if the layer is removed
+        layer.layerDeleted.connect(lambda: self.mapCanvas.unsetMapTool(self))
+        # create snapper for this layer
         self.snapLayer = QgsSnapper.SnapLayer()
         self.snapLayer.mLayer = layer
         self.snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
-        self.snapLayer.mTolerance = 7
-        self.snapLayer.mUnitType = QgsTolerance.Pixels
+        self.snapLayer.mTolerance = self.settings.value("selectTolerance")
+        if self.settings.value("selectUnits") == "map":
+            self.snapLayer.mUnitType = QgsTolerance.MapUnits
+        else:
+            self.snapLayer.mUnitType = QgsTolerance.Pixels
         self.editing = False
         self.arc = None
 

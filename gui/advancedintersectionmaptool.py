@@ -45,14 +45,18 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         self.canvas = iface.mapCanvas()
         QgsMapTool.__init__(self, self.canvas)
         self.settings = MySettings()
-        self.lineLayer = MemoryLayers(iface).lineLayer
         self.rubber = QgsRubberBand(self.canvas)
-        self.rubber.setWidth(self.settings.value("intersectRubberWidth"))
-        self.rubber.setColor(self.settings.value("intersectRubberColor"))
-        self.tolerance = self.settings.value("intersecSelectTolerance")
-        units = self.settings.value("intersecSelectUnits")
+
+        self.tolerance = self.settings.value("selectTolerance")
+        units = self.settings.value("selectUnits")
         if units == "pixels":
             self.tolerance *= self.canvas.mapUnitsPerPixel()
+
+    def activate(self):
+        self.rubber.setWidth(self.settings.value("rubberWidth"))
+        self.rubber.setColor(self.settings.value("rubberColor"))
+        self.lineLayer = MemoryLayers(self.iface).lineLayer
+        QgsMapTool.activate(self)
 
     def deactivate(self):
         self.rubber.reset()
@@ -103,16 +107,16 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         # save the intersection result (point) and its report
         # check first
         while True:
-            if not self.settings.value("intersecResultPlacePoint"):
+            if not self.settings.value("advancedIntersectionWritePoint"):
                 break  # if we do not place any point, skip
-            layerid = self.settings.value("intersectionLayer")
+            layerid = self.settings.value("advancedIntersectionLayer")
             message = "To place the intersection solution, you must select a layer in the settings."
             status, intLayer = self.checkLayerExists(layerid, message)
             if status == 2:
                 continue
             if status == 3:
                 return
-            if self.settings.value("intersecResultPlaceReport"):
+            if self.settings.value("advancedIntersectionWriteReport"):
                 reportField = self.settings.value("reportField")
                 message = "To save the intersection report, please select a field for it."
                 status = self.checkFieldExists(intLayer, reportField, message)
@@ -122,10 +126,10 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                     return
             break
         # save the intersection results
-        if self.settings.value("intersecResultPlacePoint"):
+        if self.settings.value("advancedIntersectionWritePoint"):
             f = QgsFeature()
             f.setGeometry(QgsGeometry().fromPoint(intersectedPoint))
-            if self.settings.value("intersecResultPlaceReport"):
+            if self.settings.value("advancedIntersectionWriteReport"):
                 irep = intLayer.dataProvider().fieldNameIndex(reportField)
                 f.addAttribute(irep, report)
             intLayer.dataProvider().addFeatures([f])

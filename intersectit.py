@@ -37,7 +37,8 @@ from gui.mysettingsdialog import MySettingsDialog
 from gui.dimensionmaptool import DimensionMapTool
 from gui.distancemaptool import DistanceMapTool
 from gui.orientationmaptool import OrientationMapTool
-from gui.intersectionmaptool import IntersectionMapTool
+from gui.advancedintersectionmaptool import AdvancedIntersectionMapTool
+from gui.simpleintersectionmaptool import SimpleIntersectionMapTool
 
 import resources
 
@@ -78,21 +79,21 @@ class IntersectIt ():
         # separator
         self.toolBar.addSeparator()
         # simple intersection
-        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_simple.svg"),
-                                          "intersection of 2 lines from any layers", self.iface.mainWindow())
-        self.intersectionAction.setCheckable(True)
-        self.intersectionMapTool = IntersectionMapTool(self.iface)
-        self.intersectionMapTool.setAction(self.intersectionAction)
-        self.toolBar.addAction(self.intersectionAction)
-        self.iface.addPluginToMenu("&Intersect It", self.intersectionAction)
+        self.simpleIntersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_simple.svg"),
+                                                "simple intersection of 2 objects", self.iface.mainWindow())
+        self.simpleIntersectionAction.setCheckable(True)
+        self.simpleIntersectionMapTool = SimpleIntersectionMapTool(self.iface)
+        self.simpleIntersectionMapTool.setAction(self.simpleIntersectionAction)
+        self.toolBar.addAction(self.simpleIntersectionAction)
+        self.iface.addPluginToMenu("&Intersect It", self.simpleIntersectionAction)
         # advanced intersection
-        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_advanced.svg"),
-                                          "intersection of 2+ observations", self.iface.mainWindow())
-        self.intersectionAction.setCheckable(True)
-        self.intersectionMapTool = IntersectionMapTool(self.iface)
-        self.intersectionMapTool.setAction(self.intersectionAction)
-        self.toolBar.addAction(self.intersectionAction)
-        self.iface.addPluginToMenu("&Intersect It", self.intersectionAction)
+        self.advancedIntersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_advanced.svg"),
+                                                  "advanced intersection of 2+ observations", self.iface.mainWindow())
+        self.advancedIntersectionAction.setCheckable(True)
+        self.advancedIntersectionMapTool = AdvancedIntersectionMapTool(self.iface)
+        self.advancedIntersectionMapTool.setAction(self.advancedIntersectionAction)
+        self.toolBar.addAction(self.advancedIntersectionAction)
+        self.iface.addPluginToMenu("&Intersect It", self.advancedIntersectionAction)
         # separator
         self.toolBar.addSeparator()
         # dimension edit
@@ -125,14 +126,16 @@ class IntersectIt ():
     def unload(self):
         self.iface.removePluginMenu("&Intersect It", self.distanceAction)
         self.iface.removePluginMenu("&Intersect It", self.orientationAction)
-        self.iface.removePluginMenu("&Intersect It", self.intersectionAction)
+        self.iface.removePluginMenu("&Intersect It", self.simpleIntersectionAction)
+        self.iface.removePluginMenu("&Intersect It", self.advancedIntersectionAction)
         self.iface.removePluginMenu("&Intersect It", self.dimensionAction)
         self.iface.removePluginMenu("&Intersect It", self.uisettingsAction)
         self.iface.removePluginMenu("&Intersect It", self.cleanerAction)
         self.iface.removePluginMenu("&Intersect It", self.helpAction)
         self.iface.removeToolBarIcon(self.distanceAction)
         self.iface.removeToolBarIcon(self.orientationAction)
-        self.iface.removeToolBarIcon(self.intersectionAction)
+        self.iface.removeToolBarIcon(self.simpleIntersectionAction)
+        self.iface.removeToolBarIcon(self.advancedIntersectionAction)
         self.iface.removeToolBarIcon(self.dimensionAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
         del self.toolBar
@@ -148,8 +151,10 @@ class IntersectIt ():
             self.mapCanvas.setMapTool(self.distanceMapTool)
         if action == self.orientationAction:
             self.mapCanvas.setMapTool(self.orientationMapTool)
-        if action == self.intersectionAction:
-            self.mapCanvas.setMapTool(self.intersectionMapTool)
+        if action == self.simpleIntersectionAction:
+            self.mapCanvas.setMapTool(self.simpleIntersectionMapTool)
+        if action == self.advancedIntersectionAction:
+            self.mapCanvas.setMapTool(self.advancedIntersectionMapTool)
         if action == self.dimensionAction:
             self.mapCanvas.setMapTool(self.dimensionMapTool)
 

@@ -28,6 +28,7 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtGui import QDialog
+from qgis.core import QGis
 
 from ..qgissettingmanager import SettingDialog
 from ..qgiscombomanager import VectorLayerCombo, FieldCombo
@@ -57,9 +58,13 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
                                          lambda: self.settings.value("typeField"))
         self.precisionFieldCombo = FieldCombo(self.precisionField, self.dimensionLayerCombo,
                                               lambda: self.settings.value("precisionField"))
-
-        self.intersectionLayerCombo = VectorLayerCombo(self.intersectionLayer,
-                                                       lambda: self.settings.value("intersectionLayer"),
-                                                       {"groupLayers": False, "hasGeometry": True})
-        self.reportFieldCombo = FieldCombo(self.reportField, self.intersectionLayerCombo,
+        self.simpleIntersectionLayerCombo = VectorLayerCombo(self.simpleIntersectionLayer,
+                                                             lambda: self.settings.value("simpleIntersectionLayer"),
+                                                             {"groupLayers": False, "hasGeometry": True,
+                                                              "geomType": QGis.Point})
+        self.advancedIntersectionLayerCombo = VectorLayerCombo(self.advancedIntersectionLayer,
+                                                               lambda: self.settings.value("advancedIntersectionLayer"),
+                                                               {"groupLayers": False, "hasGeometry": True,
+                                                                "geomType": QGis.Point})
+        self.reportFieldCombo = FieldCombo(self.reportField, self.advancedIntersectionLayerCombo,
                                            lambda: self.settings.value("reportField"))

@@ -47,7 +47,21 @@ class DistanceMapTool(QgsMapTool):
 
     def activate(self):
         self.rubber = QgsRubberBand(self.canvas)
-        self.rubber.setIconSize(8)
+        self.rubber.setIconSize(12)
+        self.snapperList = []
+        tolerance = self.settings.value("selectTolerance")
+        units = self.settings.value("selectUnits")
+        for layer in self.iface.mapCanvas().layers():
+            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
+                snapLayer = QgsSnapper.SnapLayer()
+                snapLayer.mLayer = layer
+                snapLayer.mSnapTo = QgsSnapper.SnapToVertex
+                snapLayer.mTolerance = tolerance
+                if units == "map":
+                    snapLayer.mUnitType = QgsTolerance.MapUnits
+                else:
+                    snapLayer.mUnitType = QgsTolerance.Pixels
+                self.snapperList.append(snapLayer)
         self.messageWidget = self.iface.messageBar().createMessage("Not snapped.")
         self.messageWidgetExist = True
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
@@ -70,11 +84,15 @@ class DistanceMapTool(QgsMapTool):
         if nSnappingResults == 0:
             message = "No snap"
         else:
-            message = "<b>Snapped to: %s" % snappingResults[0].layer.name() + "</b>"
+            message = "Snapped to: <b>%s" % snappingResults[0].layer.name() + "</b>"
             if nSnappingResults > 1:
-                message += "<br>Other layers: "
+                layers = []
+                message += " Nearby: "
                 for res in snappingResults[1:]:
-                    message += res.layer.name() + ", "
+                    layerName = res.layer.name()
+                    if layerName not in layers:
+                        message += res.layer.name() + ", "
+                        layers.append(layerName)
                 message = message[:-2]
         messageTextEdit = self.messageWidget.findChild(QTextEdit, "mMsgText")
         if messageTextEdit is not None:
@@ -116,23 +134,11 @@ class DistanceMapTool(QgsMapTool):
                 return initPoint
 
         if self.snapping == "all":
-            snapperList = []
-            for layer in self.iface.mapCanvas().layers():
-                if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                    snapLayer = QgsSnapper.SnapLayer()
-                    snapLayer.mLayer = layer
-                    snapLayer.mSnapTo = QgsSnapper.SnapToVertex
-                    snapLayer.mTolerance = self.settings.value("intersecSelectTolerance")
-                    if self.settings.value("intersecSelectUnits") == "map units":
-                        snapLayer.mUnitType = QgsTolerance.MapUnits
-                    else:
-                        snapLayer.mUnitType = QgsTolerance.Pixels
-                    snapperList.append(snapLayer)
-            if len(snapperList) == 0:
+            if len(self.snapperList) == 0:
                 return initPoint
             snapper = QgsSnapper(self.canvas.mapRenderer())
-            snapper.setSnapLayers(snapperList)
-            snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
+            snapper.setSnapLayers(self.snapperList)
+            snapper.setSnapMode(QgsSnapper.SnapWithResultsWithinTolerances)
             ok, snappingResults = snapper.snapPoint(pixPoint, [])
             self.displaySnapInfo(snappingResults)
             if ok == 0 and len(snappingResults) > 0:

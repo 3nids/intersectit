@@ -79,8 +79,11 @@ class OrientationMapTool(QgsMapTool):
                     snapLayer = QgsSnapper.SnapLayer()
                     snapLayer.mLayer = layer
                     snapLayer.mSnapTo = QgsSnapper.SnapToSegment
-                    snapLayer.mTolerance = 7
-                    snapLayer.mUnitType = QgsTolerance.Pixels
+                    snapLayer.mTolerance = self.settings.value("selectTolerance")
+                    if self.settings.value("selectUnits") == "map":
+                        snapLayer.mUnitType = QgsTolerance.MapUnits
+                    else:
+                        snapLayer.mUnitType = QgsTolerance.Pixels
                     snapperList.append(snapLayer)
         if len(snapperList) == 0:
             return None

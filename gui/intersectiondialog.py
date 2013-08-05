@@ -84,8 +84,8 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
             else:
                 intersection = DistanceOrientationIntersection(observations, self.initPoint)
         else:
-            maxIter = self.intersecLSmaxIteration.value()
-            threshold = self.intersecLSconvergeThreshold.value()
+            maxIter = self.advancedIntersecLSmaxIteration.value()
+            threshold = self.advancedIntersecLSconvergeThreshold.value()
             intersection = LeastSquares(observations, self.initPoint, maxIter, threshold)
 
         self.reportBrowser.setText(intersection.report)

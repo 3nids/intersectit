@@ -5,10 +5,12 @@
     * display snap info in the message bar
     * correctly remove rubber band if canceling
     * fix crash if layer removed while map tool is active
-* Intersection
+* Intersection (now called advanced)
     * prevent intersection from only one element
     * add solution in rubber band
     * fix intersection distance / orientation
+* Simple intersection
+    * new tool to intersect exactly 2 line or polygon features from any layer and write intersection to a point layer
 * Dimensions
     * now use a standard linestring for dimensions
     * tool to edit arcs for dimensions of distances (like in cadtools plugin)
