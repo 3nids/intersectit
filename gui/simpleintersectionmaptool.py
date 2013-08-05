@@ -46,20 +46,20 @@ class SimpleIntersectionMapTool(QgsMapTool):
 
     def deactivate(self):
         self.rubber.reset()
-        QgsMapLayerRegistry.instance().layersAdded.disconnect(self.updateLayerList)
-        QgsMapLayerRegistry.instance().layersRemoved.disconnect(self.updateLayerList)
+        QgsMapLayerRegistry.instance().layersAdded.disconnect(self.updateSnapperList)
+        QgsMapLayerRegistry.instance().layersRemoved.disconnect(self.updateSnapperList)
         QgsMapTool.deactivate(self)
 
     def activate(self):
         QgsMapTool.activate(self)
         self.rubber.setWidth(self.settings.value("rubberWidth"))
         self.rubber.setColor(self.settings.value("rubberColor"))
-        self.updateLayerList(None)
-        QgsMapLayerRegistry.instance().layersAdded.connect(self.updateLayerList)
-        QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateLayerList)
+        self.updateSnapperList()
+        QgsMapLayerRegistry.instance().layersAdded.connect(self.updateSnapperList)
+        QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateSnapperList)
         self.checkLayer()
 
-    def updateLayerList(self, dummy):
+    def updateSnapperList(self, dummy=None):
         # make a snapper list of all line and polygons layers
         self.snapperList = []
         for layer in self.iface.mapCanvas().layers():

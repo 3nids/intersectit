@@ -29,7 +29,7 @@
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTextEdit
-from qgis.core import QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper
+from qgis.core import QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper, QgsMapLayerRegistry
 from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper
 
 from ..core.mysettings import MySettings
@@ -46,8 +46,19 @@ class DistanceMapTool(QgsMapTool):
         QgsMapTool.__init__(self, self.canvas)
 
     def activate(self):
+        QgsMapTool.activate(self)
         self.rubber = QgsRubberBand(self.canvas)
         self.rubber.setIconSize(12)
+        self.updateSnapperList()
+        QgsMapLayerRegistry.instance().layersAdded.connect(self.updateSnapperList)
+        QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateSnapperList)
+        self.messageWidget = self.iface.messageBar().createMessage("Not snapped.")
+        self.messageWidgetExist = True
+        self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
+        if self.settings.value("obsDistanceSnapping") != "no":
+            self.iface.messageBar().pushWidget(self.messageWidget)
+
+    def updateSnapperList(self, dummy=None):
         self.snapperList = []
         tolerance = self.settings.value("selectTolerance")
         units = self.settings.value("selectUnits")
@@ -62,16 +73,12 @@ class DistanceMapTool(QgsMapTool):
                 else:
                     snapLayer.mUnitType = QgsTolerance.Pixels
                 self.snapperList.append(snapLayer)
-        self.messageWidget = self.iface.messageBar().createMessage("Not snapped.")
-        self.messageWidgetExist = True
-        self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
-        if self.settings.value("obsDistanceSnapping") != "no":
-            self.iface.messageBar().pushWidget(self.messageWidget)
-        QgsMapTool.activate(self)
 
     def deactivate(self):
         self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
+        QgsMapLayerRegistry.instance().layersAdded.disconnect(self.updateSnapperList)
+        QgsMapLayerRegistry.instance().layersRemoved.disconnect(self.updateSnapperList)
         QgsMapTool.deactivate(self)
 
     def messageWidgetRemoved(self):
