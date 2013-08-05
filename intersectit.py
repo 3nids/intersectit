@@ -73,7 +73,7 @@ class IntersectIt ():
         self.toolBar.addAction(self.directionAction)
         self.iface.addPluginToMenu("&Intersect It", self.directionAction)
         # intersection
-        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersectit.svg"), "intersection", self.iface.mainWindow())
+        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection.svg"), "intersection", self.iface.mainWindow())
         self.intersectionAction.setCheckable(True)
         self.intersectionMapTool = IntersectionMapTool(self.iface)
         self.intersectionMapTool.setAction(self.intersectionAction)
