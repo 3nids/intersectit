@@ -42,27 +42,16 @@ class DistanceMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
+        self.settings = MySettings()
         QgsMapTool.__init__(self, self.canvas)
 
     def activate(self):
         self.rubber = QgsRubberBand(self.canvas)
         self.rubber.setIconSize(8)
-        self.snapperList = []
-        self.snapping = MySettings().value("obsDistanceSnapping")
-        if self.snapping == "all":
-            for layer in self.iface.mapCanvas().layers():
-                if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                    snapLayer = QgsSnapper.SnapLayer()
-                    snapLayer.mLayer = layer
-                    snapLayer.mSnapTo = QgsSnapper.SnapToVertex
-                    snapLayer.mTolerance = 7
-                    snapLayer.mUnitType = QgsTolerance.Pixels
-                    self.snapperList.append(snapLayer)
-
         self.messageWidget = self.iface.messageBar().createMessage("Not snapped.")
         self.messageWidgetExist = True
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
-        if self.snapping != "no":
+        if self.settings.value("obsDistanceSnapping") != "no":
             self.iface.messageBar().pushWidget(self.messageWidget)
         QgsMapTool.activate(self)
 
@@ -92,12 +81,11 @@ class DistanceMapTool(QgsMapTool):
             messageTextEdit.setText(message)
 
     def canvasMoveEvent(self, mouseEvent):
-        if self.snapping:
-            snappedPoint = self.snapToLayers(mouseEvent.pos())
-            if snappedPoint is None:
-                self.rubber.reset()
-            else:
-                self.rubber.setToGeometry(QgsGeometry().fromPoint(snappedPoint), None)
+        snappedPoint = self.snapToLayers(mouseEvent.pos())
+        if snappedPoint is None:
+            self.rubber.reset()
+        else:
+            self.rubber.setToGeometry(QgsGeometry().fromPoint(snappedPoint), None)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
@@ -114,6 +102,8 @@ class DistanceMapTool(QgsMapTool):
         self.rubber.reset()
 
     def snapToLayers(self, pixPoint, initPoint=None):
+        self.snapping = self.settings.value("obsDistanceSnapping")
+
         if self.snapping == "no":
             return initPoint
 
@@ -126,12 +116,23 @@ class DistanceMapTool(QgsMapTool):
                 return initPoint
 
         if self.snapping == "all":
-            if len(self.snapperList) == 0:
+            snapperList = []
+            for layer in self.iface.mapCanvas().layers():
+                if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
+                    snapLayer = QgsSnapper.SnapLayer()
+                    snapLayer.mLayer = layer
+                    snapLayer.mSnapTo = QgsSnapper.SnapToVertex
+                    snapLayer.mTolerance = self.settings.value("intersecSelectTolerance")
+                    if self.settings.value("intersecSelectUnits") == "map units":
+                        snapLayer.mUnitType = QgsTolerance.MapUnits
+                    else:
+                        snapLayer.mUnitType = QgsTolerance.Pixels
+                    snapperList.append(snapLayer)
+            if len(snapperList) == 0:
                 return initPoint
             snapper = QgsSnapper(self.canvas.mapRenderer())
-            snapper.setSnapLayers(self.snapperList)
+            snapper.setSnapLayers(snapperList)
             snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
-
             ok, snappingResults = snapper.snapPoint(pixPoint, [])
             self.displaySnapInfo(snappingResults)
             if ok == 0 and len(snappingResults) > 0:

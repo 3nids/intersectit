@@ -4,6 +4,7 @@
 * Distance
     * display snap info in the message bar
     * correctly remove rubber band if canceling
+    * fix crash if layer removed while map tool is active
 * Intersection
     * prevent intersection from only one element
     * add solution in rubber band
@@ -11,6 +12,7 @@
 * Dimensions
     * now use a standard linestring for dimensions
     * tool to edit arcs for dimensions of distances (like in cadtools plugin)
+* General settings for snapping and rubbers bands
 
 ### 2.0 01.07.2013 _experimental_
 
