@@ -29,7 +29,7 @@
 
 from PyQt4.QtCore import Qt
 from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
-from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint
+from qgis.gui import QgsRubberBand, QgsMapTool
 
 from ..core.observation import Orientation
 from ..core.mysettings import MySettings
@@ -37,17 +37,17 @@ from ..core.mysettings import MySettings
 from orientationdialog import OrientationDialog
 
 
-class OrientationMapTool(QgsMapToolEmitPoint):
+class OrientationMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
         self.settings = MySettings()
         self.canvas = iface.mapCanvas()
         self.rubber = QgsRubberBand(self.canvas)
-        QgsMapToolEmitPoint.__init__(self, self.canvas)
+        QgsMapTool.__init__(self, self.canvas)
 
     def deactivate(self):
         self.rubber.reset()
-        QgsMapToolEmitPoint.deactivate(self)
+        QgsMapTool.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
         orientation = self.getOrientation(mouseEvent.pos())

@@ -6,7 +6,8 @@
         <file>icons/prolongation.svg</file>
         <file>icons/eraser.svg</file>
         <file>icons/intersectit.svg</file>
-        <file>icons/intersection.svg</file>
+        <file>icons/intersection_simple.svg</file>
+        <file>icons/intersection_advanced.svg</file>
         <file>icons/dimension.svg</file>
     </qresource>
 </RCC>

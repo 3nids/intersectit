@@ -55,44 +55,65 @@ class IntersectIt ():
         self.toolBar.setObjectName("IntersectIt")
 
         # settings
-        self.uisettingsAction = QAction(QIcon(":/plugins/quickfinder/icons/settings.svg"), "settings", self.iface.mainWindow())
+        self.uisettingsAction = QAction(QIcon(":/plugins/quickfinder/icons/settings.svg"), "settings",
+                                        self.iface.mainWindow())
         self.uisettingsAction.triggered.connect(self.showSettings)
         self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)
         # distance
-        self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.svg"), "place distance", self.iface.mainWindow())
+        self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.svg"), "place distance",
+                                      self.iface.mainWindow())
         self.distanceAction.setCheckable(True)
         self.distanceMapTool = DistanceMapTool(self.iface)
         self.distanceMapTool.setAction(self.distanceAction)
         self.toolBar.addAction(self.distanceAction)
         self.iface.addPluginToMenu("&Intersect It", self.distanceAction)
         # prolongation
-        self.orientationAction = QAction(QIcon(":/plugins/intersectit/icons/prolongation.svg"), "place orientation", self.iface.mainWindow())
+        self.orientationAction = QAction(QIcon(":/plugins/intersectit/icons/prolongation.svg"), "place orientation",
+                                         self.iface.mainWindow())
         self.orientationAction.setCheckable(True)
         self.orientationMapTool = OrientationMapTool(self.iface)
         self.orientationMapTool.setAction(self.orientationAction)
         self.toolBar.addAction(self.orientationAction)
         self.iface.addPluginToMenu("&Intersect It", self.orientationAction)
-        # intersection
-        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection.svg"), "intersection", self.iface.mainWindow())
+        # separator
+        self.toolBar.addSeparator()
+        # simple intersection
+        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_simple.svg"),
+                                          "intersection of 2 lines from any layers", self.iface.mainWindow())
         self.intersectionAction.setCheckable(True)
         self.intersectionMapTool = IntersectionMapTool(self.iface)
         self.intersectionMapTool.setAction(self.intersectionAction)
         self.toolBar.addAction(self.intersectionAction)
         self.iface.addPluginToMenu("&Intersect It", self.intersectionAction)
+        # advanced intersection
+        self.intersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_advanced.svg"),
+                                          "intersection of 2+ observations", self.iface.mainWindow())
+        self.intersectionAction.setCheckable(True)
+        self.intersectionMapTool = IntersectionMapTool(self.iface)
+        self.intersectionMapTool.setAction(self.intersectionAction)
+        self.toolBar.addAction(self.intersectionAction)
+        self.iface.addPluginToMenu("&Intersect It", self.intersectionAction)
+        # separator
+        self.toolBar.addSeparator()
         # dimension edit
-        self.dimensionAction = QAction(QIcon(":/plugins/intersectit/icons/dimension.svg"), "dimension", self.iface.mainWindow())
+        self.dimensionAction = QAction(QIcon(":/plugins/intersectit/icons/dimension.svg"), "dimension",
+                                       self.iface.mainWindow())
         self.dimensionAction.setCheckable(True)
         self.dimensionMapTool = DimensionMapTool(self.iface)
         self.dimensionMapTool.setAction(self.dimensionAction)
         self.toolBar.addAction(self.dimensionAction)
         self.iface.addPluginToMenu("&Intersect It", self.dimensionAction)
+        # separator
+        self.toolBar.addSeparator()
         # cleaner
-        self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/eraser.svg"), "clean points and circles", self.iface.mainWindow())
+        self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/eraser.svg"), "clean points and circles",
+                                     self.iface.mainWindow())
         self.cleanerAction.triggered.connect(self.cleanMemoryLayers)
         self.toolBar.addAction(self.cleanerAction)
         self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)
         # help
-        self.helpAction = QAction(QIcon(":/plugins/quickfinder/icons/help.svg"), "help", self.iface.mainWindow())
+        self.helpAction = QAction(QIcon(":/plugins/quickfinder/icons/help.svg"), "help",
+                                  self.iface.mainWindow())
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToMenu("&Intersect It", self.helpAction)
 

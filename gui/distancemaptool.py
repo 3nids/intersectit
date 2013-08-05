@@ -30,7 +30,7 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTextEdit
 from qgis.core import QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper
-from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint, QgsMapCanvasSnapper
+from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper
 
 from ..core.mysettings import MySettings
 from ..core.observation import Distance
@@ -38,11 +38,11 @@ from ..core.observation import Distance
 from distancedialog import DistanceDialog
 
 
-class DistanceMapTool(QgsMapToolEmitPoint):
+class DistanceMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        QgsMapToolEmitPoint.__init__(self, self.canvas)
+        QgsMapTool.__init__(self, self.canvas)
 
     def activate(self):
         self.rubber = QgsRubberBand(self.canvas)
@@ -64,12 +64,12 @@ class DistanceMapTool(QgsMapToolEmitPoint):
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
         if self.snapping != "no":
             self.iface.messageBar().pushWidget(self.messageWidget)
-        QgsMapToolEmitPoint.activate(self)
+        QgsMapTool.activate(self)
 
     def deactivate(self):
         self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
-        QgsMapToolEmitPoint.deactivate(self)
+        QgsMapTool.deactivate(self)
 
     def messageWidgetRemoved(self):
         self.messageWidgetExist = False

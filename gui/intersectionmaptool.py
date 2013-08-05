@@ -29,7 +29,7 @@
 
 from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint
-from qgis.gui import QgsMapToolEmitPoint, QgsRubberBand
+from qgis.gui import QgsMapTool, QgsRubberBand
 
 from ..core.mysettings import MySettings
 from ..core.memorylayers import MemoryLayers
@@ -39,14 +39,13 @@ from mysettingsdialog import MySettingsDialog
 from intersectiondialog import IntersectionDialog
 
 
-class IntersectionMapTool(QgsMapToolEmitPoint):
+class IntersectionMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
         self.canvas = iface.mapCanvas()
-        QgsMapToolEmitPoint.__init__(self, self.canvas)
+        QgsMapTool.__init__(self, self.canvas)
         self.settings = MySettings()
         self.lineLayer = MemoryLayers(iface).lineLayer
-        self.pointLayer = MemoryLayers(iface).pointLayer
         self.rubber = QgsRubberBand(self.canvas)
         self.rubber.setWidth(self.settings.value("intersectRubberWidth"))
         self.rubber.setColor(self.settings.value("intersectRubberColor"))
@@ -57,7 +56,7 @@ class IntersectionMapTool(QgsMapToolEmitPoint):
 
     def deactivate(self):
         self.rubber.reset()
-        QgsMapToolEmitPoint.deactivate(self)
+        QgsMapTool.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
         # put the observations within tolerance in the rubber band
