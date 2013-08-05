@@ -27,8 +27,7 @@
 #
 #---------------------------------------------------------------------
 
-from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsMapLayerRegistry, QgsTolerance, QgsSnapper, QgsFeature, QgsFeatureRequest, QgsPoint
+from qgis.core import QgsMapLayerRegistry, QgsTolerance, QgsSnapper, QgsFeature, QgsFeatureRequest
 from qgis.gui import QgsRubberBand, QgsMapTool, QgsMessageBar
 
 from ..core.arc import Arc
@@ -46,24 +45,26 @@ class DimensionMapTool(QgsMapTool):
         QgsMapTool.__init__(self, self.mapCanvas)
 
     def activate(self):
+        QgsMapTool.activate(self)
         layerid = MySettings().value("dimensionLayer")
         layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
         if layer is None:
             self.iface.messageBar().pushMessage("Intersect It", "Dimension layer must defined.",
                                                 QgsMessageBar.WARNING, 3)
+            self.mapCanvas.unsetMapTool(self)
             return
         if not layer.isEditable():
             self.iface.messageBar().pushMessage("Intersect It", "Dimension layer must be editable to edit arcs.",
                                                 QgsMessageBar.WARNING, 3)
+            self.mapCanvas.unsetMapTool(self)
             return
         self.snapLayer = QgsSnapper.SnapLayer()
         self.snapLayer.mLayer = layer
-        self.snapLayer.mSnapTo = QgsSnapper.SnapToVertex
+        self.snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
         self.snapLayer.mTolerance = 7
         self.snapLayer.mUnitType = QgsTolerance.Pixels
         self.editing = False
         self.arc = None
-        QgsMapTool.activate(self)
 
     def deactivate(self):
         self.lineRubber.reset()
@@ -76,13 +77,23 @@ class DimensionMapTool(QgsMapTool):
         self.editing = True
         line = feature.geometry().asPolyline()
         point = self.map2layer(mouseEvent.pos())
-        print len(line)
         self.arc = Arc(line[0], point, line[len(line)-1])
+        self.featureId = feature.id()
 
     def canvasReleaseEvent(self, mouseEvent):
         if not self.editing:
             return
+        self.editing = False
+        self.lineRubber.reset()
         point = self.map2layer(mouseEvent.pos())
+        if point is None:
+            return
+        self.arc.setPoint(point)
+        geom = self.arc.geometry()
+        layer = self.snapLayer.mLayer
+        editBuffer = layer.editBuffer()
+        editBuffer.changeGeometry(self.featureId, geom)
+        layer.triggerRepaint()
 
     def canvasMoveEvent(self, mouseEvent):
         if not self.editing:
