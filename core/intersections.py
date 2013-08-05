@@ -118,7 +118,7 @@ class TwoOrientationIntersection():
         self.report += "Solution      | %13.3f | %13.3f |\n" % (x, y)
 
 
-class CircleOrientationIntersection():
+class DistanceOrientationIntersection():
     def __init__(self, observations, initPoint):
         self.intersection = None
         if observations[0]["type"] == "distance":

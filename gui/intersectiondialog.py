@@ -35,7 +35,7 @@ from ..qgissettingmanager import SettingDialog
 
 from ..core.mysettings import MySettings
 from ..core.leastsquares import LeastSquares
-from ..core.intersections import TwoCirclesIntersection, TwoOrientationIntersection, CircleOrientationIntersection
+from ..core.intersections import TwoCirclesIntersection, TwoOrientationIntersection, DistanceOrientationIntersection
 
 from ..ui.ui_intersection import Ui_Intersection
 
@@ -82,7 +82,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
             elif observations[0]["type"] == "orientation" and observations[1]["type"] == "orientation":
                 intersection = TwoOrientationIntersection(observations)
             else:
-                intersection = CircleOrientationIntersection(observations, self.initPoint)
+                intersection = DistanceOrientationIntersection(observations, self.initPoint)
         else:
             maxIter = self.intersecLSmaxIteration.value()
             threshold = self.intersecLSconvergeThreshold.value()
