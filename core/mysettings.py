@@ -40,8 +40,8 @@ class MySettings(SettingManager):
         # global settings
         self.addSetting("obsDistanceSnapping", "string", "global", "all")
         self.addSetting("obsDefaultPrecisionDistance", "double", "global", .025)
-        self.addSetting("obsDefaultPrecisionDirection", "double", "global", .5)
-        self.addSetting("obsDirectionLength", "double", "global", 4)
+        self.addSetting("obsDefaultPrecisionOrientation", "double", "global", .5)
+        self.addSetting("obsOrientationLength", "double", "global", 4)
         self.addSetting("intersecSelectTolerance", "double", "global", 0.3)
         self.addSetting("intersecSelectUnits", "string", "global", "map")
         self.addSetting("intersectRubberColor", "Color", "global", QColor(0, 0, 255))

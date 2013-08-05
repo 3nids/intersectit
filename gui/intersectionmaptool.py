@@ -191,7 +191,7 @@ class IntersectionMapTool(QgsMapToolEmitPoint):
                 p1 = intersectedPoint
                 if obs["type"] == "distance":
                     geom = Arc(p0, p1).geometry()
-                elif obs["type"] == "direction":
+                elif obs["type"] == "orientation":
                     geom = QgsGeometry().fromPolyline([p0, p1])
                 else:
                     raise NameError("Invalid observation %s" % obs["type"])

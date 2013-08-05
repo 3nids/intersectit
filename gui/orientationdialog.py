@@ -31,37 +31,37 @@ from PyQt4.QtGui import QDialog
 
 from ..core.mysettings import MySettings
 
-from ..ui.ui_place_direction import Ui_PlaceDirection
+from ..ui.ui_place_orientation import Ui_PlaceOrientation
 
 
-class DirectionDialog(QDialog, Ui_PlaceDirection):
-    def __init__(self, direction, rubber):
+class OrientationDialog(QDialog, Ui_PlaceOrientation):
+    def __init__(self, orientation, rubber):
         QDialog.__init__(self)
         self.setupUi(self)
 
-        # this is a reference, direction observation is modified in outer class
-        self.direction = direction
+        # this is a reference, orientation observation is modified in outer class
+        self.orientation = orientation
         self.rubber = rubber
 
         settings = MySettings()
-        self.observation.setValue(direction.observation)
-        self.length.setValue(settings.value("obsDirectionLength"))
-        self.precision.setValue(settings.value("obsDefaultPrecisionDirection"))
+        self.observation.setValue(orientation.observation)
+        self.length.setValue(settings.value("obsOrientationLength"))
+        self.precision.setValue(settings.value("obsDefaultPrecisionOrientation"))
 
         self.precision.valueChanged.connect(self.changePrecision)
         self.observation.valueChanged.connect(self.changeObservation)
         self.length.valueChanged.connect(self.changeLength)
 
     def changeLength(self, v):
-        self.direction.length = v
-        self.rubber.setToGeometry(self.direction.geometry(), None)
+        self.orientation.length = v
+        self.rubber.setToGeometry(self.orientation.geometry(), None)
 
     def changeObservation(self, v):
-        self.direction.observation = v
-        self.rubber.setToGeometry(self.direction.geometry(), None)
+        self.orientation.observation = v
+        self.rubber.setToGeometry(self.orientation.geometry(), None)
 
     def changePrecision(self, v):
-        self.direction.precision = v
+        self.orientation.precision = v
 
     def closeEvent(self, e):
         self.rubber.reset()

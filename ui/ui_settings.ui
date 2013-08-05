@@ -95,7 +95,7 @@
        <item row="2" column="0">
         <widget class="QGroupBox" name="groupBox_3">
          <property name="title">
-          <string>Directions</string>
+          <string>Orientations</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_8">
           <item row="0" column="0">
@@ -104,12 +104,12 @@
              <bool>true</bool>
             </property>
             <property name="text">
-             <string>Default precision for directions [°]</string>
+             <string>Default precision for orientations [°]</string>
             </property>
            </widget>
           </item>
           <item row="1" column="1">
-           <widget class="QDoubleSpinBox" name="obsDirectionLength">
+           <widget class="QDoubleSpinBox" name="obsOrientationLength">
             <property name="decimals">
              <number>1</number>
             </property>
@@ -126,7 +126,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QDoubleSpinBox" name="obsDirectionDefaultPrecision">
+           <widget class="QDoubleSpinBox" name="obsOrientationDefaultPrecision">
             <property name="enabled">
              <bool>true</bool>
             </property>

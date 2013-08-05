@@ -31,13 +31,13 @@ from PyQt4.QtCore import Qt
 from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapToolEmitPoint
 
-from ..core.observation import Direction
+from ..core.observation import Orientation
 from ..core.mysettings import MySettings
 
-from directiondialog import DirectionDialog
+from orientationdialog import OrientationDialog
 
 
-class DirectionMapTool(QgsMapToolEmitPoint):
+class OrientationMapTool(QgsMapToolEmitPoint):
     def __init__(self, iface):
         self.iface = iface
         self.settings = MySettings()
@@ -50,28 +50,28 @@ class DirectionMapTool(QgsMapToolEmitPoint):
         QgsMapToolEmitPoint.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
-        direction = self.getDirection(mouseEvent.pos())
-        if direction is None:
+        orientation = self.getOrientation(mouseEvent.pos())
+        if orientation is None:
             self.rubber.reset()
         else:
-            self.rubber.setToGeometry(direction.geometry(), None)
+            self.rubber.setToGeometry(orientation.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
             self.rubber.reset()
             return
-        direction = self.getDirection(mouseEvent.pos())
-        if direction is None:
+        orientation = self.getOrientation(mouseEvent.pos())
+        if orientation is None:
             self.rubber.reset()
             return
-        dlg = DirectionDialog(direction, self.rubber)
+        dlg = OrientationDialog(orientation, self.rubber)
         if dlg.exec_():
-            if direction.length != 0:
-                print direction.precision
-                direction.save()
+            if orientation.length != 0:
+                print orientation.precision
+                orientation.save()
         self.rubber.reset()
 
-    def getDirection(self, pixPoint):
+    def getOrientation(self, pixPoint):
         snapperList = []
         for layer in self.iface.mapCanvas().layers():
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
@@ -100,7 +100,7 @@ class DirectionMapTool(QgsMapToolEmitPoint):
                 i = dist.index(mindist)
                 ve = vertices[i]
                 az = po.azimuth(ve)
-                return Direction(self.iface, ve, az)
+                return Orientation(self.iface, ve, az)
         else:
             return None
 

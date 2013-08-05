@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PlaceDirection</class>
- <widget class="QDialog" name="PlaceDirection">
+ <class>PlaceOrientation</class>
+ <widget class="QDialog" name="PlaceOrientation">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Place direction</string>
+   <string>Place orientation</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="4" column="0" colspan="3">
@@ -146,7 +146,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>PlaceDirection</receiver>
+   <receiver>PlaceOrientation</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -162,7 +162,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>PlaceDirection</receiver>
+   <receiver>PlaceOrientation</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

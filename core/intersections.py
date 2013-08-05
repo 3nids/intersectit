@@ -80,7 +80,7 @@ class TwoCirclesIntersection():
         self.report += "Solution | %13.3f | %13.3f |\n" % (self.solution.x(), self.solution.y())
 
 
-class TwoDirectionIntersection():
+class TwoOrientationIntersection():
     def __init__(self, observations):
         self.intersection = None
 
@@ -103,29 +103,29 @@ class TwoDirectionIntersection():
         y2 = observations[1]["y"]
         a2 = pi/180 * observations[1]["observation"]
         if fabs(a1) == fabs(a2):
-            self.report = "No solution found using two directions intersection since directions are parralell."
+            self.report = "No solution found using two orientations intersection since orientations are parralell."
             return
         k = (x2-x1+(y1-y2)*tan(a2)) / (sin(a1)*(1-tan(a2)/tan(a1)))
         x = x1 + k * sin(a1)
         y = y1 + k * cos(a1)
         self.solution = QgsPoint(x, y)
-        self.report = "A solution using two directions has been found.\n\n"
-        self.report += "            |       x       |       y       | azimut |\n"
-        self.report += " ---------- | ------------- | ------------- | ------ |\n"
-        self.report += "Direction 1 | %13.3f | %13.3f | %8.3f |\n" % (x1, y1, a1)
-        self.report += "Direction 2 | %13.3f | %13.3f | %8.3f |\n" % (x2, y2, a2)
-        self.report += "----------- | ------------- | ------------- |\n"
-        self.report += "Solution    | %13.3f | %13.3f |\n" % (x, y)
+        self.report = "A solution using two orientations has been found.\n\n"
+        self.report += "              |       x       |       y       | azimut |\n"
+        self.report += " ------------ | ------------- | ------------- | ------ |\n"
+        self.report += "Orientation 1 | %13.3f | %13.3f | %8.3f |\n" % (x1, y1, a1)
+        self.report += "Orientation 2 | %13.3f | %13.3f | %8.3f |\n" % (x2, y2, a2)
+        self.report += "------------- | ------------- | ------------- |\n"
+        self.report += "Solution      | %13.3f | %13.3f |\n" % (x, y)
 
 
-class CircleDirectionIntersection():
+class CircleOrientationIntersection():
     def __init__(self, observations, initPoint):
         self.intersection = None
         if observations[0]["type"] == "distance":
             distance = observations[0]
-            direction = observations[1]
+            orientation = observations[1]
         else:
-            direction = observations[0]
+            orientation = observations[0]
             distance = observations[1]
         # obs 1: distance:: (x1-x)^2 + (y1-y)^2 - r^2 = 0
         # obs 2: line::   [ x = x2 + k . sin(az)
@@ -141,9 +141,9 @@ class CircleDirectionIntersection():
         x1 = distance["x"]
         y1 = distance["y"]
         r = distance["observation"]
-        x2 = direction["x"]
-        y2 = direction["y"]
-        az = direction["observation"]*pi/180
+        x2 = orientation["x"]
+        y2 = orientation["y"]
+        az = orientation["observation"]*pi/180
         dx = x1-x2
         dy = y1-y2
         # solve quadratic equation
@@ -153,7 +153,7 @@ class CircleDirectionIntersection():
         delta = pow(b, 2) - 4*a*c
         # no intersection
         if delta < 0:
-            self.report = "No solution found using a direction and a distance intersection."
+            self.report = "No solution found using an orientation and a distance intersection."
             return
         # compute solutions
         k_1 = (-b + sqrt(delta)) / a
@@ -165,10 +165,10 @@ class CircleDirectionIntersection():
         P1 = QgsPoint(x_1, y_1)
         P2 = QgsPoint(x_2, y_2)
         self.solution = closestPoint(initPoint, [P1, P2])
-        self.report = "A solution using a direction and a distance has been found.\n\n"
+        self.report = "A solution using an orientation and a distance has been found.\n\n"
         self.report += "          |       x       |       y       | observation |\n"
         self.report += "--------- | ------------- | ------------- | ----------- |\n"
-        self.report += "Direction | %13.3f | %13.3f |   %9.3f |\n" % (x2, y2, az)
+        self.report += "Orientation | %13.3f | %13.3f |   %9.3f |\n" % (x2, y2, az)
         self.report += "Circle    | %13.3f | %13.3f |   %9.3f |\n" % (x1, y1, r)
         self.report += "--------- | ------------- | ------------- |\n"
         self.report += "Solution  | %13.3f | %13.3f |\n" % (self.solution.x(), self.solution.y())
