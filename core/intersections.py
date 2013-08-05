@@ -133,9 +133,9 @@ class DistanceOrientationIntersection():
         #
         # dx = x1-x2, dy = y1-y2
         #
-        # (dx-k.sin(az))^2 + (dy-k.cos(az))^2 + r^2 = 0
+        # (dx-k.sin(az))^2 + (dy-k.cos(az))^2 - r^2 = 0
         #
-        # k^2 + -2.k * (dx.sin(az)+dy.cos(az)) + dx^2 + dy^2 - r^2
+        # k^2 + -2.k * (dx.sin(az)+dy.cos(az)) + dx^2 + dy^2 - r^2 = 0
         #
         # => quadratic equation for k
         x1 = distance["x"]
@@ -156,8 +156,8 @@ class DistanceOrientationIntersection():
             self.report = "No solution found using an orientation and a distance intersection."
             return
         # compute solutions
-        k_1 = (-b + sqrt(delta)) / a
-        k_2 = (-b - sqrt(delta)) / a
+        k_1 = (-b + sqrt(delta)) / (2*a)
+        k_2 = (-b - sqrt(delta)) / (2*a)
         x_1 = x2 + k_1*sin(az)
         y_1 = y2 + k_1*cos(az)
         x_2 = x2 + k_2*sin(az)

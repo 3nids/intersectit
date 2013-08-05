@@ -4,9 +4,10 @@
 * Distance
     * display snap info in the message bar
     * correctly remove rubber band if canceling
-* Intersection dialog
+* Intersection
     * prevent intersection from only one element
     * add solution in rubber band
+    * fix intersection distance / orientation
 * Dimensions
     * now use a standard linestring for dimensions
     * tool to edit arcs for dimensions of distances (like in cadtools plugin)
