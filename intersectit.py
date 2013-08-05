@@ -82,7 +82,7 @@ class IntersectIt ():
         # dimension edit
         self.dimensionAction = QAction(QIcon(":/plugins/intersectit/icons/dimension.svg"), "dimension", self.iface.mainWindow())
         self.dimensionAction.setCheckable(True)
-        self.dimensionMapTool = DimensionMapTool(self.mapCanvas)
+        self.dimensionMapTool = DimensionMapTool(self.iface)
         self.dimensionMapTool.setAction(self.dimensionAction)
         self.toolBar.addAction(self.dimensionAction)
         self.iface.addPluginToMenu("&Intersect It", self.dimensionAction)

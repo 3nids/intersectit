@@ -35,12 +35,15 @@ class Arc():
     def __init__(self, p1, p2, p3=None):
         if p3 is None:
             p3 = QgsPoint(p2)
-            p2 = self.createPoint(p1, p3)
+            p2 = self.createMiddlePoint(p1, p3)
         self.p1 = QgsPoint(p1)
         self.p2 = QgsPoint(p2)
         self.p3 = QgsPoint(p3)
 
-    def createPoint(self, p1, p3):
+    def setPoint(self, point):
+        self.p2 = point
+
+    def createMiddlePoint(self, p1, p3):
         direction = [-(p1.y()-p3.y()),  p1.x()-p3.x()]
         length = sqrt(p1.sqrDist(p3))
         return QgsPoint((p1.x()+p3.x())/2 + direction[0] * .2 * length,

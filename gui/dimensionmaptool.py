@@ -28,50 +28,91 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsMapLayerRegistry, QgsTolerance, QgsSnapper, QgsFeature, QgsFeatureRequest
-from qgis.gui import QgsRubberBand, QgsMapTool
+from qgis.core import QGis, QgsMapLayerRegistry, QgsTolerance, QgsSnapper, QgsFeature, QgsFeatureRequest, QgsPoint
+from qgis.gui import QgsRubberBand, QgsMapTool, QgsMessageBar
 
 from ..core.arc import Arc
 from ..core.mysettings import MySettings
 
 
-
-
 class DimensionMapTool(QgsMapTool):
-    def __init__(self, canvas):
-        self.mapCanvas = canvas
-        QgsMapTool.__init__(self, canvas)
+    def __init__(self, iface):
+        self.iface = iface
+        self.mapCanvas = iface.mapCanvas()
+        self.lineRubber = QgsRubberBand(self.mapCanvas)
+        self.lineRubber.setWidth(4)
+        self.editing = False
+        self.snapLayer = None
+        QgsMapTool.__init__(self, self.mapCanvas)
 
     def activate(self):
         layerid = MySettings().value("dimensionLayer")
         layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
+        if layer is None:
+            self.iface.messageBar().pushMessage("Intersect It", "Dimension layer must defined.",
+                                                QgsMessageBar.WARNING, 3)
+            return
+        if not layer.isEditable():
+            self.iface.messageBar().pushMessage("Intersect It", "Dimension layer must be editable to edit arcs.",
+                                                QgsMessageBar.WARNING, 3)
+            return
         self.snapLayer = QgsSnapper.SnapLayer()
         self.snapLayer.mLayer = layer
         self.snapLayer.mSnapTo = QgsSnapper.SnapToVertex
         self.snapLayer.mTolerance = 7
         self.snapLayer.mUnitType = QgsTolerance.Pixels
-        self.rubber = QgsRubberBand(self.mapCanvas)
+        self.editing = False
+        self.arc = None
         QgsMapTool.activate(self)
 
-    def canvasMoveEvent(self, mouseEvent):
-        featureId = self.snapToDimension(mouseEvent.pos())
-        if featureId is None:
-            self.rubber.reset()
-            return
-        f = QgsFeature()
-        if self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId).setFlags(QgsFeatureRequest.NoGeometry)).nextFeature(f) is False:
-            self.rubber.reset()
-            return
-        print 123
-        self.rubber.setToGeometry(f.geometry(), self.snapLayer.mLayer)
+    def deactivate(self):
+        self.lineRubber.reset()
+        QgsMapTool.deactivate(self)
 
-    def snapToDimension(self, pixPoint):
+    def canvasPressEvent(self, mouseEvent):
+        feature = self.snapToDimensionLayer(mouseEvent.pos())
+        if feature is None:
+            return
+        self.editing = True
+        line = feature.geometry().asPolyline()
+        point = self.map2layer(mouseEvent.pos())
+        print len(line)
+        self.arc = Arc(line[0], point, line[len(line)-1])
+
+    def canvasReleaseEvent(self, mouseEvent):
+        if not self.editing:
+            return
+        point = self.map2layer(mouseEvent.pos())
+
+    def canvasMoveEvent(self, mouseEvent):
+        if not self.editing:
+            feature = self.snapToDimensionLayer(mouseEvent.pos())
+            if feature is None:
+                self.lineRubber.reset()
+                return
+            self.lineRubber.setToGeometry(feature.geometry(), self.snapLayer.mLayer)
+        else:
+            point = self.map2layer(mouseEvent.pos())
+            if point is None:
+                return
+            self.arc.setPoint(point)
+            self.lineRubber.setToGeometry(self.arc.geometry(), self.snapLayer.mLayer)
+
+    def map2layer(self, pos):
+        point = self.toMapCoordinates(pos)
+        return self.mapCanvas.mapRenderer().mapToLayerCoordinates(self.snapLayer.mLayer, point)
+
+    def snapToDimensionLayer(self, pixPoint):
         snapper = QgsSnapper(self.mapCanvas.mapRenderer())
         snapper.setSnapLayers([self.snapLayer])
         snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
 
         ok, snappingResults = snapper.snapPoint(pixPoint, [])
         if ok == 0 and len(snappingResults) > 0:
-            return snappingResults[0].snappedAtGeometry
+            featureId = snappingResults[0].snappedAtGeometry
+            f = QgsFeature()
+            if self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is False:
+                return None
+            return f
         else:
             return None
