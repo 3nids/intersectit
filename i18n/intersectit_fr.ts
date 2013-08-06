@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="2.0">
+<!DOCTYPE TS>
+<TS version="2.0" language="fr" sourcelanguage="en">
 <context>
     <name>Intersection</name>
     <message>
@@ -10,50 +11,50 @@
     <message>
         <location filename="ui_intersection.ui" line="60"/>
         <source>Convergence</source>
-        <translation type="unfinished"></translation>
+        <translation>Convergence</translation>
     </message>
     <message>
         <location filename="ui_intersection.ui" line="67"/>
         <source>Max iteration</source>
-        <translation type="unfinished"></translation>
+        <translation>Nb. max itérations</translation>
     </message>
     <message>
         <location filename="ui_intersection.ui" line="81"/>
         <source>mm</source>
-        <translation type="unfinished"></translation>
+        <translation>mm</translation>
     </message>
     <message>
         <location filename="ui_intersection.ui" line="88"/>
         <source>process</source>
-        <translation type="unfinished"></translation>
+        <translation>lancer</translation>
     </message>
     <message>
         <location filename="ui_intersection.ui" line="102"/>
         <source>Use this solution</source>
-        <translation type="unfinished"></translation>
+        <translation>Utiliser cette solution</translation>
     </message>
 </context>
-<context encoding="UTF-8">
+<context>
     <name>PlaceOrientation</name>
     <message>
         <location filename="ui_place_orientation.ui" line="14"/>
         <source>Place orientation</source>
-        <translation type="unfinished"></translation>
+        <translation>Placer une orientation</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="ui_place_orientation.ui" line="23"/>
         <source>Precision of prolongation [°]</source>
-        <translation type="unfinished"></translation>
+        <translation>Précision de l&apos;orientation</translation>
     </message>
     <message>
         <location filename="ui_place_orientation.ui" line="66"/>
         <source>Length of drawn line</source>
-        <translation type="unfinished"></translation>
+        <translation>Longueur de la ligne déssinée</translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="ui_place_orientation.ui" line="118"/>
         <source>Angle [°]</source>
-        <translation type="unfinished"></translation>
+        <translation>Angle [°]</translation>
     </message>
 </context>
 <context>
@@ -61,67 +62,67 @@
     <message>
         <location filename="ui_settings.ui" line="14"/>
         <source>Intersect It :: settings</source>
-        <translation type="unfinished"></translation>
+        <translation>Intersect It :: réglages</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="34"/>
         <source>General</source>
-        <translation type="unfinished"></translation>
+        <translation>Général</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="40"/>
         <source>Map</source>
-        <translation type="unfinished"></translation>
+        <translation>Carte</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="62"/>
         <source>highlighting</source>
-        <translation type="unfinished"></translation>
+        <translation>surbrillance</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="79"/>
         <source>select objects within</source>
-        <translation type="unfinished"></translation>
+        <translation>Sélection dans un rayon de</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="105"/>
         <source>pixels</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="118"/>
         <source>map units</source>
-        <translation type="unfinished"></translation>
+        <translation>unités de la carte</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="151"/>
         <source>Observations</source>
-        <translation type="unfinished"></translation>
+        <translation>Mesures</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="157"/>
         <source>Distances</source>
-        <translation type="unfinished"></translation>
+        <translation>Distance</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="163"/>
         <source>Snapping</source>
-        <translation type="unfinished"></translation>
+        <translation>Accrochage</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="171"/>
         <source>no</source>
-        <translation type="unfinished"></translation>
+        <translation>non</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="176"/>
         <source>according to project settings</source>
-        <translation type="unfinished"></translation>
+        <translation>selon les réglages des projets</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="181"/>
         <source>on vertex of all layers</source>
-        <translation type="unfinished"></translation>
+        <translation>pour toutes les couches</translation>
     </message>
     <message>
         <location filename="ui_settings.ui" line="189"/>
@@ -133,7 +134,7 @@
         <source>Orientations</source>
         <translation type="unfinished"></translation>
     </message>
-    <message encoding="UTF-8">
+    <message utf8="true">
         <location filename="ui_settings.ui" line="224"/>
         <source>Default precision for orientations [°]</source>
         <translation type="unfinished"></translation>

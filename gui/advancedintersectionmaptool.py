@@ -233,7 +233,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         if layer is not None:
             return 1, layer
 
-        reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
+        reply = QMessageBox.question(self.iface.mainWindow(), "Intersect It",
                                      message + " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             if MySettingsDialog().exec_():
@@ -248,7 +248,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         if layer.dataProvider().fieldNameIndex(field) != -1:
             return 1
 
-        reply = QMessageBox.question(self.iface.mainWindow(), "IntersectIt",
+        reply = QMessageBox.question(self.iface.mainWindow(), "Intersect It",
                                      message + " Would you like to open settings?", QMessageBox.Yes, QMessageBox.No)
         if reply == QMessageBox.Yes:
             if MySettingsDialog().exec_():

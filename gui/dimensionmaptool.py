@@ -146,7 +146,7 @@ class DimensionMapTool(QgsMapTool):
         for result in snappingResults:
             featureId = result.snappedAtGeometry
             f = QgsFeature()
-            if not self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is False:
+            if self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is not False:
                 if self.checkType:
                     if f[self.fieldTypeIdx] != "distance":
                         continue

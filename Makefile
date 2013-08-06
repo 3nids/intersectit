@@ -25,7 +25,7 @@ RC_FILES=$(patsubst %.qrc,%.py,$(RC_SOURCES))
 LN_SOURCES=$(wildcard i18n/*.ts)
 LN_FILES=$(join $(dir $(LN_SOURCES)), $(notdir $(LN_SOURCES:%.ts=%.qm)))
 
-GEN_FILES = ${UI_FILES} ${RC_FILES} ${LN_FILES}
+GEN_FILES = ${UI_FILES} ${RC_FILES}
 
 all: $(GEN_FILES)
 ui: $(UI_FILES)
