@@ -29,11 +29,10 @@
 
 from qgis.core import QgsPoint, QgsGeometry, QgsFeature
 
-from math import cos, sin, pi
 from datetime import datetime
 
 from memorylayers import MemoryLayers
-from mysettings import MySettings
+
 
 
 class Observation():
@@ -88,30 +87,4 @@ class Observation():
         self.pointLayer.updateExtents()
         self.pointLayer.setCacheImage(None)
         self.pointLayer.triggerRepaint()
-
-
-class Distance(Observation):
-    def __init__(self, iface, point, observation):
-        precision = MySettings().value("obsDefaultPrecisionDistance")
-        Observation.__init__(self, iface, "distance", point, observation, precision)
-
-    def geometry(self):
-        # trace circle at distance from point
-        return QgsGeometry().fromPolyline([QgsPoint(self.point.x() + self.observation * cos(pi/180*a),
-                                                    self.point.y() + self.observation * sin(pi/180*a))
-                                           for a in range(0, 361, 3)])
-
-
-class Orientation(Observation):
-    def __init__(self, iface, point, observation):
-        settings = MySettings()
-        self.length = settings.value("obsOrientationLength")
-        precision = settings.value("obsDefaultPrecisionOrientation")
-        Observation.__init__(self, iface, "orientation", point, observation, precision)
-
-    def geometry(self):
-        x = self.point.x() + self.length * cos((90-self.observation)*pi/180)
-        y = self.point.y() + self.length * sin((90-self.observation)*pi/180)
-        return QgsGeometry().fromPolyline([self.point, QgsPoint(x, y)])
-
 

@@ -33,7 +33,7 @@ from qgis.core import QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapp
 from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper
 
 from ..core.mysettings import MySettings
-from ..core.observation import Distance
+from ..core.distance import Distance
 
 from distancedialog import DistanceDialog
 

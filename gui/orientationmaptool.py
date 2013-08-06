@@ -31,7 +31,7 @@ from PyQt4.QtCore import Qt
 from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapTool
 
-from ..core.observation import Orientation
+from ..core.distance import Orientation
 from ..core.mysettings import MySettings
 
 from orientationdialog import OrientationDialog
