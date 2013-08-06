@@ -22,8 +22,10 @@ UI_SOURCES=$(wildcard ui/*.ui)
 UI_FILES=$(join $(dir $(UI_SOURCES)), $(notdir $(UI_SOURCES:%.ui=%.py)))
 RC_SOURCES=$(wildcard *.qrc)
 RC_FILES=$(patsubst %.qrc,%.py,$(RC_SOURCES))
+LN_SOURCES=$(wildcard i18n/*.ts)
+LN_FILES=$(join $(dir $(LN_SOURCES)), $(notdir $(LN_SOURCES:%.ts=%.qm)))
 
-GEN_FILES = ${UI_FILES} ${RC_FILES}
+GEN_FILES = ${UI_FILES} ${RC_FILES} ${LN_FILES}
 
 all: $(GEN_FILES)
 ui: $(UI_FILES)
@@ -35,10 +37,16 @@ $(UI_FILES): ui/%.py: ui/%.ui
 $(RC_FILES): %.py: %.qrc
 	pyrcc4 -o $@ $<
 
+$(LN_FILES): i18n/%.qm: i18n/%.ts
+	lrelease $<
+
 clean:
 	rm -f $(GEN_FILES) *.pyc
 
-compile: $(UI_FILES) $(RESOURCE_FILES)
+compile: $(UI_FILES) $(RC_FILES) $(LN_FILES)
+
+transup:
+	pylupdate4 -noobsolete $(UI_SOURCES) -ts i18n/intersectit_fr.ts
 
 deploy:
 	mkdir -p $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)

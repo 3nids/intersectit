@@ -90,7 +90,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         pos = mouseEvent.pos()
         observations = self.getFeatures(pos)
         point = self.toMapCoordinates(pos)
-        #self.doIntersection(point, observations)
+        self.doIntersection(point, observations)
 
     def getFeatures(self, pixPoint):
         snapper = QgsSnapper(self.mapCanvas.mapRenderer())
@@ -102,24 +102,15 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         alreadyGot = []
         for result in snappingResults:
             featureId = result.snappedAtGeometry
-            print featureId
-            print type(featureId)
-            print result.layer.name()
             f = QgsFeature()
             if featureId not in alreadyGot:
                 if result.layer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is not False:
-                    print f["precision"]
                     features.append(QgsFeature(f))
                     alreadyGot.append(featureId)
         return features
 
     def doIntersection(self, initPoint, observations):
         nObs = len(observations)
-        # for o in observations:
-        #     print o
-        #     for a in o.attributes():
-        #         print a
-        #     print o["type"]
         if nObs < 2:
             return
         self.rubber.reset()

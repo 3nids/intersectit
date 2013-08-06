@@ -81,7 +81,10 @@ class DimensionMapTool(QgsMapTool):
         self.lineRubber.reset()
         layer = QgsMapLayerRegistry.instance().mapLayer(self.settings.value("dimensionLayer"))
         if layer is not None:
-            layer.layerDeleted.disconnect(self.unsetMapTool)
+            try:
+                layer.layerDeleted.disconnect(self.unsetMapTool)
+            except TypeError:
+                pass
         QgsMapTool.deactivate(self)
 
     def canvasPressEvent(self, mouseEvent):

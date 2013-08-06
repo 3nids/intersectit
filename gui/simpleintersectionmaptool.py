@@ -84,7 +84,7 @@ class SimpleIntersectionMapTool(QgsMapTool):
         if len(features) != 2:
             self.iface.messageBar().pushMessage("Intersect It",
                                                 "You need exactly 2 features to proceed a simple intersection.",
-                                                QgsMessageBar.WARNING, 3)
+                                                QgsMessageBar.WARNING, 2)
             return
         intersection = features[0].geometry().intersection(features[1].geometry()).asPoint()
         if intersection is None:
