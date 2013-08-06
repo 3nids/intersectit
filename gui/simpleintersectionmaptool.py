@@ -27,7 +27,7 @@
 #
 #---------------------------------------------------------------------
 
-from qgis.core import QGis, QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsMapLayer, QgsTolerance, QgsSnapper
+from qgis.core import QGis, QgsFeatureRequest, QgsFeature, QgsPoint, QgsGeometry, QgsMapLayerRegistry, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
@@ -63,7 +63,7 @@ class SimpleIntersectionMapTool(QgsMapTool):
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType() and layer.geometryType() in (QGis.Line, QGis.Polygon):
                 snapLayer = QgsSnapper.SnapLayer()
                 snapLayer.mLayer = layer
-                snapLayer.mSnapTo = QgsSnapper.SnapToVertex
+                snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
                 snapLayer.mTolerance = self.settings.value("selectTolerance")
                 if self.settings.value("selectUnits") == "map":
                     snapLayer.mUnitType = QgsTolerance.MapUnits
@@ -79,16 +79,29 @@ class SimpleIntersectionMapTool(QgsMapTool):
 
     def canvasPressEvent(self, mouseEvent):
         self.rubber.reset()
-        features = self.getFeatures(mouseEvent.pos())
-        print len(features)
+        pos = mouseEvent.pos()
+        features = self.getFeatures(pos)
         if len(features) != 2:
             self.iface.messageBar().pushMessage("Intersect It",
                                                 "You need exactly 2 features to proceed a simple intersection.",
                                                 QgsMessageBar.WARNING, 2)
             return
-        intersection = features[0].geometry().intersection(features[1].geometry()).asPoint()
-        if intersection is None:
+        intersection = features[0].geometry().intersection(features[1].geometry())
+        intersectionMP = intersection.asMultiPoint()
+        intersectionP = intersection.asPoint()
+        if len(intersectionMP) == 0 and intersectionP == QgsPoint(0, 0):
+            self.iface.messageBar().pushMessage("Intersect It",
+                                                "Objects do not intersect.",
+                                                QgsMessageBar.WARNING, 2)
             return
+        if len(intersectionMP) > 1:
+            mousePoint = self.toMapCoordinates(pos)
+            intersection = intersectionMP[0]
+            for point in intersectionMP[1:]:
+                if mousePoint.sqrDist(point) < mousePoint.sqrDist(intersection):
+                    intersection = QgsPoint(point.x(), point.y())
+        else:
+            intersection = intersectionP
         layer = self.checkLayer()
         if layer is None:
             return
