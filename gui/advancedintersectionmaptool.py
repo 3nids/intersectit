@@ -158,7 +158,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
          # check that dimension layer and fields have been set correctly
         while True:
             # check layer
-            if not self.settings.value("dimenPlaceDimension"):
+            if not self.settings.value("dimensionWriteObservation"):
                 return  # if we do not place any dimension, skip
             dimensionLayerId = self.settings.value("dimensionLayer")
             message = "To place dimension arcs, you must select a layer in the settings."
@@ -168,7 +168,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
             if status == 3:
                 return
             # check fields
-            if self.settings.value("dimenPlaceMeasure"):
+            if self.settings.value("dimensionWriteMeasure"):
                 measureField = self.settings.value("observationField")
                 message = "To save the observed distance, please select a field for it."
                 status = self.checkFieldExists(dimLayer, measureField, message)
@@ -176,7 +176,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                     continue
                 if status == 3:
                     return
-            if self.settings.value("dimenPlaceType"):
+            if self.settings.value("dimensionWriteType"):
                 typeField = self.settings.value("typeField")
                 message = "To save the type of observaton, please select a field for it."
                 status = self.checkFieldExists(dimLayer, typeField, message)
@@ -184,7 +184,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                     continue
                 if status == 3:
                     return
-            if self.settings.value("dimenPlacePrecision"):
+            if self.settings.value("dimensionWritePrecision"):
                 precisionField = self.settings.value("precisionField")
                 message = "To save the precision of observation, please select a field for it."
                 status = self.checkFieldExists(dimLayer, precisionField, message)
@@ -194,7 +194,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                     return
             break
         # save the intersection results
-        if self.settings.value("dimenPlaceDimension"):
+        if self.settings.value("dimensionWriteObservation"):
             layer = QgsMapLayerRegistry.instance().mapLayer(dimensionLayerId)
             initFields = layer.dataProvider().fields()
             features = []
@@ -202,11 +202,11 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                 f = QgsFeature()
                 f.setFields(initFields)
                 f.initAttributes(initFields.size())
-                if self.settings.value("dimenPlaceMeasure"):
+                if self.settings.value("dimensionWriteMeasure"):
                     f[self.settings.value("observationField")] = obs["observation"]
-                if self.settings.value("dimenPlaceType"):
+                if self.settings.value("dimensionWriteType"):
                     f[self.settings.value("typeField")] = obs["type"]
-                if self.settings.value("dimenPlacePrecision"):
+                if self.settings.value("dimensionWritePrecision"):
                     f[self.settings.value("precisionField")] = obs["precision"]
                 p0 = QgsPoint(obs["x"], obs["y"])
                 p1 = intersectedPoint

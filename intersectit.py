@@ -97,7 +97,7 @@ class IntersectIt ():
         # separator
         self.toolBar.addSeparator()
         # dimension edit
-        self.dimensionAction = QAction(QIcon(":/plugins/intersectit/icons/dimension.svg"), "dimension",
+        self.dimensionAction = QAction(QIcon(":/plugins/intersectit/icons/dimension_distance.svg"), "dimension",
                                        self.iface.mainWindow())
         self.dimensionAction.setCheckable(True)
         self.dimensionMapTool = DimensionMapTool(self.iface)

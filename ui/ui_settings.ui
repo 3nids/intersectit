@@ -27,7 +27,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>3</number>
      </property>
      <widget class="QWidget" name="generalTab">
       <attribute name="title">
@@ -431,7 +431,7 @@
         <widget class="QComboBox" name="observationField"/>
        </item>
        <item row="3" column="1">
-        <widget class="QCheckBox" name="dimenPlacePrecision">
+        <widget class="QCheckBox" name="dimensionWritePrecision">
          <property name="text">
           <string>place precision in</string>
          </property>
@@ -445,7 +445,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QCheckBox" name="dimenPlaceMeasure">
+        <widget class="QCheckBox" name="dimensionWriteMeasure">
          <property name="text">
           <string>place observation value in</string>
          </property>
@@ -471,7 +471,7 @@
         </spacer>
        </item>
        <item row="0" column="0" colspan="2">
-        <widget class="QCheckBox" name="dimenPlaceDimension">
+        <widget class="QCheckBox" name="dimensionWriteObservation">
          <property name="text">
           <string>place dimensions in layer</string>
          </property>
@@ -494,7 +494,7 @@
         </spacer>
        </item>
        <item row="2" column="1">
-        <widget class="QCheckBox" name="dimenPlaceType">
+        <widget class="QCheckBox" name="dimensionWriteType">
          <property name="text">
           <string>place observation type in</string>
          </property>
@@ -504,6 +504,13 @@
         <widget class="QComboBox" name="typeField">
          <property name="enabled">
           <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="3">
+        <widget class="QCheckBox" name="dimensionCheckType">
+         <property name="text">
+          <string>Check type when editing</string>
          </property>
         </widget>
        </item>
@@ -551,7 +558,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>dimenPlaceDimension</sender>
+   <sender>dimensionWriteObservation</sender>
    <signal>toggled(bool)</signal>
    <receiver>dimensionLayer</receiver>
    <slot>setEnabled(bool)</slot>
@@ -567,7 +574,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>dimenPlaceMeasure</sender>
+   <sender>dimensionWriteMeasure</sender>
    <signal>toggled(bool)</signal>
    <receiver>observationField</receiver>
    <slot>setEnabled(bool)</slot>
@@ -583,7 +590,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>dimenPlacePrecision</sender>
+   <sender>dimensionWritePrecision</sender>
    <signal>toggled(bool)</signal>
    <receiver>precisionField</receiver>
    <slot>setEnabled(bool)</slot>
@@ -599,7 +606,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>dimenPlaceType</sender>
+   <sender>dimensionWriteType</sender>
    <signal>toggled(bool)</signal>
    <receiver>typeField</receiver>
    <slot>setEnabled(bool)</slot>
