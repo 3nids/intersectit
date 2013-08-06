@@ -46,7 +46,7 @@ clean:
 compile: $(UI_FILES) $(RC_FILES) $(LN_FILES)
 
 transup:
-	pylupdate4 -noobsolete $(UI_SOURCES) -ts i18n/intersectit_fr.ts
+	pylupdate4 -noobsolete $(UI_SOURCES) intersectit.py gui/*.py core/*.py -ts i18n/intersectit_fr.ts
 
 deploy:
 	mkdir -p $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)

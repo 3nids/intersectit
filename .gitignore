@@ -3,3 +3,5 @@ tmp/
 *.qgs
 ui_*.py
 resources.py
+*.qm
+
