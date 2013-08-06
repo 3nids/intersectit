@@ -57,6 +57,7 @@ class MySettings(SettingManager):
         self.addSetting("dimensionWriteMeasure", "bool", "project", True)
         self.addSetting("dimensionWriteType", "bool", "project", False)
         self.addSetting("dimensionWritePrecision", "bool", "project", False)
+        self.addSetting("dimensionCheckType", "bool", "project", False)
         # fields and layers
         self.addSetting("dimensionLayer", "string", "project", "")
         self.addSetting("observationField", "string", "project", "")

@@ -27,7 +27,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="generalTab">
       <attribute name="title">
@@ -628,12 +628,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>152</x>
+     <x>119</x>
      <y>78</y>
     </hint>
     <hint type="destinationlabel">
-     <x>301</x>
-     <y>83</y>
+     <x>119</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -644,12 +644,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>201</x>
-     <y>236</y>
+     <x>119</x>
+     <y>89</y>
     </hint>
     <hint type="destinationlabel">
-     <x>327</x>
-     <y>235</y>
+     <x>119</x>
+     <y>89</y>
     </hint>
    </hints>
   </connection>
@@ -660,12 +660,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>198</x>
-     <y>256</y>
+     <x>119</x>
+     <y>89</y>
     </hint>
     <hint type="destinationlabel">
-     <x>354</x>
-     <y>260</y>
+     <x>119</x>
+     <y>89</y>
     </hint>
    </hints>
   </connection>

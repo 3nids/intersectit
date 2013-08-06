@@ -60,6 +60,13 @@ class DimensionMapTool(QgsMapTool):
                                                 QgsMessageBar.WARNING, 3)
             self.mapCanvas.unsetMapTool(self)
             return
+        self.checkType = self.settings.value("dimensionCheckType")
+        self.fieldTypeIdx = layer.fieldNameIndex(self.settings.value("typeField"))
+        if self.checkType and (self.fieldTypeIdx == -1 or not self.settings.value("dimensionWriteType")):
+            self.checkType = False
+            self.iface.messageBar().pushMessage("Intersect It",
+                                                "Dimension type cannot be checked since field type could not be found.",
+                                                QgsMessageBar.INFO, 3)
         # unset this tool if the layer is removed
         layer.layerDeleted.connect(self.unsetMapTool)
         # create snapper for this layer
@@ -133,14 +140,15 @@ class DimensionMapTool(QgsMapTool):
     def snapToDimensionLayer(self, pixPoint):
         snapper = QgsSnapper(self.mapCanvas.mapRenderer())
         snapper.setSnapLayers([self.snapLayer])
-        snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
+        snapper.setSnapMode(QgsSnapper.SnapWithResultsWithinTolerances)
 
         ok, snappingResults = snapper.snapPoint(pixPoint, [])
-        if ok == 0 and len(snappingResults) > 0:
-            featureId = snappingResults[0].snappedAtGeometry
+        for result in snappingResults:
+            featureId = result.snappedAtGeometry
             f = QgsFeature()
-            if self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is False:
-                return None
-            return f
-        else:
-            return None
+            if not self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is False:
+                if self.checkType:
+                    if f[self.fieldTypeIdx] != "distance":
+                        continue
+                return f
+        return None
