@@ -218,9 +218,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                     raise NameError("Invalid observation %s" % obs["type"])
                 f.setGeometry(geom)
                 features.append(f)
-            print layer.id()
-            print features
-            print layer.dataProvider().addFeatures(features)
+            layer.dataProvider().addFeatures(features)
             layer.updateExtents()
             self.mapCanvas.refresh()
 

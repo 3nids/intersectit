@@ -31,12 +31,14 @@ from qgis.core import QgsMapLayerRegistry, QgsTolerance, QgsSnapper, QgsFeature,
 from qgis.gui import QgsRubberBand, QgsMapTool, QgsMessageBar
 
 from ..core.arc import Arc
+from ..core.orientationline import OrientationLine
 from ..core.mysettings import MySettings
 
 
 class DimensionMapTool(QgsMapTool):
-    def __init__(self, iface):
+    def __init__(self, iface, observationType):
         self.iface = iface
+        self.observationType = observationType
         self.mapCanvas = iface.mapCanvas()
         self.settings = MySettings()
         self.lineRubber = QgsRubberBand(self.mapCanvas)
@@ -79,7 +81,7 @@ class DimensionMapTool(QgsMapTool):
         else:
             self.snapLayer.mUnitType = QgsTolerance.Pixels
         self.editing = False
-        self.arc = None
+        self.drawObject = None
 
     def unsetMapTool(self):
         self.mapCanvas.unsetMapTool(self)
@@ -98,11 +100,20 @@ class DimensionMapTool(QgsMapTool):
         feature = self.snapToDimensionLayer(mouseEvent.pos())
         if feature is None:
             return
-        self.editing = True
         line = feature.geometry().asPolyline()
         point = self.map2layer(mouseEvent.pos())
-        self.arc = Arc(line[0], point, line[len(line)-1])
+        if self.observationType == "distance":
+            if len(line) == 0:
+                return
+            self.editing = True
+            self.drawObject = Arc(line[0], point, line[len(line)-1])
+        else:
+            if len(line) != 2:
+                return
+            self.editing = True
+            self.drawObject = OrientationLine(line, point)
         self.featureId = feature.id()
+
 
     def canvasReleaseEvent(self, mouseEvent):
         if not self.editing:
@@ -112,8 +123,8 @@ class DimensionMapTool(QgsMapTool):
         point = self.map2layer(mouseEvent.pos())
         if point is None:
             return
-        self.arc.setPoint(point)
-        geom = self.arc.geometry()
+        self.drawObject.setPoint(point)
+        geom = self.drawObject.geometry()
         layer = self.snapLayer.mLayer
         editBuffer = layer.editBuffer()
         editBuffer.changeGeometry(self.featureId, geom)
@@ -130,8 +141,8 @@ class DimensionMapTool(QgsMapTool):
             point = self.map2layer(mouseEvent.pos())
             if point is None:
                 return
-            self.arc.setPoint(point)
-            self.lineRubber.setToGeometry(self.arc.geometry(), self.snapLayer.mLayer)
+            self.drawObject.setPoint(point)
+            self.lineRubber.setToGeometry(self.drawObject.geometry(), self.snapLayer.mLayer)
 
     def map2layer(self, pos):
         point = self.toMapCoordinates(pos)
@@ -148,7 +159,11 @@ class DimensionMapTool(QgsMapTool):
             f = QgsFeature()
             if self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is not False:
                 if self.checkType:
-                    if f[self.fieldTypeIdx] != "distance":
+                    if f[self.fieldTypeIdx] != self.observationType:
+                        continue
+                if self.observationType == "orientation":
+                    line = f.geometry().asPolyline()
+                    if len(line) != 2:
                         continue
                 return f
         return None

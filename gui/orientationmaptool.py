@@ -31,7 +31,7 @@ from PyQt4.QtCore import Qt
 from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsRubberBand, QgsMapTool
 
-from ..core.distance import Orientation
+from ..core.orientation import Orientation
 from ..core.mysettings import MySettings
 
 from orientationdialog import OrientationDialog
@@ -67,7 +67,6 @@ class OrientationMapTool(QgsMapTool):
         dlg = OrientationDialog(orientation, self.rubber)
         if dlg.exec_():
             if orientation.length != 0:
-                print orientation.precision
                 orientation.save()
         self.rubber.reset()
 

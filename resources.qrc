@@ -8,7 +8,7 @@
         <file>icons/intersectit.svg</file>
         <file>icons/intersection_simple.svg</file>
         <file>icons/intersection_advanced.svg</file>
-        <file>icons/dimension_direction.svg</file>
+        <file>icons/dimension_orientation.svg</file>
         <file>icons/dimension_distance.svg</file>
     </qresource>
 </RCC>

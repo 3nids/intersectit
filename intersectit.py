@@ -96,14 +96,22 @@ class IntersectIt ():
         self.iface.addPluginToMenu("&Intersect It", self.advancedIntersectionAction)
         # separator
         self.toolBar.addSeparator()
-        # dimension edit
-        self.dimensionAction = QAction(QIcon(":/plugins/intersectit/icons/dimension_distance.svg"), "dimension",
-                                       self.iface.mainWindow())
-        self.dimensionAction.setCheckable(True)
-        self.dimensionMapTool = DimensionMapTool(self.iface)
-        self.dimensionMapTool.setAction(self.dimensionAction)
-        self.toolBar.addAction(self.dimensionAction)
-        self.iface.addPluginToMenu("&Intersect It", self.dimensionAction)
+        # dimension distance edit
+        self.dimensionDistanceAction = QAction(QIcon(":/plugins/intersectit/icons/dimension_distance.svg"),
+                                               "edit distance dimension", self.iface.mainWindow())
+        self.dimensionDistanceAction.setCheckable(True)
+        self.dimensionDistanceMapTool = DimensionMapTool(self.iface, "distance")
+        self.dimensionDistanceMapTool.setAction(self.dimensionDistanceAction)
+        self.toolBar.addAction(self.dimensionDistanceAction)
+        self.iface.addPluginToMenu("&Intersect It", self.dimensionDistanceAction)
+        # dimension orientation edit
+        self.dimensionOrientationAction = QAction(QIcon(":/plugins/intersectit/icons/dimension_orientation.svg"),
+                                                  "edit orientation dimension", self.iface.mainWindow())
+        self.dimensionOrientationAction.setCheckable(True)
+        self.dimensionOrientationMapTool = DimensionMapTool(self.iface, "orientation")
+        self.dimensionOrientationMapTool.setAction(self.dimensionOrientationAction)
+        self.toolBar.addAction(self.dimensionOrientationAction)
+        self.iface.addPluginToMenu("&Intersect It", self.dimensionOrientationAction)
         # separator
         self.toolBar.addSeparator()
         # cleaner
@@ -128,7 +136,8 @@ class IntersectIt ():
         self.iface.removePluginMenu("&Intersect It", self.orientationAction)
         self.iface.removePluginMenu("&Intersect It", self.simpleIntersectionAction)
         self.iface.removePluginMenu("&Intersect It", self.advancedIntersectionAction)
-        self.iface.removePluginMenu("&Intersect It", self.dimensionAction)
+        self.iface.removePluginMenu("&Intersect It", self.dimensionDistanceAction)
+        self.iface.removePluginMenu("&Intersect It", self.dimensionOrientationAction)
         self.iface.removePluginMenu("&Intersect It", self.uisettingsAction)
         self.iface.removePluginMenu("&Intersect It", self.cleanerAction)
         self.iface.removePluginMenu("&Intersect It", self.helpAction)
@@ -136,8 +145,11 @@ class IntersectIt ():
         self.iface.removeToolBarIcon(self.orientationAction)
         self.iface.removeToolBarIcon(self.simpleIntersectionAction)
         self.iface.removeToolBarIcon(self.advancedIntersectionAction)
-        self.iface.removeToolBarIcon(self.dimensionAction)
+        self.iface.removeToolBarIcon(self.dimensionDistanceAction)
+        self.iface.removeToolBarIcon(self.dimensionOrientationAction)
+        self.iface.removeToolBarIcon(self.uisettingsAction)
         self.iface.removeToolBarIcon(self.cleanerAction)
+        self.iface.removeToolBarIcon(self.helpAction)
         del self.toolBar
         try:
             print "IntersecIt :: Removing temporary layer"
@@ -155,8 +167,10 @@ class IntersectIt ():
             self.mapCanvas.setMapTool(self.simpleIntersectionMapTool)
         if action == self.advancedIntersectionAction:
             self.mapCanvas.setMapTool(self.advancedIntersectionMapTool)
-        if action == self.dimensionAction:
-            self.mapCanvas.setMapTool(self.dimensionMapTool)
+        if action == self.dimensionDistanceAction:
+            self.mapCanvas.setMapTool(self.dimensionDistanceMapTool)
+        if action == self.dimensionOrientationAction:
+            self.mapCanvas.setMapTool(self.dimensionOrientationMapTool)
 
     def cleanMemoryLayers(self):
         for layer in (self.lineLayer(), self.pointLayer()):

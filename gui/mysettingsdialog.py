@@ -51,7 +51,8 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
 
         self.dimensionLayerCombo = VectorLayerCombo(self.dimensionLayer,
                                                     lambda: self.settings.value("dimensionLayer"),
-                                                    {"groupLayers": False, "hasGeometry": True})
+                                                    {"groupLayers": False, "hasGeometry": True,
+                                                     "geomType": QGis.Line})
         self.observationFieldCombo = FieldCombo(self.observationField, self.dimensionLayerCombo,
                                                 lambda: self.settings.value("observationField"))
         self.typeFieldCombo = FieldCombo(self.typeField, self.dimensionLayerCombo,
