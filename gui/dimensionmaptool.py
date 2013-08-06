@@ -61,7 +61,7 @@ class DimensionMapTool(QgsMapTool):
             self.mapCanvas.unsetMapTool(self)
             return
         # unset this tool if the layer is removed
-        layer.layerDeleted.connect(lambda: self.mapCanvas.unsetMapTool(self))
+        layer.layerDeleted.connect(self.unsetMapTool)
         # create snapper for this layer
         self.snapLayer = QgsSnapper.SnapLayer()
         self.snapLayer.mLayer = layer
@@ -74,8 +74,14 @@ class DimensionMapTool(QgsMapTool):
         self.editing = False
         self.arc = None
 
+    def unsetMapTool(self):
+        self.mapCanvas.unsetMapTool(self)
+
     def deactivate(self):
         self.lineRubber.reset()
+        layer = QgsMapLayerRegistry.instance().mapLayer(self.settings.value("dimensionLayer"))
+        if layer is not None:
+            layer.layerDeleted.disconnect(self.unsetMapTool)
         QgsMapTool.deactivate(self)
 
     def canvasPressEvent(self, mouseEvent):

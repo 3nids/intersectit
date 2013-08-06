@@ -27,13 +27,10 @@
 #
 #---------------------------------------------------------------------
 
-from PyQt4.QtGui import QMessageBox
 from qgis.core import QGis, QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsMapLayer, QgsTolerance, QgsSnapper
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
-
-from mysettingsdialog import MySettingsDialog
 
 
 class SimpleIntersectionMapTool(QgsMapTool):

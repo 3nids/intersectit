@@ -28,7 +28,7 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtGui import QMessageBox
-from qgis.core import QgsRectangle, QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint
+from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint, QgsSnapper, QgsTolerance
 from qgis.gui import QgsMapTool, QgsRubberBand
 
 from ..core.mysettings import MySettings
@@ -42,57 +42,84 @@ from intersectiondialog import IntersectionDialog
 class AdvancedIntersectionMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
-        self.canvas = iface.mapCanvas()
-        QgsMapTool.__init__(self, self.canvas)
+        self.mapCanvas = iface.mapCanvas()
+        QgsMapTool.__init__(self, self.mapCanvas)
         self.settings = MySettings()
-        self.rubber = QgsRubberBand(self.canvas)
+        self.rubber = QgsRubberBand(self.mapCanvas)
 
         self.tolerance = self.settings.value("selectTolerance")
         units = self.settings.value("selectUnits")
         if units == "pixels":
-            self.tolerance *= self.canvas.mapUnitsPerPixel()
+            self.tolerance *= self.mapCanvas.mapUnitsPerPixel()
 
     def activate(self):
+        QgsMapTool.activate(self)
         self.rubber.setWidth(self.settings.value("rubberWidth"))
         self.rubber.setColor(self.settings.value("rubberColor"))
-        self.lineLayer = MemoryLayers(self.iface).lineLayer
-        QgsMapTool.activate(self)
+        lineLayer = MemoryLayers(self.iface).lineLayer()
+        # unset this tool if the layer is removed
+        lineLayer.layerDeleted.connect(self.unsetMapTool)
+        self.layerId = lineLayer.id()
+        # create snapper for this layer
+        self.snapLayer = QgsSnapper.SnapLayer()
+        self.snapLayer.mLayer = lineLayer
+        self.snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
+        self.snapLayer.mTolerance = self.settings.value("selectTolerance")
+        if self.settings.value("selectUnits") == "map":
+            self.snapLayer.mUnitType = QgsTolerance.MapUnits
+        else:
+            self.snapLayer.mUnitType = QgsTolerance.Pixels
+
+    def unsetMapTool(self):
+        self.mapCanvas.unsetMapTool(self)
 
     def deactivate(self):
         self.rubber.reset()
+        lineLayer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
+        if lineLayer is not None:
+            lineLayer.layerDeleted.disconnect(self.unsetMapTool)
         QgsMapTool.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
         # put the observations within tolerance in the rubber band
         self.rubber.reset()
-        point = self.toMapCoordinates(mouseEvent.pos())
-        for f in self.getFeatures(point):
+        for f in self.getFeatures(mouseEvent.pos()):
             self.rubber.addGeometry(f.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
-        observations = []
-        point = self.toMapCoordinates(mouseEvent.pos())
-        for f in self.getFeatures(point):
-            observations.append(QgsFeature(f))
-        self.doIntersection(point, observations)
+        pos = mouseEvent.pos()
+        observations = self.getFeatures(pos)
+        point = self.toMapCoordinates(pos)
+        #self.doIntersection(point, observations)
 
-    def getFeatures(self, point):
+    def getFeatures(self, pixPoint):
+        snapper = QgsSnapper(self.mapCanvas.mapRenderer())
+        snapper.setSnapLayers([self.snapLayer])
+        snapper.setSnapMode(QgsSnapper.SnapWithResultsWithinTolerances)
+        ok, snappingResults = snapper.snapPoint(pixPoint, [])
+        # output snapped features
         features = []
-        featReq = QgsFeatureRequest()
-        box = QgsRectangle(point.x()-self.tolerance,
-                           point.y()-self.tolerance,
-                           point.x()+self.tolerance,
-                           point.y()+self.tolerance)
-        featReq.setFilterRect(box)
-        featReq.setFlags(QgsFeatureRequest.ExactIntersect)
-        f = QgsFeature()
-        vliter = self.lineLayer().getFeatures(featReq)
-        while vliter.nextFeature(f):
-            features.append(QgsFeature(f))
+        alreadyGot = []
+        for result in snappingResults:
+            featureId = result.snappedAtGeometry
+            print featureId
+            print type(featureId)
+            print result.layer.name()
+            f = QgsFeature()
+            if featureId not in alreadyGot:
+                if result.layer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is not False:
+                    print f["precision"]
+                    features.append(QgsFeature(f))
+                    alreadyGot.append(featureId)
         return features
 
     def doIntersection(self, initPoint, observations):
         nObs = len(observations)
+        # for o in observations:
+        #     print o
+        #     for a in o.attributes():
+        #         print a
+        #     print o["type"]
         if nObs < 2:
             return
         self.rubber.reset()
@@ -134,7 +161,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                 f.addAttribute(irep, report)
             intLayer.dataProvider().addFeatures([f])
             intLayer.updateExtents()
-            self.canvas.refresh()
+            self.mapCanvas.refresh()
 
     def saveDimension(self, intersectedPoint, observations):
          # check that dimension layer and fields have been set correctly
@@ -204,7 +231,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
             print features
             print layer.dataProvider().addFeatures(features)
             layer.updateExtents()
-            self.canvas.refresh()
+            self.mapCanvas.refresh()
 
     def checkLayerExists(self, layerid, message):
         # returns:
