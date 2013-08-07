@@ -28,8 +28,9 @@
 #---------------------------------------------------------------------
 
 
-from PyQt4.QtCore import QUrl, QCoreApplication
+from PyQt4.QtCore import QUrl, QCoreApplication, QFileInfo, QSettings, QTranslator
 from PyQt4.QtGui import QAction, QIcon, QDesktopServices
+from qgis.core import QgsApplication
 
 from core.memorylayers import MemoryLayers
 
@@ -51,18 +52,33 @@ class IntersectIt ():
         self.lineLayer = memLay.lineLayer
         self.pointLayer = memLay.pointLayer
 
+        # Initialise the translation environment.
+        userPluginPath = QFileInfo(QgsApplication.qgisUserDbFilePath()).path()+"/python/plugins/intersectit"
+        systemPluginPath = QgsApplication.prefixPath()+"/share/qgis/python/plugins/intersectit"
+        locale = QSettings().value("locale/userLocale")
+        myLocale = locale[0:2]
+        if QFileInfo(userPluginPath).exists():
+            pluginPath = userPluginPath+"/i18n/intersectit_"+myLocale+".qm"
+        elif QFileInfo(systemPluginPath).exists():
+            pluginPath = systemPluginPath+"/i18n/intersectit_"+myLocale+".qm"
+        self.localePath = pluginPath
+        if QFileInfo(self.localePath).exists():
+            self.translator = QTranslator()
+            self.translator.load(self.localePath)
+            QCoreApplication.installTranslator(self.translator)
+
     def initGui(self):
         self.toolBar = self.iface.addToolBar("IntersectIt")
         self.toolBar.setObjectName("IntersectIt")
 
         # settings
-        self.uisettingsAction = QAction(QIcon(":/plugins/quickfinder/icons/settings.svg"),
-                                        QCoreApplication().translate("IntersectIt", "settings"), self.iface.mainWindow())
+        self.uisettingsAction = QAction(QIcon(":/plugins/intersectit/icons/settings.svg"),
+                                        QCoreApplication.translate("IntersectIt", "settings"), self.iface.mainWindow())
         self.uisettingsAction.triggered.connect(self.showSettings)
         self.iface.addPluginToMenu("&Intersect It", self.uisettingsAction)
         # distance
         self.distanceAction = QAction(QIcon(":/plugins/intersectit/icons/distance.svg"),
-                                      QCoreApplication().translate("IntersectIt", "place distance"), self.iface.mainWindow())
+                                      QCoreApplication.translate("IntersectIt", "place distance"), self.iface.mainWindow())
         self.distanceAction.setCheckable(True)
         self.distanceMapTool = DistanceMapTool(self.iface)
         self.distanceMapTool.setAction(self.distanceAction)
@@ -70,7 +86,7 @@ class IntersectIt ():
         self.iface.addPluginToMenu("&Intersect It", self.distanceAction)
         # prolongation
         self.orientationAction = QAction(QIcon(":/plugins/intersectit/icons/prolongation.svg"),
-                                         QCoreApplication().translate("IntersectIt", "place orientation"),
+                                         QCoreApplication.translate("IntersectIt", "place orientation"),
                                          self.iface.mainWindow())
         self.orientationAction.setCheckable(True)
         self.orientationMapTool = OrientationMapTool(self.iface)
@@ -81,7 +97,7 @@ class IntersectIt ():
         self.toolBar.addSeparator()
         # simple intersection
         self.simpleIntersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_simple.svg"),
-                                                QCoreApplication().translate("IntersectIt", "simple intersection of 2 objects"),
+                                                QCoreApplication.translate("IntersectIt", "simple intersection of 2 objects"),
                                                 self.iface.mainWindow())
         self.simpleIntersectionAction.setCheckable(True)
         self.simpleIntersectionMapTool = SimpleIntersectionMapTool(self.iface)
@@ -90,7 +106,7 @@ class IntersectIt ():
         self.iface.addPluginToMenu("&Intersect It", self.simpleIntersectionAction)
         # advanced intersection
         self.advancedIntersectionAction = QAction(QIcon(":/plugins/intersectit/icons/intersection_advanced.svg"),
-                                                  QCoreApplication().translate("IntersectIt", "advanced intersection of 2+ observations"),
+                                                  QCoreApplication.translate("IntersectIt", "advanced intersection of 2+ observations"),
                                                   self.iface.mainWindow())
         self.advancedIntersectionAction.setCheckable(True)
         self.advancedIntersectionMapTool = AdvancedIntersectionMapTool(self.iface)
@@ -101,7 +117,7 @@ class IntersectIt ():
         self.toolBar.addSeparator()
         # dimension distance edit
         self.dimensionDistanceAction = QAction(QIcon(":/plugins/intersectit/icons/dimension_distance.svg"),
-                                               QCoreApplication().translate("IntersectIt", "edit distance dimension"),
+                                               QCoreApplication.translate("IntersectIt", "edit distance dimension"),
                                                self.iface.mainWindow())
         self.dimensionDistanceAction.setCheckable(True)
         self.dimensionDistanceMapTool = DimensionMapTool(self.iface, "distance")
@@ -110,7 +126,7 @@ class IntersectIt ():
         self.iface.addPluginToMenu("&Intersect It", self.dimensionDistanceAction)
         # dimension orientation edit
         self.dimensionOrientationAction = QAction(QIcon(":/plugins/intersectit/icons/dimension_orientation.svg"),
-                                                  QCoreApplication().translate("IntersectIt", "edit orientation dimension"),
+                                                  QCoreApplication.translate("IntersectIt", "edit orientation dimension"),
                                                   self.iface.mainWindow())
         self.dimensionOrientationAction.setCheckable(True)
         self.dimensionOrientationMapTool = DimensionMapTool(self.iface, "orientation")
@@ -121,14 +137,14 @@ class IntersectIt ():
         self.toolBar.addSeparator()
         # cleaner
         self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/eraser.svg"),
-                                     QCoreApplication().translate("IntersectIt", "erase construction features"),
+                                     QCoreApplication.translate("IntersectIt", "erase construction features"),
                                      self.iface.mainWindow())
         self.cleanerAction.triggered.connect(self.cleanMemoryLayers)
         self.toolBar.addAction(self.cleanerAction)
         self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)
         # help
-        self.helpAction = QAction(QIcon(":/plugins/quickfinder/icons/help.svg"),
-                                  QCoreApplication().translate("IntersectIt", "help"), self.iface.mainWindow())
+        self.helpAction = QAction(QIcon(":/plugins/intersectit/icons/help.svg"),
+                                  QCoreApplication.translate("IntersectIt", "help"), self.iface.mainWindow())
         self.helpAction.triggered.connect(self.help)
         self.iface.addPluginToMenu("&Intersect It", self.helpAction)
 

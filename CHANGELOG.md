@@ -15,6 +15,7 @@
     * now use a standard linestring for dimensions
     * tool to edit arcs for dimensions of distances (like in cadtools plugin)
 * General settings for snapping and rubbers bands
+* Added French translation
 
 ### 2.0 01.07.2013 _experimental_
 
