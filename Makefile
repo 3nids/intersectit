@@ -38,7 +38,7 @@ $(RC_FILES): %.py: %.qrc
 	pyrcc4 -o $@ $<
 
 $(LN_FILES): i18n/%.qm: i18n/%.ts
-	lrelease $<
+	lrelease-qt4 $<
 
 clean:
 	rm -f $(GEN_FILES) *.pyc
@@ -46,7 +46,7 @@ clean:
 compile: $(UI_FILES) $(RC_FILES) $(LN_FILES)
 
 transup:
-	pylupdate4 -noobsolete $(UI_SOURCES) intersectit.py gui/*.py core/*.py -ts i18n/intersectit_fr.ts
+	pylupdate4 -noobsolete $(UI_SOURCES) $(PLUGINAME).py gui/*.py core/*.py -ts i18n/$(PLUGINAME)_fr.ts
 
 deploy:
 	mkdir -p $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
