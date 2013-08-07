@@ -2,7 +2,7 @@
 [general]
 name=Intersect It
 description=Intersect It is a QGIS plugin to place observations (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer.
-version=2.0
+version=3.0
 qgisMinimumVersion=2.0
 
 experimental=True

@@ -1,5 +1,5 @@
 
-### 3.0 in dev
+### 3.0 07.08.2013 _experimental_
 
 * Distance
     * display snap info in the message bar
