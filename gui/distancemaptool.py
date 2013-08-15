@@ -29,8 +29,8 @@
 
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QTextEdit
-from qgis.core import QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper, QgsMapLayerRegistry
-from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper
+from qgis.core import QGis, QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper, QgsMapLayerRegistry
+from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper, QgsMessageBar
 
 from ..core.mysettings import MySettings
 from ..core.distance import Distance
@@ -47,12 +47,14 @@ class DistanceMapTool(QgsMapTool):
 
     def activate(self):
         QgsMapTool.activate(self)
-        self.rubber = QgsRubberBand(self.canvas)
-        self.rubber.setIconSize(12)
+        self.rubber = QgsRubberBand(self.canvas, QGis.Point)
+        self.rubber.setColor(self.settings.value("rubberColor"))
+        self.rubber.setIcon(self.settings.value("rubberIcon"))
+        self.rubber.setIconSize(self.settings.value("rubberSize"))
         self.updateSnapperList()
         QgsMapLayerRegistry.instance().layersAdded.connect(self.updateSnapperList)
         QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateSnapperList)
-        self.messageWidget = self.iface.messageBar().createMessage("Not snapped.")
+        self.messageWidget = self.iface.messageBar().createMessage("Intersect It", "Not snapped.")
         self.messageWidgetExist = True
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
         if self.settings.value("obsDistanceSnapping") != "no":

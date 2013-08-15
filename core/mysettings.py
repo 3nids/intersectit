@@ -44,8 +44,10 @@ class MySettings(SettingManager):
         self.addSetting("obsOrientationLength", "double", "global", 4)
         self.addSetting("selectTolerance", "double", "global", 7)
         self.addSetting("selectUnits", "string", "global", "pixels")
-        self.addSetting("rubberColor", "Color", "global", QColor(0, 0, 255))
+        self.addSetting("rubberColor", "Color", "global", QColor(0, 0, 255, 150), {"alpha": True})
         self.addSetting("rubberWidth", "double", "global", 2)
+        self.addSetting("rubberSize", "integer", "global", 12)
+        self.addSetting("rubberIcon", "integer", "global", 4)
         self.addSetting("advancedIntersecLSmaxIteration", "Integer", "global", 15)
         self.addSetting("advancedIntersecLSconvergeThreshold", "double", "global", .0005)
 
