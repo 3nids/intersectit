@@ -1,36 +1,32 @@
 ## What?
 
-Intersect It is a QGIS plugin to place observations (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer to produce maps.
+Intersect It is a QGIS plugin to construct points by intersecting distances and orientations and to draw dimensions.
 
-A demo is available on [youtube](http://www.youtube.com/watch?v=IJQvIe1CLD0&hd=1).
-
-The plugin requires numpy.
+This plugin requires numpy if you want to use the advanced intersection which is solved using least-squares adjustment.
 
 ## How ?
 
 ### Observations
-First, you have to place observations which can be distances or orientations (**orientations are not available yet**). 
+
+First, you have to place observations which can be **distance** or **orientation**.
 Click on the corresponding icon to place an observation.
 
-In the dedicated tab in settings, you can define:
-* if the snap is used to place observations (using the layers properties).
-* the default precision for both types of observations.
+In the plugin settings, you can define the snapping behavior.
 
 The observations are put in two memory layers which are automatically created by the plugin (_IntersectIt Points_ and _IntersectIt Lines_).
 
-The observations can deleted using the usual tools from QGIS or all at once using the broom icon.
-
+The observations can be deleted using the standard tools from QGIS or all at once using the eraser icon.
 
 ### Intersection
 
-Once you have place the needed observations, you can start the intersection process by clicking on the icon. you have to click on the map to define the approximate location of the intersection. All the observations which will be used in intersection process will be highlighted. Distance tolerance and highlighting of selection can be defined in the settings.
+Once you have place the needed observations, you may want to intersect them Two tools are offered:
 
-Then, if only two observations are selected a simple intersection is calculated. If more than 2, a least-squares adjustment is performed. Convergence threshold and maximum iterations can be defined in settings.
-
-If defined in settings, the least-squares report is displayed for confirmation. It can also be saved in a field of the layer used to save intersection point.
+* **simple intersection**: it will allow the instersection of two linear (also polygonal) objects from any layer in the legend. A point will be created at the intersection in the chosen layer (settings).
+* **advanced intersection**: this tool can be used to intersect 2 or more observations (distance or observations) using a least-square adjustment. Once finished, it will also create dimension for each observation.
 
 ### Dimensions
 
-Once the intersection is found, if defined in settings, the dimensions can be place in layers. These are stored in a multipoint layer: three points are saved. From this, you can use a view in postgis to draw dimension arcs.
-The SQL creation code of these two layers can be found [here](https://github.com/3nids/intersectit/wiki/Dimension-layers).
+Once the advanced intersection is found, if defined in settings, the dimensions will be written in chosen layer.
+Arcs are drawn for distance and lines are drawn for orientations.
+They can be edited using the corresponding icons.
 
