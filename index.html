@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Intersect it by 3nids</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/main.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <header>
+        <h1>Intersect it</h1>
+        <p>Intersect It Intersect is a QGIS plugin to construct points by intersecting distances and orientations and to draw dimensions.</p>
+      </header>
+
+      <div id="banner">
+        <span id="logo"></span>
+
+        <a href="https://github.com/3nids/intersectit" class="button fork"><strong>View On GitHub</strong></a>
+        <div class="downloads">
+          <span>Downloads:</span>
+          <ul>
+            <li><a href="https://github.com/3nids/intersectit/zipball/master" class="button">ZIP</a></li>
+            <li><a href="https://github.com/3nids/intersectit/tarball/master" class="button">TAR</a></li>
+          </ul>
+        </div>
+      </div><!-- end banner -->
+
+    <div class="wrapper">
+      <nav>
+        <ul></ul>
+      </nav>
+      <section>
+        <h2>
+<a name="what" class="anchor" href="#what"><span class="octicon octicon-link"></span></a>What?</h2>
+
+<p>Intersect It is a QGIS plugin to construct points by intersecting distances and orientations and to draw dimensions.</p>
+
+<p>This plugin requires numpy if you want to use the advanced intersection which is solved using least-squares adjustment.</p>
+
+<h2>
+<a name="how-" class="anchor" href="#how-"><span class="octicon octicon-link"></span></a>How ?</h2>
+
+<h3>
+<a name="observations" class="anchor" href="#observations"><span class="octicon octicon-link"></span></a>Observations</h3>
+
+<p>First, you have to place observations which can be <strong>distance</strong> or <strong>orientation</strong>.
+Click on the corresponding icon to place an observation.</p>
+
+<p>In the plugin settings, you can define the snapping behavior.</p>
+
+<p>The observations are put in two memory layers which are automatically created by the plugin (_IntersectIt Points_ and <em>IntersectIt Lines</em>).</p>
+
+<p>The observations can be deleted using the standard tools from QGIS or all at once using the eraser icon.</p>
+
+<h3>
+<a name="intersection" class="anchor" href="#intersection"><span class="octicon octicon-link"></span></a>Intersection</h3>
+
+<p>Once you have place the needed observations, you may want to intersect them Two tools are offered:</p>
+
+<ul>
+<li>
+<strong>simple intersection</strong>: it will allow the instersection of two linear (also polygonal) objects from any layer in the legend. A point will be created at the intersection in the chosen layer (settings).</li>
+<li>
+<strong>advanced intersection</strong>: this tool can be used to intersect 2 or more observations (distance or observations) using a least-square adjustment. Once finished, it will also create dimension for each observation.</li>
+</ul><h3>
+<a name="dimensions" class="anchor" href="#dimensions"><span class="octicon octicon-link"></span></a>Dimensions</h3>
+
+<p>Once the advanced intersection is found, if defined in settings, the dimensions will be written in chosen layer.
+Arcs are drawn for distance and lines are drawn for orientations.
+They can be edited using the corresponding icons.</p>
+      </section>
+      <footer>
+        <p>Project maintained by <a href="https://github.com/3nids">3nids</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
