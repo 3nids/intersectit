@@ -1,15 +1,15 @@
 
 [general]
 name=Intersect It
-description=Intersect It is a QGIS plugin to place observations (distance or orientation) with their corresponding precision, intersect them using a least-squares solution and save dimensions in a dedicated layer.
-version=3.0
+description=Intersect It Intersect is a QGIS plugin to construct points by intersecting distances and orientations and to draw dimensions.
+version=3.1
 qgisMinimumVersion=2.0
 
-experimental=True
+experimental=False
 icon=icons/intersectit-128.png
 
 tags=distance,orientation,observation,least-squares,intersection,dimension,cad
-homepage=https://github.com/3nids/intersectit/wiki
+homepage=http://3nids.github.io/intersectit
 tracker=https://github.com/3nids/intersectit/issues
 repository=https://github.com/3nids/intersectit
 

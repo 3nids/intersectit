@@ -1,4 +1,9 @@
 
+### 3.1 15.08.2013
+
+* Define icon for snapping
+* Allow alpha channel in rubber band color
+
 ### 3.0 07.08.2013 _experimental_
 
 * Distance
