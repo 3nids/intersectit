@@ -13,7 +13,7 @@
 
 # global
 PLUGINNAME = intersectit
-PY_FILES = __init__.py $(PLUGINAME).py
+PY_FILES = __init__.py $(PLUGINNAME).py
 EXTRAS = metadata.txt resources.qrc
 TOOL_DIR = gui core ui qgiscombomanager qgissettingmanager
 ICONS_DIR = icons
@@ -46,7 +46,7 @@ clean:
 compile: $(UI_FILES) $(RC_FILES) $(LN_FILES)
 
 transup:
-	pylupdate4 -noobsolete $(UI_SOURCES) $(PLUGINAME).py gui/*.py core/*.py -ts i18n/$(PLUGINAME)_fr.ts
+	pylupdate4 -noobsolete $(UI_SOURCES) $(PLUGINNAME).py gui/*.py core/*.py -ts i18n/$(PLUGINNAME)_fr.ts
 
 deploy:
 	mkdir -p $(HOME)/.qgis2/python/plugins/$(PLUGINNAME)
