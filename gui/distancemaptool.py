@@ -41,19 +41,19 @@ from distancedialog import DistanceDialog
 class DistanceMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
-        self.canvas = iface.mapCanvas()
+        self.mapCanvas = iface.mapCanvas()
         self.settings = MySettings()
-        QgsMapTool.__init__(self, self.canvas)
+        QgsMapTool.__init__(self, self.mapCanvas)
 
     def activate(self):
         QgsMapTool.activate(self)
-        self.rubber = QgsRubberBand(self.canvas, QGis.Point)
+        self.rubber = QgsRubberBand(self.mapCanvas, QGis.Point)
         self.rubber.setColor(self.settings.value("rubberColor"))
         self.rubber.setIcon(self.settings.value("rubberIcon"))
         self.rubber.setIconSize(self.settings.value("rubberSize"))
         self.updateSnapperList()
-        QgsMapLayerRegistry.instance().layersAdded.connect(self.updateSnapperList)
-        QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateSnapperList)
+        self.mapCanvas.layersChanged.connect(self.updateSnapperList)
+        self.mapCanvas.scaleChanged.connect(self.updateSnapperList)
         self.messageWidget = self.iface.messageBar().createMessage("Intersect It", "Not snapped.")
         self.messageWidgetExist = True
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
@@ -64,23 +64,25 @@ class DistanceMapTool(QgsMapTool):
         self.snapperList = []
         tolerance = self.settings.value("selectTolerance")
         units = self.settings.value("selectUnits")
+        scale = self.iface.mapCanvas().mapRenderer().scale()
         for layer in self.iface.mapCanvas().layers():
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                snapLayer = QgsSnapper.SnapLayer()
-                snapLayer.mLayer = layer
-                snapLayer.mSnapTo = QgsSnapper.SnapToVertex
-                snapLayer.mTolerance = tolerance
-                if units == "map":
-                    snapLayer.mUnitType = QgsTolerance.MapUnits
-                else:
-                    snapLayer.mUnitType = QgsTolerance.Pixels
-                self.snapperList.append(snapLayer)
+                if not layer.hasScaleBasedVisibility() or layer.maximumScale() <= scale < layer.minimumScale():
+                    snapLayer = QgsSnapper.SnapLayer()
+                    snapLayer.mLayer = layer
+                    snapLayer.mSnapTo = QgsSnapper.SnapToVertex
+                    snapLayer.mTolerance = tolerance
+                    if units == "map":
+                        snapLayer.mUnitType = QgsTolerance.MapUnits
+                    else:
+                        snapLayer.mUnitType = QgsTolerance.Pixels
+                    self.snapperList.append(snapLayer)
 
     def deactivate(self):
         self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
-        QgsMapLayerRegistry.instance().layersAdded.disconnect(self.updateSnapperList)
-        QgsMapLayerRegistry.instance().layersRemoved.disconnect(self.updateSnapperList)
+        self.mapCanvas.layersChanged.disconnect(self.updateSnapperList)
+        self.mapCanvas.scaleChanged.disconnect(self.updateSnapperList)
         QgsMapTool.deactivate(self)
 
     def messageWidgetRemoved(self):
@@ -103,9 +105,8 @@ class DistanceMapTool(QgsMapTool):
                         message += res.layer.name() + ", "
                         layers.append(layerName)
                 message = message[:-2]
-        messageTextEdit = self.messageWidget.findChild(QTextEdit, "mMsgText")
-        if messageTextEdit is not None:
-            messageTextEdit.setText(message)
+        if self.messageWidgetExist:
+            self.messageWidget.setText(message)
 
     def canvasMoveEvent(self, mouseEvent):
         snappedPoint = self.snapToLayers(mouseEvent.pos())
@@ -123,7 +124,7 @@ class DistanceMapTool(QgsMapTool):
         mapPoint = self.snapToLayers(pixPoint, mapPoint)
         self.rubber.setToGeometry(QgsGeometry().fromPoint(mapPoint), None)
         distance = Distance(self.iface, mapPoint, 1)
-        dlg = DistanceDialog(distance, self.canvas)
+        dlg = DistanceDialog(distance, self.mapCanvas)
         if dlg.exec_():
             distance.save()
         self.rubber.reset()
@@ -135,7 +136,7 @@ class DistanceMapTool(QgsMapTool):
             return initPoint
 
         if self.snapping == "project":
-            ok, snappingResults = QgsMapCanvasSnapper(self.canvas).snapToBackgroundLayers(pixPoint, [])
+            ok, snappingResults = QgsMapCanvasSnapper(self.mapCanvas).snapToBackgroundLayers(pixPoint, [])
             self.displaySnapInfo(snappingResults)
             if ok == 0 and len(snappingResults) > 0:
                 return QgsPoint(snappingResults[0].snappedVertex)
@@ -145,7 +146,7 @@ class DistanceMapTool(QgsMapTool):
         if self.snapping == "all":
             if len(self.snapperList) == 0:
                 return initPoint
-            snapper = QgsSnapper(self.canvas.mapRenderer())
+            snapper = QgsSnapper(self.mapCanvas.mapRenderer())
             snapper.setSnapLayers(self.snapperList)
             snapper.setSnapMode(QgsSnapper.SnapWithResultsWithinTolerances)
             ok, snappingResults = snapper.snapPoint(pixPoint, [])
