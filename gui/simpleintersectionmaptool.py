@@ -31,7 +31,7 @@ from qgis.core import QGis, QgsFeatureRequest, QgsFeature, QgsPoint, QgsGeometry
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
-
+from ..core.isfeaturerendered import isFeatureRendered
 
 class SimpleIntersectionMapTool(QgsMapTool):
     def __init__(self, iface):
@@ -43,8 +43,8 @@ class SimpleIntersectionMapTool(QgsMapTool):
 
     def deactivate(self):
         self.rubber.reset()
-        QgsMapLayerRegistry.instance().layersAdded.disconnect(self.updateSnapperList)
-        QgsMapLayerRegistry.instance().layersRemoved.disconnect(self.updateSnapperList)
+        self.mapCanvas.layersChanged.disconnect(self.updateSnapperList)
+        self.mapCanvas.scaleChanged.disconnect(self.updateSnapperList)
         QgsMapTool.deactivate(self)
 
     def activate(self):
@@ -52,24 +52,26 @@ class SimpleIntersectionMapTool(QgsMapTool):
         self.rubber.setWidth(self.settings.value("rubberWidth"))
         self.rubber.setColor(self.settings.value("rubberColor"))
         self.updateSnapperList()
-        QgsMapLayerRegistry.instance().layersAdded.connect(self.updateSnapperList)
-        QgsMapLayerRegistry.instance().layersRemoved.connect(self.updateSnapperList)
+        self.mapCanvas.layersChanged.connect(self.updateSnapperList)
+        self.mapCanvas.scaleChanged.connect(self.updateSnapperList)
         self.checkLayer()
 
     def updateSnapperList(self, dummy=None):
         # make a snapper list of all line and polygons layers
         self.snapperList = []
-        for layer in self.iface.mapCanvas().layers():
+        scale = self.iface.mapCanvas().mapRenderer().scale()
+        for layer in self.mapCanvas.layers():
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType() and layer.geometryType() in (QGis.Line, QGis.Polygon):
-                snapLayer = QgsSnapper.SnapLayer()
-                snapLayer.mLayer = layer
-                snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
-                snapLayer.mTolerance = self.settings.value("selectTolerance")
-                if self.settings.value("selectUnits") == "map":
-                    snapLayer.mUnitType = QgsTolerance.MapUnits
-                else:
-                    snapLayer.mUnitType = QgsTolerance.Pixels
-                self.snapperList.append(snapLayer)
+                if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
+                    snapLayer = QgsSnapper.SnapLayer()
+                    snapLayer.mLayer = layer
+                    snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
+                    snapLayer.mTolerance = self.settings.value("selectTolerance")
+                    if self.settings.value("selectUnits") == "map":
+                        snapLayer.mUnitType = QgsTolerance.MapUnits
+                    else:
+                        snapLayer.mUnitType = QgsTolerance.Pixels
+                    self.snapperList.append(snapLayer)
 
     def canvasMoveEvent(self, mouseEvent):
         # put the observations within tolerance in the rubber band
@@ -127,6 +129,8 @@ class SimpleIntersectionMapTool(QgsMapTool):
             f = QgsFeature()
             if (result.layer.id(), featureId) not in alreadyGot:
                 if result.layer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is False:
+                    continue
+                if not isFeatureRendered(self.mapCanvas, result.layer, f):
                     continue
                 features.append(QgsFeature(f))
                 alreadyGot.append((result.layer.id(), featureId))

@@ -67,7 +67,7 @@ class DistanceMapTool(QgsMapTool):
         scale = self.iface.mapCanvas().mapRenderer().scale()
         for layer in self.iface.mapCanvas().layers():
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                if not layer.hasScaleBasedVisibility() or layer.maximumScale() <= scale < layer.minimumScale():
+                if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
                     snapLayer = QgsSnapper.SnapLayer()
                     snapLayer.mLayer = layer
                     snapLayer.mSnapTo = QgsSnapper.SnapToVertex
