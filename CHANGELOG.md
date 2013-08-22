@@ -1,4 +1,10 @@
 
+### 3.2 22.08.2013
+
+* only use visible layers for snapping
+* display snapped layers if simple intersection fails
+* fix set rubber bands style
+
 ### 3.1 15.08.2013
 
 * Define icon for snapping
