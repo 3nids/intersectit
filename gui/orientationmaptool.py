@@ -46,6 +46,11 @@ class OrientationMapTool(QgsMapTool):
         self.rubber = QgsRubberBand(self.canvas)
         QgsMapTool.__init__(self, self.canvas)
 
+    def activate(self):
+        QgsMapTool.activate(self)
+        self.rubber.setWidth(self.settings.value("rubberWidth"))
+        self.rubber.setColor(self.settings.value("rubberColor"))
+
     def deactivate(self):
         self.rubber.reset()
         QgsMapTool.deactivate(self)

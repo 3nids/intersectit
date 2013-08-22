@@ -42,14 +42,14 @@ class DimensionMapTool(QgsMapTool):
         self.mapCanvas = iface.mapCanvas()
         self.settings = MySettings()
         self.lineRubber = QgsRubberBand(self.mapCanvas)
-        self.lineRubber.setWidth(self.settings.value("rubberWidth"))
-        self.lineRubber.setColor(self.settings.value("rubberColor"))
         self.editing = False
         self.snapLayer = None
         QgsMapTool.__init__(self, self.mapCanvas)
 
     def activate(self):
         QgsMapTool.activate(self)
+        self.lineRubber.setWidth(self.settings.value("rubberWidth"))
+        self.lineRubber.setColor(self.settings.value("rubberColor"))
         layerid = self.settings.value("dimensionLayer")
         layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
         if layer is None:
