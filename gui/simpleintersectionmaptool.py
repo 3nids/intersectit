@@ -83,10 +83,13 @@ class SimpleIntersectionMapTool(QgsMapTool):
         self.rubber.reset()
         pos = mouseEvent.pos()
         features = self.getFeatures(pos)
-        if len(features) != 2:
+        nFeat = len(features)
+        if nFeat != 2:
+            layerNames = " , ".join([feature.layer.name() for feature in features])
             self.iface.messageBar().pushMessage("Intersect It",
-                                                "You need exactly 2 features to proceed a simple intersection.",
-                                                QgsMessageBar.WARNING, 2)
+                                                "You need exactly 2 features to proceed a simple intersection."
+                                                " %u given (%s)" % (nFeat, layerNames),
+                                                QgsMessageBar.WARNING, 3)
             return
         intersection = features[0].geometry().intersection(features[1].geometry())
         intersectionMP = intersection.asMultiPoint()
@@ -133,6 +136,7 @@ class SimpleIntersectionMapTool(QgsMapTool):
                 if not isFeatureRendered(self.mapCanvas, result.layer, f):
                     continue
                 features.append(QgsFeature(f))
+                features[-1].layer = result.layer
                 alreadyGot.append((result.layer.id(), featureId))
         return features
 
