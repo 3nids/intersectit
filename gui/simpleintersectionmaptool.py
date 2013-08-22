@@ -33,6 +33,7 @@ from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 from ..core.mysettings import MySettings
 from ..core.isfeaturerendered import isFeatureRendered
 
+
 class SimpleIntersectionMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
@@ -61,17 +62,18 @@ class SimpleIntersectionMapTool(QgsMapTool):
         self.snapperList = []
         scale = self.iface.mapCanvas().mapRenderer().scale()
         for layer in self.mapCanvas.layers():
-            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType() and layer.geometryType() in (QGis.Line, QGis.Polygon):
-                if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
-                    snapLayer = QgsSnapper.SnapLayer()
-                    snapLayer.mLayer = layer
-                    snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
-                    snapLayer.mTolerance = self.settings.value("selectTolerance")
-                    if self.settings.value("selectUnits") == "map":
-                        snapLayer.mUnitType = QgsTolerance.MapUnits
-                    else:
-                        snapLayer.mUnitType = QgsTolerance.Pixels
-                    self.snapperList.append(snapLayer)
+            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
+                if layer.geometryType() in (QGis.Line, QGis.Polygon):
+                    if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
+                        snapLayer = QgsSnapper.SnapLayer()
+                        snapLayer.mLayer = layer
+                        snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
+                        snapLayer.mTolerance = self.settings.value("selectTolerance")
+                        if self.settings.value("selectUnits") == "map":
+                            snapLayer.mUnitType = QgsTolerance.MapUnits
+                        else:
+                            snapLayer.mUnitType = QgsTolerance.Pixels
+                        self.snapperList.append(snapLayer)
 
     def canvasMoveEvent(self, mouseEvent):
         # put the observations within tolerance in the rubber band
@@ -94,6 +96,8 @@ class SimpleIntersectionMapTool(QgsMapTool):
         intersection = features[0].geometry().intersection(features[1].geometry())
         intersectionMP = intersection.asMultiPoint()
         intersectionP = intersection.asPoint()
+        if len(intersectionMP) == 0:
+            intersectionMP = intersection.asPolyline()
         if len(intersectionMP) == 0 and intersectionP == QgsPoint(0, 0):
             self.iface.messageBar().pushMessage("Intersect It",
                                                 "Objects do not intersect.",
