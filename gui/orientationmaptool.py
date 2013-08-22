@@ -28,11 +28,12 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper
+from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper, QgsFeature, QgsFeatureRequest
 from qgis.gui import QgsRubberBand, QgsMapTool
 
 from ..core.orientation import Orientation
 from ..core.mysettings import MySettings
+from ..core.isfeaturerendered import isFeatureRendered
 
 from orientationdialog import OrientationDialog
 
@@ -72,27 +73,34 @@ class OrientationMapTool(QgsMapTool):
 
     def getOrientation(self, pixPoint):
         snapperList = []
+        scale = self.iface.mapCanvas().mapRenderer().scale()
         for layer in self.iface.mapCanvas().layers():
             if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
                 if layer.geometryType() in (QGis.Line, QGis.Polygon):
-                    snapLayer = QgsSnapper.SnapLayer()
-                    snapLayer.mLayer = layer
-                    snapLayer.mSnapTo = QgsSnapper.SnapToSegment
-                    snapLayer.mTolerance = self.settings.value("selectTolerance")
-                    if self.settings.value("selectUnits") == "map":
-                        snapLayer.mUnitType = QgsTolerance.MapUnits
-                    else:
-                        snapLayer.mUnitType = QgsTolerance.Pixels
-                    snapperList.append(snapLayer)
+                    if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
+                        snapLayer = QgsSnapper.SnapLayer()
+                        snapLayer.mLayer = layer
+                        snapLayer.mSnapTo = QgsSnapper.SnapToSegment
+                        snapLayer.mTolerance = self.settings.value("selectTolerance")
+                        if self.settings.value("selectUnits") == "map":
+                            snapLayer.mUnitType = QgsTolerance.MapUnits
+                        else:
+                            snapLayer.mUnitType = QgsTolerance.Pixels
+                        snapperList.append(snapLayer)
         if len(snapperList) == 0:
             return None
         snapper = QgsSnapper(self.canvas.mapRenderer())
         snapper.setSnapLayers(snapperList)
         snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
 
+        f = QgsFeature()
         ok, snappingResults = snapper.snapPoint(pixPoint, [])
         if ok == 0:
             for result in snappingResults:
+                if result.layer.getFeatures(QgsFeatureRequest().setFilterFid(result.snappedAtGeometry)).nextFeature(f) is False:
+                    continue
+                if not isFeatureRendered(self.canvas, result.layer, f):
+                    continue
                 vertices = (result.afterVertex, result.beforeVertex)
                 po = result.snappedVertex
                 dist = (po.sqrDist(vertices[0]), po.sqrDist(vertices[1]))
