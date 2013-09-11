@@ -31,6 +31,7 @@ from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QDialog
 from qgis.gui import QgsRubberBand
 
+from ..core.mysettings import MySettings
 from ..ui.ui_place_distance import Ui_place_distance
 
 
@@ -38,11 +39,14 @@ class DistanceDialog(QDialog, Ui_place_distance):
     def __init__(self, distance, canvas):
         QDialog.__init__(self)
         self.setupUi(self)
+        self.settings = MySettings()
 
         # this is a reference, distance observation is modified in outer class
         self.distance = distance
 
         self.rubber = QgsRubberBand(canvas)
+        self.rubber.setColor(self.settings.value("rubberColor"))
+        self.rubber.setIconSize(self.settings.value("rubberSize"))
 
         self.x.setText("%.3f" % distance.point.x())
         self.y.setText("%.3f" % distance.point.y())

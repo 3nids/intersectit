@@ -44,7 +44,8 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
     def __init__(self, iface, observations, initPoint):
         QDialog.__init__(self)
         self.setupUi(self)
-        SettingDialog.__init__(self, MySettings(), False, False)
+        self.settings = MySettings()
+        SettingDialog.__init__(self, self.settings, False, False)
         self.processButton.clicked.connect(self.doIntersection)
         self.okButton.clicked.connect(self.accept)
         self.initPoint = initPoint
@@ -53,14 +54,17 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         self.solution = None
         self.report = ""
 
-        self.rubberBand = QgsRubberBand(iface.mapCanvas(), QGis.Point)
+        self.rubber = QgsRubberBand(iface.mapCanvas(), QGis.Point)
+        self.rubber.setColor(self.settings.value("rubberColor"))
+        self.rubber.setIcon(self.settings.value("rubberIcon"))
+        self.rubber.setIconSize(self.settings.value("rubberSize"))
 
         self.observationTableWidget.displayRows(observations)
         self.observationTableWidget.itemChanged.connect(self.disbaleOKbutton)
         self.doIntersection()
 
     def closeEvent(self, e):
-        self.rubberBand.reset()
+        self.rubber.reset()
 
     def disbaleOKbutton(self):
         self.okButton.setDisabled(True)
@@ -69,7 +73,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         self.observations = []
         self.solution = None
         self.report = ""
-        self.rubberBand.reset()
+        self.rubber.reset()
 
         observations = self.observationTableWidget.getObservations()
         nObs = len(observations)
@@ -95,7 +99,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
             self.observations = observations
             self.report = intersection.report
             self.okButton.setEnabled(True)
-            self.rubberBand.setToGeometry(QgsGeometry().fromPoint(self.solution), None)
+            self.rubber.setToGeometry(QgsGeometry().fromPoint(self.solution), None)
 
 
 
