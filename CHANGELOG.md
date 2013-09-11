@@ -1,4 +1,8 @@
 
+### 3.2.1 11.09.2013
+
+* use correct settings for rubber band
+
 ### 3.2 22.08.2013
 
 * only use visible layers for snapping
