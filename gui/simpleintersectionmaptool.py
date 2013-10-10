@@ -86,10 +86,10 @@ class SimpleIntersectionMapTool(QgsMapTool):
         pos = mouseEvent.pos()
         features = self.getFeatures(pos)
         nFeat = len(features)
-        if nFeat != 2:
+        if nFeat < 2:
             layerNames = " , ".join([feature.layer.name() for feature in features])
             self.iface.messageBar().pushMessage("Intersect It",
-                                                "You need exactly 2 features to proceed a simple intersection."
+                                                "You need 2 features to proceed a simple intersection."
                                                 " %u given (%s)" % (nFeat, layerNames),
                                                 QgsMessageBar.WARNING, 3)
             return
