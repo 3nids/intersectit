@@ -38,19 +38,22 @@ from ..core.mysettings import MySettings
 class DimensionMapTool(QgsMapTool):
     def __init__(self, iface, observationType):
         self.iface = iface
-        self.observationType = observationType
+        self.observationType = observationType  # distance or orientation
         self.mapCanvas = iface.mapCanvas()
         self.settings = MySettings()
         self.lineRubber = QgsRubberBand(self.mapCanvas)
         self.editing = False
         self.snapLayer = None
+        self.observationType = self.observationType.lower().title()
+        if self.observationType not in ("Orientation", "Distance"):
+            raise NameError("Wrong observation type")
         QgsMapTool.__init__(self, self.mapCanvas)
 
     def activate(self):
         QgsMapTool.activate(self)
         self.lineRubber.setWidth(self.settings.value("rubberWidth"))
         self.lineRubber.setColor(self.settings.value("rubberColor"))
-        layerid = self.settings.value("dimensionLayer")
+        layerid = self.settings.value("dimension"+self.observationType+"Layer")
         layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
         if layer is None:
             self.iface.messageBar().pushMessage("Intersect It", "Dimension layer must defined.",
@@ -62,13 +65,6 @@ class DimensionMapTool(QgsMapTool):
                                                 QgsMessageBar.WARNING, 3)
             self.mapCanvas.unsetMapTool(self)
             return
-        self.checkType = self.settings.value("dimensionCheckType")
-        self.fieldTypeIdx = layer.fieldNameIndex(self.settings.value("typeField"))
-        if self.checkType and (self.fieldTypeIdx == -1 or not self.settings.value("dimensionWriteType")):
-            self.checkType = False
-            self.iface.messageBar().pushMessage("Intersect It",
-                                                "Dimension type cannot be checked since field type could not be found.",
-                                                QgsMessageBar.INFO, 3)
         # unset this tool if the layer is removed
         layer.layerDeleted.connect(self.unsetMapTool)
         # create snapper for this layer
@@ -88,7 +84,7 @@ class DimensionMapTool(QgsMapTool):
 
     def deactivate(self):
         self.lineRubber.reset()
-        layer = QgsMapLayerRegistry.instance().mapLayer(self.settings.value("dimensionLayer"))
+        layer = QgsMapLayerRegistry.instance().mapLayer(self.settings.value("dimension"+self.observationType+"Layer"))
         if layer is not None:
             try:
                 layer.layerDeleted.disconnect(self.unsetMapTool)
@@ -102,7 +98,7 @@ class DimensionMapTool(QgsMapTool):
             return
         line = feature.geometry().asPolyline()
         point = self.map2layer(mouseEvent.pos())
-        if self.observationType == "distance":
+        if self.observationType == "Distance":
             if len(line) == 0:
                 return
             self.editing = True
@@ -113,7 +109,6 @@ class DimensionMapTool(QgsMapTool):
             self.editing = True
             self.drawObject = OrientationLine(line, point)
         self.featureId = feature.id()
-
 
     def canvasReleaseEvent(self, mouseEvent):
         if not self.editing:
@@ -158,9 +153,6 @@ class DimensionMapTool(QgsMapTool):
             featureId = result.snappedAtGeometry
             f = QgsFeature()
             if self.snapLayer.mLayer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is not False:
-                if self.checkType:
-                    if f[self.fieldTypeIdx] != self.observationType:
-                        continue
                 if self.observationType == "orientation":
                     line = f.geometry().asPolyline()
                     if len(line) != 2:

@@ -27,6 +27,7 @@
 #
 #---------------------------------------------------------------------
 
+from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint, QgsSnapper, QgsTolerance
 from qgis.gui import QgsMapTool, QgsRubberBand
@@ -155,72 +156,83 @@ class AdvancedIntersectionMapTool(QgsMapTool):
             self.mapCanvas.refresh()
 
     def saveDimension(self, intersectedPoint, observations):
-         # check that dimension layer and fields have been set correctly
-        while True:
-            # check layer
-            if not self.settings.value("dimensionWriteObservation"):
-                return  # if we do not place any dimension, skip
-            dimensionLayerId = self.settings.value("dimensionLayer")
-            message = "To place dimension arcs, you must select a layer in the settings."
-            status, dimLayer = self.checkLayerExists(dimensionLayerId, message)
-            if status == 2:
-                continue
-            if status == 3:
-                return
-            # check fields
-            if self.settings.value("dimensionWriteMeasure"):
-                measureField = self.settings.value("observationField")
-                message = "To save the observed distance, please select a field for it."
-                status = self.checkFieldExists(dimLayer, measureField, message)
-                if status == 2:
-                    continue
-                if status == 3:
-                    return
-            if self.settings.value("dimensionWriteType"):
-                typeField = self.settings.value("typeField")
-                message = "To save the type of observaton, please select a field for it."
-                status = self.checkFieldExists(dimLayer, typeField, message)
-                if status == 2:
-                    continue
-                if status == 3:
-                    return
-            if self.settings.value("dimensionWritePrecision"):
-                precisionField = self.settings.value("precisionField")
-                message = "To save the precision of observation, please select a field for it."
-                status = self.checkFieldExists(dimLayer, precisionField, message)
-                if status == 2:
-                    continue
-                if status == 3:
-                    return
-            break
+        # check that dimension layer and fields have been set correctly
+        if not self.settings.value("dimensionDistanceWrite") and not self.settings.value("dimensionOrientationWrite"):
+            return  # if we do not place any dimension, skip
+        obsTypes = ("Distance", "Orientation")
+        recheck = True
+        while recheck:
+            # settings might change during checking,
+            # so recheck both observation types whenever the settings dialog is shown
+            recheck = False
+            for obsType in obsTypes:
+                while True:
+                    if not self.settings.value("dimension"+obsType+"Write"):
+                        break
+                    # check layer
+                    layerId = self.settings.value("dimension"+obsType+"Layer")
+                    message = QCoreApplication.translate("IntersectIt",
+                                                         "To place dimensions, you must define a layer in the settings.")
+                    status, dimLayer = self.checkLayerExists(layerId, message)
+                    if status == 2:
+                        recheck = True
+                        continue
+                    if status == 3:
+                        return
+                    # check fields
+                    if self.settings.value("dimension"+obsType+"ObservationWrite"):
+                        obsField = self.settings.value("dimension"+obsType+"ObservationField")
+                        message = QCoreApplication.translate("IntersectIt",
+                                                             "To save the observation in the layer,"
+                                                             " please select a field for it.")
+                        status = self.checkFieldExists(dimLayer, obsField, message)
+                        if status == 2:
+                            recheck = True
+                            continue
+                        if status == 3:
+                            return
+                    if self.settings.value("dimension"+obsType+"PrecisionWrite"):
+                        precisionField = self.settings.value("dimension"+obsType+"PrecisionField")
+                        message = QCoreApplication.translate("IntersectIt",
+                                                             "To save the precision of observation,"
+                                                             " please select a field for it.")
+                        status = self.checkFieldExists(dimLayer, precisionField, message)
+                        if status == 2:
+                            recheck = True
+                            continue
+                        if status == 3:
+                            return
+                    break
         # save the intersection results
-        if self.settings.value("dimensionWriteObservation"):
-            layer = QgsMapLayerRegistry.instance().mapLayer(dimensionLayerId)
-            initFields = layer.dataProvider().fields()
-            features = []
-            for obs in observations:
-                f = QgsFeature()
-                f.setFields(initFields)
-                f.initAttributes(initFields.size())
-                if self.settings.value("dimensionWriteMeasure"):
-                    f[self.settings.value("observationField")] = obs["observation"]
-                if self.settings.value("dimensionWriteType"):
-                    f[self.settings.value("typeField")] = obs["type"]
-                if self.settings.value("dimensionWritePrecision"):
-                    f[self.settings.value("precisionField")] = obs["precision"]
-                p0 = QgsPoint(obs["x"], obs["y"])
-                p1 = intersectedPoint
-                if obs["type"] == "distance":
-                    geom = Arc(p0, p1).geometry()
-                elif obs["type"] == "orientation":
-                    geom = QgsGeometry().fromPolyline([p0, p1])
-                else:
-                    raise NameError("Invalid observation %s" % obs["type"])
-                f.setGeometry(geom)
-                features.append(f)
-            layer.dataProvider().addFeatures(features)
-            layer.updateExtents()
-            self.mapCanvas.refresh()
+        for obsType in obsTypes:
+            if self.settings.value("dimension"+obsType+"Write"):
+                layerid = self.settings.value("dimension"+obsType+"Layer")
+                layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
+                initFields = layer.dataProvider().fields()
+                features = []
+                for obs in observations:
+                    if obs["type"] != obsType.lower():
+                        continue
+                    f = QgsFeature()
+                    f.setFields(initFields)
+                    f.initAttributes(initFields.size())
+                    if self.settings.value("dimension"+obsType+"ObservationWrite"):
+                        f[self.settings.value("dimension"+obsType+"ObservationField")] = obs["observation"]
+                    if self.settings.value("dimension"+obsType+"PrecisionWrite"):
+                        f[self.settings.value("dimension"+obsType+"PrecisionField")] = obs["precision"]
+                    p0 = QgsPoint(obs["x"], obs["y"])
+                    p1 = intersectedPoint
+                    if obs["type"] == "distance":
+                        geom = Arc(p0, p1).geometry()
+                    elif obs["type"] == "orientation":
+                        geom = QgsGeometry().fromPolyline([p0, p1])
+                    else:
+                        raise NameError("Invalid observation %s" % obs["type"])
+                    f.setGeometry(geom)
+                    features.append(f)
+                    layer.dataProvider().addFeatures(features)
+                layer.updateExtents()
+        self.mapCanvas.refresh()
 
     def checkLayerExists(self, layerid, message):
         # returns:

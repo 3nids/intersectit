@@ -49,16 +49,31 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
 
         SettingDialog.__init__(self, self.settings)
 
-        self.dimensionLayerCombo = VectorLayerCombo(self.dimensionLayer,
-                                                    lambda: self.settings.value("dimensionLayer"),
-                                                    {"groupLayers": False, "hasGeometry": True,
-                                                     "geomType": QGis.Line})
-        self.observationFieldCombo = FieldCombo(self.observationField, self.dimensionLayerCombo,
-                                                lambda: self.settings.value("observationField"))
-        self.typeFieldCombo = FieldCombo(self.typeField, self.dimensionLayerCombo,
-                                         lambda: self.settings.value("typeField"))
-        self.precisionFieldCombo = FieldCombo(self.precisionField, self.dimensionLayerCombo,
-                                              lambda: self.settings.value("precisionField"))
+        # distance combos
+        self.distanceLayerCombo = VectorLayerCombo(self.dimensionDistanceLayer,
+                                                   lambda: self.settings.value("dimensionDistanceLayer"),
+                                                   {"groupLayers": False, "hasGeometry": True,
+                                                    "geomType": QGis.Line})
+
+        self.distanceObservationFieldCombo = FieldCombo(self.dimensionDistanceObservationField, self.distanceLayerCombo,
+                                                        lambda: self.settings.value("dimensionDistanceObservationField"))
+        self.distancePrecisionFieldCombo = FieldCombo(self.dimensionDistancePrecisionField, self.distanceLayerCombo,
+                                                      lambda: self.settings.value("dimensionDistancePrecisionField"))
+
+        # orientation combos
+        self.orientationLayerCombo = VectorLayerCombo(self.dimensionOrientationLayer,
+                                                      lambda: self.settings.value("dimensionOrientationLayer"),
+                                                      {"groupLayers": False, "hasGeometry": True,
+                                                       "geomType": QGis.Line})
+
+        self.orientationObservationFieldCombo = FieldCombo(self.dimensionOrientationObservationField,
+                                                           self.orientationLayerCombo,
+                                                           lambda: self.settings.value("dimensionOrientationObservationField"))
+        self.orientationPrecisionFieldCombo = FieldCombo(self.dimensionOrientationPrecisionField,
+                                                         self.orientationLayerCombo,
+                                                         lambda: self.settings.value("dimensionOrientationPrecisionField"))
+
+        # other combos
         self.simpleIntersectionLayerCombo = VectorLayerCombo(self.simpleIntersectionLayer,
                                                              lambda: self.settings.value("simpleIntersectionLayer"),
                                                              {"groupLayers": False, "hasGeometry": True,

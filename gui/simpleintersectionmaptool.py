@@ -93,6 +93,7 @@ class SimpleIntersectionMapTool(QgsMapTool):
                                                 " %u given (%s)" % (nFeat, layerNames),
                                                 QgsMessageBar.WARNING, 3)
             return
+        # TODO: check that layers are taken by order, and do all combinations
         intersection = features[0].geometry().intersection(features[1].geometry())
         intersectionMP = intersection.asMultiPoint()
         intersectionP = intersection.asPoint()
@@ -123,6 +124,7 @@ class SimpleIntersectionMapTool(QgsMapTool):
         layer.triggerRepaint()
 
     def getFeatures(self, pixPoint):
+        # todo: return only first two
         # do the snapping
         snapper = QgsSnapper(self.mapCanvas.mapRenderer())
         snapper.setSnapLayers(self.snapperList)
