@@ -1,4 +1,8 @@
 
+### 3.3 02.12.2013
+
+* use distinct layers for orientation and distance dimensions
+
 ### 3.2.1 11.09.2013
 
 * use correct settings for rubber band
