@@ -1,6 +1,6 @@
 tmp/
 .idea
-*.qgs
+*.qgs*
 ui_*.py
 resources.py
 *.qm
