@@ -30,7 +30,7 @@
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMessageBox
 from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint, QgsSnapper, QgsTolerance
-from qgis.gui import QgsMapTool, QgsRubberBand
+from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
 from ..core.memorylayers import MemoryLayers
@@ -208,6 +208,8 @@ class AdvancedIntersectionMapTool(QgsMapTool):
             if self.settings.value("dimension"+obsType+"Write"):
                 layerid = self.settings.value("dimension"+obsType+"Layer")
                 layer = QgsMapLayerRegistry.instance().mapLayer(layerid)
+                if layer is None:
+                    continue
                 initFields = layer.dataProvider().fields()
                 features = []
                 for obs in observations:
@@ -229,8 +231,10 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                     else:
                         raise NameError("Invalid observation %s" % obs["type"])
                     f.setGeometry(geom)
-                    features.append(f)
-                    layer.dataProvider().addFeatures(features)
+                    features.append(QgsFeature(f))
+                if not layer.dataProvider().addFeatures(features):
+                    self.iface.messageBar().pushMessage("Could not commit %s observations" % obsType,
+                                                        QgsMessageBar.CRITICAL)
                 layer.updateExtents()
         self.mapCanvas.refresh()
 
