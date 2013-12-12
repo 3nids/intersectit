@@ -49,6 +49,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         SettingDialog.__init__(self, self.settings, False, False)
         self.processButton.clicked.connect(self.doIntersection)
         self.okButton.clicked.connect(self.accept)
+        self.finished.connect(self.resetRubber)
         self.initPoint = initPoint
 
         self.observations = []
@@ -64,7 +65,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         self.observationTableWidget.itemChanged.connect(self.disbaleOKbutton)
         self.doIntersection()
 
-    def closeEvent(self, e):
+    def resetRubber(self, dummy=0):
         self.rubber.reset()
 
     def disbaleOKbutton(self):
