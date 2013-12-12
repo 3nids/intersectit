@@ -35,7 +35,7 @@ from qgis.core import QgsApplication
 from core.memorylayers import MemoryLayers
 
 from gui.mysettingsdialog import MySettingsDialog
-from gui.dimensionmaptool import DimensionMapTool
+from gui.dimensioneditmaptool import DimensionEditMapTool
 from gui.distancemaptool import DistanceMapTool
 from gui.orientationmaptool import OrientationMapTool
 from gui.advancedintersectionmaptool import AdvancedIntersectionMapTool
@@ -120,7 +120,7 @@ class IntersectIt ():
                                                QCoreApplication.translate("IntersectIt", "edit distance dimension"),
                                                self.iface.mainWindow())
         self.dimensionDistanceAction.setCheckable(True)
-        self.dimensionDistanceMapTool = DimensionMapTool(self.iface, "distance")
+        self.dimensionDistanceMapTool = DimensionEditMapTool(self.iface, "distance")
         self.dimensionDistanceMapTool.setAction(self.dimensionDistanceAction)
         self.toolBar.addAction(self.dimensionDistanceAction)
         self.iface.addPluginToMenu("&Intersect It", self.dimensionDistanceAction)
@@ -129,7 +129,7 @@ class IntersectIt ():
                                                   QCoreApplication.translate("IntersectIt", "edit orientation dimension"),
                                                   self.iface.mainWindow())
         self.dimensionOrientationAction.setCheckable(True)
-        self.dimensionOrientationMapTool = DimensionMapTool(self.iface, "orientation")
+        self.dimensionOrientationMapTool = DimensionEditMapTool(self.iface, "orientation")
         self.dimensionOrientationMapTool.setAction(self.dimensionOrientationAction)
         self.toolBar.addAction(self.dimensionOrientationAction)
         self.iface.addPluginToMenu("&Intersect It", self.dimensionOrientationAction)

@@ -35,7 +35,7 @@ from ..core.orientationline import OrientationLine
 from ..core.mysettings import MySettings
 
 
-class DimensionMapTool(QgsMapTool):
+class DimensionEditMapTool(QgsMapTool):
     def __init__(self, iface, observationType):
         self.iface = iface
         self.observationType = observationType  # distance or orientation
