@@ -27,6 +27,7 @@
 #
 #---------------------------------------------------------------------
 
+from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QDialog
 from qgis.core import QGis, QgsGeometry
 from qgis.gui import QgsRubberBand
@@ -78,7 +79,9 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         observations = self.observationTableWidget.getObservations()
         nObs = len(observations)
         if nObs < 2:
-            self.reportBrowser.setText("No intersection can be done with less than 2 observations.")
+            self.reportBrowser.setText(QCoreApplication.translate("IntersectIt",
+                                                                  "No intersection can be done "
+                                                                  "with less than 2 observations."))
             return
         if nObs == 2:
             if observations[0]["type"] == "distance" and observations[1]["type"] == "distance":

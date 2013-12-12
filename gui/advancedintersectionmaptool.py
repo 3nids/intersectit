@@ -129,7 +129,9 @@ class AdvancedIntersectionMapTool(QgsMapTool):
             if not self.settings.value("advancedIntersectionWritePoint"):
                 break  # if we do not place any point, skip
             layerid = self.settings.value("advancedIntersectionLayer")
-            message = "To place the intersection solution, you must select a layer in the settings."
+            message = QCoreApplication.translate("IntersectIt",
+                                                 "To place the intersection solution,"
+                                                 " you must select a layer in the settings.")
             status, intLayer = self.checkLayerExists(layerid, message)
             if status == 2:
                 continue
@@ -137,7 +139,8 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                 return
             if self.settings.value("advancedIntersectionWriteReport"):
                 reportField = self.settings.value("reportField")
-                message = "To save the intersection report, please select a field for it."
+                message = QCoreApplication.translate("IntersectIt",
+                                                     "To save the intersection report, please select a field for it.")
                 status = self.checkFieldExists(intLayer, reportField, message)
                 if status == 2:
                     continue
@@ -172,7 +175,8 @@ class AdvancedIntersectionMapTool(QgsMapTool):
                     # check layer
                     layerId = self.settings.value("dimension"+obsType+"Layer")
                     message = QCoreApplication.translate("IntersectIt",
-                                                         "To place dimensions, you must define a layer in the settings.")
+                                                         "To place dimensions, "
+                                                         "you must define a layer in the settings.")
                     status, dimLayer = self.checkLayerExists(layerId, message)
                     if status == 2:
                         recheck = True
