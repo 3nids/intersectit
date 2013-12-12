@@ -1,4 +1,10 @@
 
+### 3.3.1 12.12.2013
+
+* remove intersection solution from rubber band
+* completed frend translation
+* fix python crash when editing orientations
+
 ### 3.3 02.12.2013
 
 * use distinct layers for orientation and distance dimensions
