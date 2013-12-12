@@ -47,7 +47,6 @@ class OrientationLine():
         d = sqrt(self.origin.sqrDist(self.point)) * cos(a)
         if d == 0:
             d = 1
-        print d, sin(a), cos(a)
         P = QgsPoint(self.origin.x() + d * sin(self.orientation),
                      self.origin.y() + d * cos(self.orientation))
         return QgsGeometry().fromPolyline([self.origin, P])
