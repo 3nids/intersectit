@@ -13,8 +13,8 @@
    height="24"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="distance.svg"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="prolongation.svg"
    inkscape:export-filename="/home/denis/Documents/qgis/plugins/intersectit/icons/distance.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -51,14 +51,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="26.104025"
-     inkscape:cx="5.5785665"
+     inkscape:cx="-1.201997"
      inkscape:cy="14.293675"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1855"
      inkscape:window-height="1056"
-     inkscape:window-x="65"
+     inkscape:window-x="1985"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -79,14 +79,14 @@
      id="layer1"
      transform="translate(0,-1028.3622)">
     <path
-       style="fill:none;stroke:#000000;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4, 4;stroke-dashoffset:0"
+       style="fill:none;stroke:#cd4400;stroke-width:2;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4, 4;stroke-dashoffset:0"
        d="M 22.973611,0.97686084 6.1293229,17.755752"
        id="path5388"
        inkscape:connector-curvature="0"
        transform="translate(0,1028.3622)"
        sodipodi:nodetypes="cc" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
+       style="fill:none;stroke:#25335b;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none"
        d="m 6.0527064,0.05733247 0,17.96657753 -7.4701123,7.431804"
        id="path5390"
        inkscape:connector-curvature="0"

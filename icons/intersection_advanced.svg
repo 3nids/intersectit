@@ -9,12 +9,12 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="128"
-   height="128"
+   width="24"
+   height="24"
    id="svg2"
    version="1.1"
-   inkscape:version="0.48.3.1 r9886"
-   sodipodi:docname="intersectit.svg"
+   inkscape:version="0.48.4 r9939"
+   sodipodi:docname="intersection_advanced.svg"
    inkscape:export-filename="/home/denis/.qgis2/python/plugins/intersectit/icons/intersectit.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
@@ -50,15 +50,15 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2"
-     inkscape:cx="-79.209728"
-     inkscape:cy="50.504487"
+     inkscape:zoom="16"
+     inkscape:cx="12.593679"
+     inkscape:cy="16.042622"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1855"
      inkscape:window-height="1056"
-     inkscape:window-x="65"
+     inkscape:window-x="1985"
      inkscape:window-y="24"
      inkscape:window-maximized="1" />
   <metadata
@@ -69,7 +69,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -77,35 +77,45 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-924.36218)">
+     transform="translate(0,-1028.3622)">
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:#000000;stroke-width:5.54218214000000042;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0;fill-opacity:1"
+       style="fill:none;stroke:#6d97c4;stroke-width:4.35848783;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path2985"
        sodipodi:cx="32.829956"
        sodipodi:cy="76.861031"
        sodipodi:rx="32.577419"
        sodipodi:ry="51.138973"
-       d="M 65.407375,76.861031 C 65.407375,105.10431 50.821968,128 32.829956,128 14.837944,128 0.25253677,105.10431 0.25253677,76.861031 c 0,-28.243275 14.58540723,-51.138974 32.57741923,-51.138974 17.992012,0 32.577419,22.895699 32.577419,51.138974 z"
-       transform="matrix(2.2606684,0,0,1.4401295,-70.217644,877.67234)" />
+       d="m 65.407375,76.861031 a 32.577419,51.138973 0 1 1 -65.15483823,0 32.577419,51.138973 0 1 1 65.15483823,0 z"
+       transform="matrix(0.42343287,0,0,0.26974242,-13.442153,1019.9321)" />
     <path
        sodipodi:type="arc"
-       style="fill:none;stroke:#000000;stroke-width:5.54218214000000042;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       style="fill:none;stroke:#6d97c4;stroke-width:4.35848783;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
        id="path2985-2"
        sodipodi:cx="32.829956"
        sodipodi:cy="76.861031"
        sodipodi:rx="32.577419"
        sodipodi:ry="51.138973"
-       d="M 65.407375,76.861031 C 65.407375,105.10431 50.821968,128 32.829956,128 14.837944,128 0.25253677,105.10431 0.25253677,76.861031 c 0,-28.243275 14.58540723,-51.138974 32.57741923,-51.138974 17.992012,0 32.577419,22.895699 32.577419,51.138974 z"
-       transform="matrix(2.2606684,0,0,1.4401295,-10.217644,937.67234)" />
+       d="m 65.407375,76.861031 a 32.577419,51.138973 0 1 1 -65.15483823,0 32.577419,51.138973 0 1 1 65.15483823,0 z"
+       transform="matrix(0.42343287,0,0,0.26974242,-2.203896,1031.1704)" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:9.99023341999999914;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:19.98046683999999829, 19.98046683999999829;stroke-dashoffset:14.98535013000000049"
-       d="M 123.00261,929.36411 5.2522583,1047.165"
+       style="fill:none;stroke:#6d97c4;stroke-width:1.671;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:1.671,3.34200001;stroke-dashoffset:3.17490001"
+       d="M 22.748828,1029.6142 0.693683,1051.6788"
        id="path3800"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cc"
        inkscape:export-filename="/home/denis/Documents/qgis/plugins/intersectit/icons/intersectit.png"
        inkscape:export-xdpi="90"
        inkscape:export-ydpi="90" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#cd4400;fill-opacity:1;fill-rule:nonzero;stroke:#253e5b;stroke-width:0.49690416;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path2993-7"
+       sodipodi:cx="4"
+       sodipodi:cy="19.5"
+       sodipodi:rx="2"
+       sodipodi:ry="2.5"
+       d="m 6,19.5 a 2,2.5 0 1 1 -4,0 2,2.5 0 1 1 4,0 z"
+       transform="matrix(1.125,0,0,0.89999998,9.4375,1021.1247)" />
   </g>
 </svg>
