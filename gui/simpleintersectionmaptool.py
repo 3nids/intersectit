@@ -88,30 +88,14 @@ class SimpleIntersectionMapTool(QgsMapTool):
         nFeat = len(features)
         if nFeat < 2:
             layerNames = " , ".join([feature.layer.name() for feature in features])
-            self.iface.messageBar().pushMessage("Intersect It",
-                                                "You need 2 features to proceed a simple intersection."
-                                                " %u given (%s)" % (nFeat, layerNames),
-                                                QgsMessageBar.WARNING, 3)
+            self.iface.messageBar().pushMessage("Intersect It", "You need 2 features to proceed a simple intersection."
+                                                " %u given (%s)" % (nFeat, layerNames), QgsMessageBar.WARNING, 3)
             return
-        # TODO: check that layers are taken by order, and do all combinations
-        intersection = features[0].geometry().intersection(features[1].geometry())
-        intersectionMP = intersection.asMultiPoint()
-        intersectionP = intersection.asPoint()
-        if len(intersectionMP) == 0:
-            intersectionMP = intersection.asPolyline()
-        if len(intersectionMP) == 0 and intersectionP == QgsPoint(0, 0):
-            self.iface.messageBar().pushMessage("Intersect It",
-                                                "Objects do not intersect.",
-                                                QgsMessageBar.WARNING, 2)
+        intersectionP = self.intersection(features, pos)
+        if intersectionP == QgsPoint(0,0):
+            self.iface.messageBar().pushMessage("Intersect It", "Objects do not intersect.", QgsMessageBar.WARNING, 2)
             return
-        if len(intersectionMP) > 1:
-            mousePoint = self.toMapCoordinates(pos)
-            intersection = intersectionMP[0]
-            for point in intersectionMP[1:]:
-                if mousePoint.sqrDist(point) < mousePoint.sqrDist(intersection):
-                    intersection = QgsPoint(point.x(), point.y())
-        else:
-            intersection = intersectionP
+
         layer = self.checkLayer()
         if layer is None:
             return
@@ -119,12 +103,11 @@ class SimpleIntersectionMapTool(QgsMapTool):
         initFields = layer.dataProvider().fields()
         f.setFields(initFields)
         f.initAttributes(initFields.size())
-        f.setGeometry(QgsGeometry().fromPoint(intersection))
+        f.setGeometry(QgsGeometry().fromPoint(intersectionP))
         layer.editBuffer().addFeature(f)
         layer.triggerRepaint()
 
     def getFeatures(self, pixPoint):
-        # todo: return only first two
         # do the snapping
         snapper = QgsSnapper(self.mapCanvas.mapRenderer())
         snapper.setSnapLayers(self.snapperList)
@@ -145,6 +128,35 @@ class SimpleIntersectionMapTool(QgsMapTool):
                 features[-1].layer = result.layer
                 alreadyGot.append((result.layer.id(), featureId))
         return features
+
+    def intersection(self, features, pos):
+        # try all the combinations
+        nFeat = len(features)
+        intersections = []
+        for i in range(nFeat-1):
+            for j in range(i+1,nFeat):
+                intersection = features[i].geometry().intersection(features[j].geometry())
+                intersectionMP = intersection.asMultiPoint()
+                intersectionP = intersection.asPoint()
+                if len(intersectionMP) == 0:
+                    intersectionMP = intersection.asPolyline()
+                if len(intersectionMP) == 0 and intersectionP == QgsPoint(0, 0):
+                    continue
+                if len(intersectionMP) > 1:
+                    mousePoint = self.toMapCoordinates(pos)
+                    intersectionP = intersectionMP[0]
+                    for point in intersectionMP[1:]:
+                        if mousePoint.sqrDist(point) < mousePoint.sqrDist(intersectionP):
+                            intersectionP = QgsPoint(point.x(), point.y())
+                if intersectionP != QgsPoint(0,0):
+                    intersections.append(intersectionP)
+        if len(intersections) == 0:
+            return QgsPoint(0,0)
+        intersectionP = intersections[0]
+        for point in intersections[1:]:
+            if mousePoint.sqrDist(point) < mousePoint.sqrDist(intersectionP):
+                intersectionP = QgsPoint(point.x(), point.y())
+        return intersectionP
 
     def checkLayer(self):
         # check output layer is defined
