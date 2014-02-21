@@ -1,4 +1,10 @@
 
+
+### 3.4 21.02.2014
+
+* perform all possible intersections in simple intersection, return the closest one
+* added colored icons
+
 ### 3.3.1 12.12.2013
 
 * remove intersection solution from rubber band
