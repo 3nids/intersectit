@@ -28,7 +28,7 @@
 #---------------------------------------------------------------------
 
 
-from qgis.core import QgsRenderContext
+from qgis.core import QgsRenderContext, QGis
 
 
 def isFeatureRendered(canvas, layer, feature):
@@ -39,7 +39,10 @@ def isFeatureRendered(canvas, layer, feature):
     renderContext.setMapToPixel(canvas.mapRenderer().rendererContext().mapToPixel())
     renderContext.setRendererScale(canvas.mapRenderer().scale())
 
-    renderer.startRender(renderContext, layer)
+    if QGis.QGIS_VERSION_INT >= 20300:
+        renderer.startRender(renderContext, layer.pendingFields())
+    else:
+        renderer.startRender(renderContext, layer)
 
     ans = renderer.willRenderFeature(feature)
 
