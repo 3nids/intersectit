@@ -19,7 +19,7 @@ QGISDIR = $(HOME)/.qgis2
 
 # i18n
 LN_DIR = i18n
-TRANSLATED_LANG = fr de
+TRANSLATED_LANG = fr de es
 
 # COMMAND TO RUN DEFAULT APPLICATION (launch a URL)
 # Linux 'open' or 'xdg-open' / OSX: 'open' / Win: 'start'
