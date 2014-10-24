@@ -1,4 +1,8 @@
 
+### 3.4.2 23.10.2014
+
+* added spanish translation (thanks to Lucas Alonso)
+
 ### 3.4.1 17.03.2014
 
 * fix API break in QGIS 2.3
