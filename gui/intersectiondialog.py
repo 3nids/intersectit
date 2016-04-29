@@ -32,7 +32,7 @@ from PyQt4.QtGui import QDialog
 from qgis.core import QGis, QgsGeometry
 from qgis.gui import QgsRubberBand
 
-from ..qgissettingmanager import SettingDialog
+from ..qgissettingmanager import SettingDialog, UpdateMode
 
 from ..core.mysettings import MySettings
 from ..core.leastsquares import LeastSquares
@@ -46,7 +46,7 @@ class IntersectionDialog(QDialog, Ui_Intersection, SettingDialog):
         QDialog.__init__(self)
         self.setupUi(self)
         self.settings = MySettings()
-        SettingDialog.__init__(self, self.settings, False, False)
+        SettingDialog.__init__(self, self.settings, UpdateMode.NoUpdate)
         self.processButton.clicked.connect(self.doIntersection)
         self.okButton.clicked.connect(self.accept)
         self.finished.connect(self.resetRubber)

@@ -1,6 +1,3 @@
 [submodule "qgissettingmanager"]
 	path = qgissettingmanager
 	url = git@github.com:3nids/qgissettingmanager.git
-[submodule "qgiscombomanager"]
-	path = qgiscombomanager
-	url = git@github.com:3nids/qgiscombomanager.git

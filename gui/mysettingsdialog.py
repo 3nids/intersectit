@@ -28,10 +28,9 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtGui import QDialog
-from qgis.core import QGis
+from qgis.gui import QgsMapLayerComboBox, QgsFieldComboBox, QgsMapLayerProxyModel
 
 from ..qgissettingmanager import SettingDialog
-from ..qgiscombomanager import VectorLayerCombo, FieldCombo
 
 from ..core.mysettings import MySettings
 
@@ -47,40 +46,19 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
         self.obsDistanceSnapping.setItemData(1, "project")
         self.obsDistanceSnapping.setItemData(2, "all")
 
-        SettingDialog.__init__(self, self.settings)
-
         # distance combos
-        self.distanceLayerCombo = VectorLayerCombo(self.dimensionDistanceLayer,
-                                                   lambda: self.settings.value("dimensionDistanceLayer"),
-                                                   {"groupLayers": False, "hasGeometry": True,
-                                                    "geomType": QGis.Line})
-
-        self.distanceObservationFieldCombo = FieldCombo(self.dimensionDistanceObservationField, self.distanceLayerCombo,
-                                                        lambda: self.settings.value("dimensionDistanceObservationField"))
-        self.distancePrecisionFieldCombo = FieldCombo(self.dimensionDistancePrecisionField, self.distanceLayerCombo,
-                                                      lambda: self.settings.value("dimensionDistancePrecisionField"))
+        self.dimensionDistanceLayer.setFilters(QgsMapLayerProxyModel.LineLayer)
+        self.dimensionDistanceLayer.layerChanged.connect(self.dimensionDistanceObservationField.setLayer)
+        self.dimensionDistanceLayer.layerChanged.connect(self.dimensionDistancePrecisionField.setLayer)
 
         # orientation combos
-        self.orientationLayerCombo = VectorLayerCombo(self.dimensionOrientationLayer,
-                                                      lambda: self.settings.value("dimensionOrientationLayer"),
-                                                      {"groupLayers": False, "hasGeometry": True,
-                                                       "geomType": QGis.Line})
-
-        self.orientationObservationFieldCombo = FieldCombo(self.dimensionOrientationObservationField,
-                                                           self.orientationLayerCombo,
-                                                           lambda: self.settings.value("dimensionOrientationObservationField"))
-        self.orientationPrecisionFieldCombo = FieldCombo(self.dimensionOrientationPrecisionField,
-                                                         self.orientationLayerCombo,
-                                                         lambda: self.settings.value("dimensionOrientationPrecisionField"))
+        self.dimensionOrientationLayer.setFilters(QgsMapLayerProxyModel.LineLayer)
+        self.dimensionOrientationLayer.layerChanged.connect(self.dimensionOrientationObservationField.setLayer)
+        self.dimensionOrientationLayer.layerChanged.connect(self.dimensionOrientationPrecisionField.setLayer)
 
         # other combos
-        self.simpleIntersectionLayerCombo = VectorLayerCombo(self.simpleIntersectionLayer,
-                                                             lambda: self.settings.value("simpleIntersectionLayer"),
-                                                             {"groupLayers": False, "hasGeometry": True,
-                                                              "geomType": QGis.Point})
-        self.advancedIntersectionLayerCombo = VectorLayerCombo(self.advancedIntersectionLayer,
-                                                               lambda: self.settings.value("advancedIntersectionLayer"),
-                                                               {"groupLayers": False, "hasGeometry": True,
-                                                                "geomType": QGis.Point})
-        self.reportFieldCombo = FieldCombo(self.reportField, self.advancedIntersectionLayerCombo,
-                                           lambda: self.settings.value("reportField"))
+        self.simpleIntersectionLayer.setFilters(QgsMapLayerProxyModel.PointLayer)
+        self.advancedIntersectionLayer.setFilters(QgsMapLayerProxyModel.PointLayer)
+        self.advancedIntersectionLayer.layerChanged.connect(self.reportField.setLayer)
+
+        SettingDialog.__init__(self, self.settings)

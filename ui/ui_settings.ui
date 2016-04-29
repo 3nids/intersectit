@@ -27,7 +27,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="generalTab">
       <attribute name="title">
@@ -349,7 +349,7 @@
           <string>Advanced intersection</string>
          </property>
          <layout class="QGridLayout" name="gridLayout_11">
-          <item row="3" column="0">
+          <item row="4" column="0">
            <widget class="QCheckBox" name="advancedIntersectionWriteReport">
             <property name="text">
              <string>write intersection report in field</string>
@@ -411,24 +411,10 @@
            </widget>
           </item>
           <item row="2" column="1" colspan="2">
-           <widget class="QComboBox" name="advancedIntersectionLayer">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToContents</enum>
-            </property>
-           </widget>
+           <widget class="QgsMapLayerComboBox" name="advancedIntersectionLayer"/>
           </item>
-          <item row="3" column="1" colspan="2">
-           <widget class="QComboBox" name="reportField">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToContents</enum>
-            </property>
-           </widget>
+          <item row="4" column="1" colspan="2">
+           <widget class="QgsFieldComboBox" name="reportField"/>
           </item>
          </layout>
         </widget>
@@ -447,14 +433,7 @@
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="simpleIntersectionLayer">
-            <property name="enabled">
-             <bool>false</bool>
-            </property>
-            <property name="sizeAdjustPolicy">
-             <enum>QComboBox::AdjustToContents</enum>
-            </property>
-           </widget>
+           <widget class="QgsMapLayerComboBox" name="simpleIntersectionLayer"/>
           </item>
          </layout>
         </widget>
@@ -495,12 +474,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="dimensionOrientationLayer"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="dimensionOrientationObservationField"/>
-          </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="dimensionOrientationObservationWrite">
             <property name="text">
@@ -518,8 +491,14 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QgsMapLayerComboBox" name="dimensionOrientationLayer"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="QgsFieldComboBox" name="dimensionOrientationObservationField"/>
+          </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="dimensionOrientationPrecisionField">
+           <widget class="QgsFieldComboBox" name="dimensionOrientationPrecisionField">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -544,12 +523,6 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="QComboBox" name="dimensionDistanceLayer"/>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="dimensionDistanceObservationField"/>
-          </item>
           <item row="1" column="0">
            <widget class="QCheckBox" name="dimensionDistanceObservationWrite">
             <property name="text">
@@ -567,12 +540,18 @@
             </property>
            </widget>
           </item>
+          <item row="0" column="1">
+           <widget class="QgsMapLayerComboBox" name="dimensionDistanceLayer"/>
+          </item>
           <item row="2" column="1">
-           <widget class="QComboBox" name="dimensionDistancePrecisionField">
+           <widget class="QgsFieldComboBox" name="dimensionDistancePrecisionField">
             <property name="enabled">
              <bool>false</bool>
             </property>
            </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QgsFieldComboBox" name="dimensionDistanceObservationField"/>
           </item>
          </layout>
         </widget>
@@ -583,6 +562,18 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QgsFieldComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsfieldcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>QgsMapLayerComboBox</class>
+   <extends>QComboBox</extends>
+   <header>qgsmaplayercombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>buttonBox</tabstop>
  </tabstops>
@@ -617,118 +608,6 @@
     <hint type="destinationlabel">
      <x>257</x>
      <y>166</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dimensionDistanceObservationWrite</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dimensionDistanceObservationField</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>124</x>
-     <y>122</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>336</x>
-     <y>135</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dimensionDistancePrecisionWrite</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dimensionDistancePrecisionField</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>166</x>
-     <y>164</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>336</x>
-     <y>184</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>simpleIntersectionWritePoint</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>simpleIntersectionLayer</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>61</x>
-     <y>76</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>338</x>
-     <y>74</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>advancedIntersectionWritePoint</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>advancedIntersectionLayer</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>52</x>
-     <y>227</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>320</x>
-     <y>225</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>advancedIntersectionWriteReport</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>reportField</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>52</x>
-     <y>260</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>320</x>
-     <y>258</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dimensionOrientationObservationWrite</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dimensionOrientationObservationField</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>138</x>
-     <y>291</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>278</x>
-     <y>295</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dimensionOrientationPrecisionWrite</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>dimensionOrientationPrecisionField</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>187</x>
-     <y>335</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>272</x>
-     <y>335</y>
     </hint>
    </hints>
   </connection>

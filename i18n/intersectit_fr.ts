@@ -81,32 +81,32 @@
 <context>
     <name>Intersection</name>
     <message>
-        <location filename="ui_intersection.py" line="93"/>
+        <location filename="ui_intersection.py" line="90"/>
         <source>Convergence</source>
         <translation>Convergence</translation>
     </message>
     <message>
-        <location filename="ui_intersection.py" line="94"/>
+        <location filename="ui_intersection.py" line="91"/>
         <source>Max iteration</source>
         <translation>Nb. max itérations</translation>
     </message>
     <message>
-        <location filename="ui_intersection.py" line="95"/>
+        <location filename="ui_intersection.py" line="92"/>
         <source>mm</source>
         <translation>mm</translation>
     </message>
     <message>
-        <location filename="ui_intersection.py" line="96"/>
+        <location filename="ui_intersection.py" line="93"/>
         <source>process</source>
         <translation>lancer</translation>
     </message>
     <message>
-        <location filename="ui_intersection.py" line="97"/>
+        <location filename="ui_intersection.py" line="94"/>
         <source>Use this solution</source>
         <translation>Utiliser cette solution</translation>
     </message>
     <message>
-        <location filename="ui_intersection.py" line="92"/>
+        <location filename="ui_intersection.py" line="89"/>
         <source>Intersect It :: Least Squares report</source>
         <translation>Intersect It: :: résultats des moindres carrés</translation>
     </message>
@@ -114,22 +114,22 @@
 <context encoding="UTF-8">
     <name>PlaceOrientation</name>
     <message>
-        <location filename="ui_place_orientation.py" line="80"/>
+        <location filename="ui_place_orientation.py" line="79"/>
         <source>Place orientation</source>
         <translation>Placer une orientation</translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="ui_place_orientation.py" line="81"/>
+        <location filename="ui_place_orientation.py" line="80"/>
         <source>Precision of prolongation [°]</source>
         <translation>Précision de l&apos;orientation</translation>
     </message>
     <message>
-        <location filename="ui_place_orientation.py" line="82"/>
+        <location filename="ui_place_orientation.py" line="81"/>
         <source>Length of drawn line</source>
         <translation>Longueur de la ligne déssinée</translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="ui_place_orientation.py" line="83"/>
+        <location filename="ui_place_orientation.py" line="82"/>
         <source>Angle [°]</source>
         <translation>Angle [°]</translation>
     </message>
@@ -137,182 +137,182 @@
 <context>
     <name>Settings</name>
     <message>
-        <location filename="ui_settings.py" line="311"/>
+        <location filename="ui_settings.py" line="297"/>
         <source>Intersect It :: settings</source>
         <translation>Intersect It :: réglages</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="322"/>
+        <location filename="ui_settings.py" line="308"/>
         <source>General</source>
         <translation>Général</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="312"/>
+        <location filename="ui_settings.py" line="298"/>
         <source>Map</source>
         <translation>Carte</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="313"/>
+        <location filename="ui_settings.py" line="299"/>
         <source>select objects within</source>
         <translation>Sélection dans un rayon de</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="314"/>
+        <location filename="ui_settings.py" line="300"/>
         <source>pixels</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="315"/>
+        <location filename="ui_settings.py" line="301"/>
         <source>map units</source>
         <translation>unités de la carte</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="332"/>
+        <location filename="ui_settings.py" line="318"/>
         <source>Observations</source>
         <translation>Mesures</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="323"/>
+        <location filename="ui_settings.py" line="309"/>
         <source>Distances</source>
         <translation>Distance</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="324"/>
+        <location filename="ui_settings.py" line="310"/>
         <source>Snapping</source>
         <translation>Accrochage</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="325"/>
+        <location filename="ui_settings.py" line="311"/>
         <source>no</source>
         <translation>non</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="326"/>
+        <location filename="ui_settings.py" line="312"/>
         <source>according to project settings</source>
         <translation>selon les réglages des projets</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="327"/>
+        <location filename="ui_settings.py" line="313"/>
         <source>on vertex of all layers</source>
         <translation>pour toutes les couches</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="328"/>
+        <location filename="ui_settings.py" line="314"/>
         <source>Default precision for distances [m]</source>
         <translation>Précision par défaut pour les distances</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="329"/>
+        <location filename="ui_settings.py" line="315"/>
         <source>Orientations</source>
         <translation>Orientations</translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="ui_settings.py" line="330"/>
+        <location filename="ui_settings.py" line="316"/>
         <source>Default precision for orientations [°]</source>
         <translation>Précision par défaut pour les orientations [°]</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="331"/>
+        <location filename="ui_settings.py" line="317"/>
         <source>Length of drawn line</source>
         <translation>Longueur de la ligne déssinée</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="341"/>
+        <location filename="ui_settings.py" line="327"/>
         <source>Intersection</source>
         <translation>Intersection</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="333"/>
+        <location filename="ui_settings.py" line="319"/>
         <source>Advanced intersection</source>
         <translation>Intersection avancée</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="334"/>
+        <location filename="ui_settings.py" line="320"/>
         <source>write intersection report in field</source>
         <translation>écrire le rapport dans le champ</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="340"/>
+        <location filename="ui_settings.py" line="326"/>
         <source>write point in layer</source>
         <translation>placer le point dans la couche</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="336"/>
+        <location filename="ui_settings.py" line="322"/>
         <source>m</source>
         <translation>m</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="337"/>
+        <location filename="ui_settings.py" line="323"/>
         <source>Least-squares Convergence threshold</source>
         <translation>Seuil de convergence des moindres-carrés</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="338"/>
+        <location filename="ui_settings.py" line="324"/>
         <source>Maximum iterations</source>
         <translation>Nb. max itérations</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="339"/>
+        <location filename="ui_settings.py" line="325"/>
         <source>Simple intersection</source>
         <translation>Intersection simple</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="350"/>
+        <location filename="ui_settings.py" line="336"/>
         <source>Dimensions</source>
         <translation>Côtes</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="349"/>
+        <location filename="ui_settings.py" line="335"/>
         <source>place precision in</source>
         <translation>écrire la précision dans le champ</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="348"/>
+        <location filename="ui_settings.py" line="334"/>
         <source>place observation value in</source>
         <translation>écrire la valeur mesurée dans</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="316"/>
+        <location filename="ui_settings.py" line="302"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="317"/>
+        <location filename="ui_settings.py" line="303"/>
         <source>+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="318"/>
+        <location filename="ui_settings.py" line="304"/>
         <source>X</source>
         <translation type="unfinished"></translation>
     </message>
     <message encoding="UTF-8">
-        <location filename="ui_settings.py" line="319"/>
+        <location filename="ui_settings.py" line="305"/>
         <source>□</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="320"/>
+        <location filename="ui_settings.py" line="306"/>
         <source>O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="321"/>
+        <location filename="ui_settings.py" line="307"/>
         <source>rubber band size and color</source>
         <translation>Taille et couleur de la surbrillance</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="342"/>
+        <location filename="ui_settings.py" line="328"/>
         <source>place orientation dimensions</source>
         <translation>placer les côtes pour les orientations</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="347"/>
+        <location filename="ui_settings.py" line="333"/>
         <source>in layer</source>
         <translation>dans la couche</translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="346"/>
+        <location filename="ui_settings.py" line="332"/>
         <source>place distance dimensions</source>
         <translation>placer les côtes pour les distance</translation>
     </message>
@@ -320,32 +320,32 @@
 <context>
     <name>place_distance</name>
     <message>
-        <location filename="ui_place_distance.py" line="84"/>
+        <location filename="ui_place_distance.py" line="83"/>
         <source>Distance</source>
         <translation>Distance</translation>
     </message>
     <message>
-        <location filename="ui_place_distance.py" line="87"/>
+        <location filename="ui_place_distance.py" line="86"/>
         <source>m</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui_place_distance.py" line="86"/>
+        <location filename="ui_place_distance.py" line="85"/>
         <source>Precision</source>
         <translation>Précision</translation>
     </message>
     <message>
-        <location filename="ui_place_distance.py" line="88"/>
+        <location filename="ui_place_distance.py" line="87"/>
         <source>y</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui_place_distance.py" line="89"/>
+        <location filename="ui_place_distance.py" line="88"/>
         <source>x</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="ui_place_distance.py" line="83"/>
+        <location filename="ui_place_distance.py" line="82"/>
         <source>Intersect It :: Place Distance</source>
         <translation>Intersect It :: placer une distance</translation>
     </message>

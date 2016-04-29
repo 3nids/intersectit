@@ -30,47 +30,47 @@
 from PyQt4.QtGui import QColor
 from ..qgissettingmanager import *
 
-pluginName = "intersectit"
+pluginName = 'intersectit'
 
 
 class MySettings(SettingManager):
     def __init__(self):
         SettingManager.__init__(self, pluginName)
          
-        # global settings
-        self.addSetting("obsDistanceSnapping", "string", "global", "all")
-        self.addSetting("obsDefaultPrecisionDistance", "double", "global", .025)
-        self.addSetting("obsDefaultPrecisionOrientation", "double", "global", .5)
-        self.addSetting("obsOrientationLength", "double", "global", 4)
-        self.addSetting("selectTolerance", "double", "global", 7)
-        self.addSetting("selectUnits", "string", "global", "pixels")
-        self.addSetting("rubberColor", "Color", "global", QColor(0, 0, 255, 150), {"alpha": True})
-        self.addSetting("rubberWidth", "double", "global", 2)
-        self.addSetting("rubberSize", "integer", "global", 12)
-        self.addSetting("rubberIcon", "integer", "global", 4)
-        self.addSetting("advancedIntersecLSmaxIteration", "Integer", "global", 15)
-        self.addSetting("advancedIntersecLSconvergeThreshold", "double", "global", .0005)
+        # Global settings
+        self.add_setting( String( 'obsDistanceSnapping', Scope.Global, 'all') )
+        self.add_setting( Double( 'obsDefaultPrecisionDistance', Scope.Global, .025) )
+        self.add_setting( Double( 'obsDefaultPrecisionOrientation', Scope.Global, .5) )
+        self.add_setting( Double( 'obsOrientationLength', Scope.Global, 4) )
+        self.add_setting( Double( 'selectTolerance', Scope.Global, 7) )
+        self.add_setting( String( 'selectUnits', Scope.Global, 'pixels') )
+        self.add_setting( Color( 'rubberColor', Scope.Global, QColor(0, 0, 255, 150), {'alpha': True}) )
+        self.add_setting( Double( 'rubberWidth', Scope.Global, 2) )
+        self.add_setting( Integer( 'rubberSize', Scope.Global, 12) )
+        self.add_setting( Integer( 'rubberIcon', Scope.Global, 4) )
+        self.add_setting( Integer( 'advancedIntersecLSmaxIteration', Scope.Global, 15) )
+        self.add_setting( Double( 'advancedIntersecLSconvergeThreshold', Scope.Global, .0005) )
 
-        # project settings
-        self.addSetting("simpleIntersectionWritePoint", "bool", "project", False)
-        self.addSetting("advancedIntersectionWritePoint", "bool", "project", False)
-        self.addSetting("advancedIntersectionWriteReport", "bool", "project", False)
-        self.addSetting("dimensionDistanceWrite", "bool", "project", False)
-        self.addSetting("dimensionDistanceObservationWrite", "bool", "project", False)
-        self.addSetting("dimensionDistancePrecisionWrite", "bool", "project", False)
-        self.addSetting("dimensionOrientationWrite", "bool", "project", False)
-        self.addSetting("dimensionOrientationObservationWrite", "bool", "project", False)
-        self.addSetting("dimensionOrientationPrecisionWrite", "bool", "project", False)
+        # Project settings
+        self.add_setting( Bool( 'simpleIntersectionWritePoint', Scope.Project, False) )
+        self.add_setting( Bool( 'advancedIntersectionWritePoint', Scope.Project, False) )
+        self.add_setting( Bool( 'advancedIntersectionWriteReport', Scope.Project, False) )
+        self.add_setting( Bool( 'dimensionDistanceWrite', Scope.Project, False) )
+        self.add_setting( Bool( 'dimensionDistanceObservationWrite', Scope.Project, False) )
+        self.add_setting( Bool( 'dimensionDistancePrecisionWrite', Scope.Project, False) )
+        self.add_setting( Bool( 'dimensionOrientationWrite', Scope.Project, False) )
+        self.add_setting( Bool( 'dimensionOrientationObservationWrite', Scope.Project, False) )
+        self.add_setting( Bool( 'dimensionOrientationPrecisionWrite', Scope.Project, False) )
         # fields and layers
-        self.addSetting("dimensionDistanceLayer", "string", "project", "")
-        self.addSetting("dimensionDistancePrecisionField", "string", "project", "")
-        self.addSetting("dimensionDistanceObservationField", "string", "project", "")
-        self.addSetting("dimensionOrientationLayer", "string", "project", "")
-        self.addSetting("dimensionOrientationPrecisionField", "string", "project", "")
-        self.addSetting("dimensionOrientationObservationField", "string", "project", "")
+        self.add_setting( String( 'dimensionDistanceLayer', Scope.Project, '') )
+        self.add_setting( String( 'dimensionDistancePrecisionField', Scope.Project, '') )
+        self.add_setting( String( 'dimensionDistanceObservationField', Scope.Project, '') )
+        self.add_setting( String( 'dimensionOrientationLayer', Scope.Project, '') )
+        self.add_setting( String( 'dimensionOrientationPrecisionField', Scope.Project, '') )
+        self.add_setting( String( 'dimensionOrientationObservationField', Scope.Project, '') )
 
-        self.addSetting("simpleIntersectionLayer", "string", "project", "")
-        self.addSetting("advancedIntersectionLayer", "string", "project", "")
-        self.addSetting("reportField", "string", "project", "")
-        self.addSetting("memoryLineLayer", "string", "project", "")
-        self.addSetting("memoryPointLayer", "string", "project", "")
+        self.add_setting( String( 'simpleIntersectionLayer', Scope.Project, '') )
+        self.add_setting( String( 'advancedIntersectionLayer', Scope.Project, '') )
+        self.add_setting( String( 'reportField', Scope.Project, '') )
+        self.add_setting( String( 'memoryLineLayer', Scope.Project, '') )
+        self.add_setting( String( 'memoryPointLayer', Scope.Project, '') )
