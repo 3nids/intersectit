@@ -28,7 +28,7 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper, QgsMapLayerRegistry
+from qgis.core import QGis, QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsMapLayerRegistry, QgsPointLocator, QgsVectorLayer, QgsSnappingUtils
 from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper, QgsMessageBar
 
 from ..core.mysettings import MySettings
@@ -50,38 +50,15 @@ class DistanceMapTool(QgsMapTool):
         self.rubber.setColor(self.settings.value("rubberColor"))
         self.rubber.setIcon(self.settings.value("rubberIcon"))
         self.rubber.setIconSize(self.settings.value("rubberSize"))
-        self.updateSnapperList()
-        self.mapCanvas.layersChanged.connect(self.updateSnapperList)
-        self.mapCanvas.scaleChanged.connect(self.updateSnapperList)
         self.messageWidget = self.iface.messageBar().createMessage("Intersect It", "Not snapped.")
         self.messageWidgetExist = True
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
         if self.settings.value("obsDistanceSnapping") != "no":
             self.iface.messageBar().pushWidget(self.messageWidget)
 
-    def updateSnapperList(self, dummy=None):
-        self.snapperList = []
-        tolerance = self.settings.value("selectTolerance")
-        units = self.settings.value("selectUnits")
-        scale = self.iface.mapCanvas().mapRenderer().scale()
-        for layer in self.iface.mapCanvas().layers():
-            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
-                    snapLayer = QgsSnapper.SnapLayer()
-                    snapLayer.mLayer = layer
-                    snapLayer.mSnapTo = QgsSnapper.SnapToVertex
-                    snapLayer.mTolerance = tolerance
-                    if units == "map":
-                        snapLayer.mUnitType = QgsTolerance.MapUnits
-                    else:
-                        snapLayer.mUnitType = QgsTolerance.Pixels
-                    self.snapperList.append(snapLayer)
-
     def deactivate(self):
         self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
-        self.mapCanvas.layersChanged.disconnect(self.updateSnapperList)
-        self.mapCanvas.scaleChanged.disconnect(self.updateSnapperList)
         QgsMapTool.deactivate(self)
 
     def messageWidgetRemoved(self):
@@ -127,6 +104,35 @@ class DistanceMapTool(QgsMapTool):
         if dlg.exec_():
             distance.save()
         self.rubber.reset()
+
+    def snap_to_segment(self, pos):
+        """ Temporarily override snapping config and snap to vertices and edges
+         of any editable vector layer, to allow selection of node for editing
+         (if snapped to edge, it would offer creation of a new vertex there).
+        """
+        map_point = self.toMapCoordinates(pos)
+        tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
+        snap_type = QgsPointLocator.Type(QgsPointLocator.Edge)
+
+        snap_layers = []
+        for layer in self.canvas.layers():
+            if not isinstance(layer, QgsVectorLayer):
+                continue
+            snap_layers.append(QgsSnappingUtils.LayerConfig(
+                layer, snap_type, tol, QgsTolerance.ProjectUnits))
+
+        snap_util = self.canvas.snappingUtils()
+        old_layers = snap_util.layers()
+        old_mode = snap_util.snapToMapMode()
+        old_inter = snap_util.snapOnIntersections()
+        snap_util.setLayers(snap_layers)
+        snap_util.setSnapToMapMode(QgsSnappingUtils.SnapAdvanced)
+        snap_util.setSnapOnIntersections(False)
+        m = snap_util.snapToMap(map_point)
+        snap_util.setLayers(old_layers)
+        snap_util.setSnapToMapMode(old_mode)
+        snap_util.setSnapOnIntersections(old_inter)
+        return m
 
     def snapToLayers(self, pixPoint, initPoint=None):
         self.snapping = self.settings.value("obsDistanceSnapping")
