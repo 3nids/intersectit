@@ -28,7 +28,7 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsFeature, QgsFeatureRequest, QgsPointLocator, QgsSnappingUtils, QgsVectorLayer
+from qgis.core import QGis, QgsTolerance, QgsPointLocator, QgsSnappingUtils, QgsVectorLayer
 from qgis.gui import QgsRubberBand, QgsMapTool
 
 from ..core.orientation import Orientation
@@ -76,7 +76,7 @@ class OrientationMapTool(QgsMapTool):
         self.rubber.reset()
 
     def get_orientation(self, pos):
-        match = self.snap_to_intersection(pos)
+        match = self.snap_to_segment(pos)
         if not match.hasEdge():
             return None
         vertices = match.edgePoints()
@@ -90,7 +90,7 @@ class OrientationMapTool(QgsMapTool):
         az = po.azimuth(ve)
         return Orientation(self.iface, ve, az)
 
-    def snap_to_intersection(self, pos):
+    def snap_to_segment(self, pos):
         """ Temporarily override snapping config and snap to vertices and edges
          of any editable vector layer, to allow selection of node for editing
          (if snapped to edge, it would offer creation of a new vertex there).

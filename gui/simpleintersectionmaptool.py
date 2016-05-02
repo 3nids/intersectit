@@ -27,7 +27,7 @@
 #
 #---------------------------------------------------------------------
 
-from qgis.core import QGis, QgsFeatureRequest, QgsFeature, QgsPoint, QgsGeometry, QgsMapLayerRegistry, QgsMapLayer, QgsTolerance, QgsPointLocator, QgsVectorLayer, QgsSnappingUtils
+from qgis.core import QGis, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsTolerance, QgsPointLocator, QgsVectorLayer, QgsSnappingUtils
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings

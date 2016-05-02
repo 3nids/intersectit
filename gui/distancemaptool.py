@@ -28,11 +28,12 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsGeometry, QgsPoint, QgsMapLayer, QgsTolerance, QgsSnapper, QgsMapLayerRegistry
+from qgis.core import QGis, QgsGeometry, QgsPoint, QgsTolerance, QgsPointLocator, QgsVectorLayer, QgsSnappingUtils
 from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper, QgsMessageBar
 
 from ..core.mysettings import MySettings
 from ..core.distance import Distance
+from ..core.memorylayers import MemoryLayers
 
 from distancedialog import DistanceDialog
 
@@ -40,117 +41,85 @@ from distancedialog import DistanceDialog
 class DistanceMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
-        self.mapCanvas = iface.mapCanvas()
+        self.lineLayer = MemoryLayers(iface).lineLayer()
         self.settings = MySettings()
-        QgsMapTool.__init__(self, self.mapCanvas)
+        QgsMapTool.__init__(self, iface.mapCanvas())
 
     def activate(self):
         QgsMapTool.activate(self)
-        self.rubber = QgsRubberBand(self.mapCanvas, QGis.Point)
+        self.rubber = QgsRubberBand(self.canvas(), QGis.Point)
         self.rubber.setColor(self.settings.value("rubberColor"))
         self.rubber.setIcon(self.settings.value("rubberIcon"))
         self.rubber.setIconSize(self.settings.value("rubberSize"))
-        self.updateSnapperList()
-        self.mapCanvas.layersChanged.connect(self.updateSnapperList)
-        self.mapCanvas.scaleChanged.connect(self.updateSnapperList)
         self.messageWidget = self.iface.messageBar().createMessage("Intersect It", "Not snapped.")
         self.messageWidgetExist = True
         self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
-        if self.settings.value("obsDistanceSnapping") != "no":
-            self.iface.messageBar().pushWidget(self.messageWidget)
-
-    def updateSnapperList(self, dummy=None):
-        self.snapperList = []
-        tolerance = self.settings.value("selectTolerance")
-        units = self.settings.value("selectUnits")
-        scale = self.iface.mapCanvas().mapRenderer().scale()
-        for layer in self.iface.mapCanvas().layers():
-            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
-                    snapLayer = QgsSnapper.SnapLayer()
-                    snapLayer.mLayer = layer
-                    snapLayer.mSnapTo = QgsSnapper.SnapToVertex
-                    snapLayer.mTolerance = tolerance
-                    if units == "map":
-                        snapLayer.mUnitType = QgsTolerance.MapUnits
-                    else:
-                        snapLayer.mUnitType = QgsTolerance.Pixels
-                    self.snapperList.append(snapLayer)
 
     def deactivate(self):
         self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
-        self.mapCanvas.layersChanged.disconnect(self.updateSnapperList)
-        self.mapCanvas.scaleChanged.disconnect(self.updateSnapperList)
         QgsMapTool.deactivate(self)
 
     def messageWidgetRemoved(self):
         self.messageWidgetExist = False
 
-    def displaySnapInfo(self, snappingResults):
+    def displaySnapInfo(self, match=None):
         if not self.messageWidgetExist:
             return
-        nSnappingResults = len(snappingResults)
-        if nSnappingResults == 0:
+        if match is None:
             message = "No snap"
         else:
-            message = "Snapped to: <b>%s" % snappingResults[0].layer.name() + "</b>"
-            if nSnappingResults > 1:
-                layers = []
-                message += " Nearby: "
-                for res in snappingResults[1:]:
-                    layerName = res.layer.name()
-                    if layerName not in layers:
-                        message += res.layer.name() + ", "
-                        layers.append(layerName)
-                message = message[:-2]
-        if self.messageWidgetExist:
-            self.messageWidget.setText(message)
+            message = 'Snapped to: <b>{}</b>'.format(match.layer())
+        self.messageWidget.setText(message)
 
     def canvasMoveEvent(self, mouseEvent):
-        snappedPoint = self.snapToLayers(mouseEvent.pos())
-        if snappedPoint is None:
-            self.rubber.reset()
-        else:
-            self.rubber.setToGeometry(QgsGeometry().fromPoint(snappedPoint), None)
+        match = self.snap_to_vertex(mouseEvent.pos())
+        self.rubber.reset(QGis.Point)
+        if match.type() == QgsPointLocator.Vertex and match.layer() != self.lineLayer:
+            self.rubber.addPoint(match.point())
+        self.displaySnapInfo(match)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
             return
-        pixPoint = mouseEvent.pos()
-        mapPoint = self.toMapCoordinates(pixPoint)
-        #snap to layers
-        mapPoint = self.snapToLayers(pixPoint, mapPoint)
-        self.rubber.setToGeometry(QgsGeometry().fromPoint(mapPoint), None)
-        distance = Distance(self.iface, mapPoint, 1)
-        dlg = DistanceDialog(distance, self.mapCanvas)
+        match = self.snap_to_vertex(mouseEvent.pos())
+        if match.type() != QgsPointLocator.Vertex and match.layer() != self.lineLayer:
+            point = self.toMapCoordinates(mouseEvent.pos())
+        else:
+            point = match.point()
+        self.rubber.addPoint(point)
+        distance = Distance(self.iface, point, 1)
+        dlg = DistanceDialog(distance, self.canvas())
         if dlg.exec_():
             distance.save()
         self.rubber.reset()
 
-    def snapToLayers(self, pixPoint, initPoint=None):
-        self.snapping = self.settings.value("obsDistanceSnapping")
+    def snap_to_vertex(self, pos):
+        """ Temporarily override snapping config and snap to vertices and edges
+         of any editable vector layer, to allow selection of node for editing
+         (if snapped to edge, it would offer creation of a new vertex there).
+        """
+        map_point = self.toMapCoordinates(pos)
+        tol = QgsTolerance.vertexSearchRadius(self.canvas().mapSettings())
+        snap_type = QgsPointLocator.Type(QgsPointLocator.Vertex)
 
-        if self.snapping == "no":
-            return initPoint
+        snap_layers = []
+        for layer in self.canvas().layers():
+            if not isinstance(layer, QgsVectorLayer):
+                continue
+            snap_layers.append(QgsSnappingUtils.LayerConfig(
+                layer, snap_type, tol, QgsTolerance.ProjectUnits))
 
-        if self.snapping == "project":
-            ok, snappingResults = QgsMapCanvasSnapper(self.mapCanvas).snapToBackgroundLayers(pixPoint, [])
-            self.displaySnapInfo(snappingResults)
-            if ok == 0 and len(snappingResults) > 0:
-                return QgsPoint(snappingResults[0].snappedVertex)
-            else:
-                return initPoint
+        snap_util = self.canvas().snappingUtils()
+        old_layers = snap_util.layers()
+        old_mode = snap_util.snapToMapMode()
+        old_inter = snap_util.snapOnIntersections()
+        snap_util.setLayers(snap_layers)
+        snap_util.setSnapToMapMode(QgsSnappingUtils.SnapAdvanced)
+        snap_util.setSnapOnIntersections(True)
+        m = snap_util.snapToMap(map_point)
+        snap_util.setLayers(old_layers)
+        snap_util.setSnapToMapMode(old_mode)
+        snap_util.setSnapOnIntersections(old_inter)
+        return m
 
-        if self.snapping == "all":
-            if len(self.snapperList) == 0:
-                return initPoint
-            snapper = QgsSnapper(self.mapCanvas.mapRenderer())
-            snapper.setSnapLayers(self.snapperList)
-            snapper.setSnapMode(QgsSnapper.SnapWithResultsWithinTolerances)
-            ok, snappingResults = snapper.snapPoint(pixPoint, [])
-            self.displaySnapInfo(snappingResults)
-            if ok == 0 and len(snappingResults) > 0:
-                return QgsPoint(snappingResults[0].snappedVertex)
-            else:
-                return initPoint

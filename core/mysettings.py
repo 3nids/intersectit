@@ -38,7 +38,6 @@ class MySettings(SettingManager):
         SettingManager.__init__(self, pluginName)
          
         # Global settings
-        self.add_setting( String( 'obsDistanceSnapping', Scope.Global, 'all') )
         self.add_setting( Double( 'obsDefaultPrecisionDistance', Scope.Global, .025) )
         self.add_setting( Double( 'obsDefaultPrecisionOrientation', Scope.Global, .5) )
         self.add_setting( Double( 'obsOrientationLength', Scope.Global, 4) )

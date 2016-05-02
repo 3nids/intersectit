@@ -1,4 +1,4 @@
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 #
 # Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
@@ -7,7 +7,7 @@
 # Copyright    : (C) 2013 Denis Rouzaud
 # Email        : denis.rouzaud@gmail.com
 #
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 #
 # licensed under the terms of GNU GPL 2
 #
@@ -25,14 +25,12 @@
 # with this progsram; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
+
 
 from qgis.core import QgsPoint, QgsGeometry, QgsFeature
-
 from datetime import datetime
-
 from memorylayers import MemoryLayers
-
 
 
 class Observation():
@@ -72,19 +70,22 @@ class Observation():
         f["observation"] = self.observation
         f["precision"] = self.precision
         f.setGeometry(self.geometry())
-        self.lineLayer.dataProvider().addFeatures([f])
+        ok, l = self.lineLayer.dataProvider().addFeatures([f])
         self.lineLayer.updateExtents()
         self.lineLayer.setCacheImage(None)
         self.lineLayer.triggerRepaint()
+        self.lineLayer.featureAdded.emit(l[0].id())  # emit signal so feature is added to snapping index
 
         # center
         f = QgsFeature()
         fields = self.pointLayer.dataProvider().fields()
         f.setFields(fields)
         f["id"] = self.id
-        f.setGeometry(QgsGeometry().fromPoint(self.point))
+        ok, l = f.setGeometry(QgsGeometry().fromPoint(self.point))
         self.pointLayer.dataProvider().addFeatures([f])
         self.pointLayer.updateExtents()
         self.pointLayer.setCacheImage(None)
         self.pointLayer.triggerRepaint()
+        self.pointLayer.featureAdded.emit(l[0].id())  # emit signal so feature is added to snapping index
+
 
