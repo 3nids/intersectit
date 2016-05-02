@@ -28,12 +28,11 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsSnapper, QgsFeature, QgsFeatureRequest
+from qgis.core import QGis, QgsMapLayer, QgsTolerance, QgsFeature, QgsFeatureRequest, QgsPointLocator, QgsSnappingUtils, QgsVectorLayer
 from qgis.gui import QgsRubberBand, QgsMapTool
 
 from ..core.orientation import Orientation
 from ..core.mysettings import MySettings
-from ..core.isfeaturerendered import isFeatureRendered
 
 from orientationdialog import OrientationDialog
 
@@ -56,68 +55,69 @@ class OrientationMapTool(QgsMapTool):
         QgsMapTool.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
-        orientation = self.getOrientation(mouseEvent.pos())
-        if orientation is None:
+        ori = self.get_orientation(mouseEvent.pos())
+        if ori is None:
             self.rubber.reset()
         else:
-            self.rubber.setToGeometry(orientation.geometry(), None)
+            self.rubber.setToGeometry(ori.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
             self.rubber.reset()
             return
-        orientation = self.getOrientation(mouseEvent.pos())
-        if orientation is None:
+        ori = self.get_orientation(mouseEvent.pos())
+        if ori is None:
             self.rubber.reset()
             return
-        dlg = OrientationDialog(orientation, self.rubber)
+        dlg = OrientationDialog(ori, self.rubber)
         if dlg.exec_():
-            if orientation.length != 0:
-                orientation.save()
+            if ori.length != 0:
+                ori.save()
         self.rubber.reset()
 
-    def getOrientation(self, pixPoint):
-        snapperList = []
-        scale = self.iface.mapCanvas().mapRenderer().scale()
-        for layer in self.iface.mapCanvas().layers():
-            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                if layer.geometryType() in (QGis.Line, QGis.Polygon):
-                    if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
-                        snapLayer = QgsSnapper.SnapLayer()
-                        snapLayer.mLayer = layer
-                        snapLayer.mSnapTo = QgsSnapper.SnapToSegment
-                        snapLayer.mTolerance = self.settings.value("selectTolerance")
-                        if self.settings.value("selectUnits") == "map":
-                            snapLayer.mUnitType = QgsTolerance.MapUnits
-                        else:
-                            snapLayer.mUnitType = QgsTolerance.Pixels
-                        snapperList.append(snapLayer)
-        if len(snapperList) == 0:
+    def get_orientation(self, pos):
+        match = self.snap_to_intersection(pos)
+        if not match.hasEdge():
             return None
-        snapper = QgsSnapper(self.canvas.mapRenderer())
-        snapper.setSnapLayers(snapperList)
-        snapper.setSnapMode(QgsSnapper.SnapWithOneResult)
+        vertices = match.edgePoints()
+        po = match.point()
+        dist = (po.sqrDist(vertices[0]), po.sqrDist(vertices[1]))
+        mindist = min(dist)
+        if mindist == 0:
+            return None
+        i = dist.index(mindist)
+        ve = vertices[i]
+        az = po.azimuth(ve)
+        return Orientation(self.iface, ve, az)
 
-        f = QgsFeature()
-        ok, snappingResults = snapper.snapPoint(pixPoint, [])
-        if ok == 0:
-            for result in snappingResults:
-                if result.layer.getFeatures(QgsFeatureRequest().setFilterFid(result.snappedAtGeometry)).nextFeature(f) is False:
-                    continue
-                if not isFeatureRendered(self.canvas, result.layer, f):
-                    continue
-                vertices = (result.afterVertex, result.beforeVertex)
-                po = result.snappedVertex
-                dist = (po.sqrDist(vertices[0]), po.sqrDist(vertices[1]))
-                mindist = min(dist)
-                if mindist == 0:
-                    return None
-                i = dist.index(mindist)
-                ve = vertices[i]
-                az = po.azimuth(ve)
-                return Orientation(self.iface, ve, az)
-        else:
-            return None
+    def snap_to_intersection(self, pos):
+        """ Temporarily override snapping config and snap to vertices and edges
+         of any editable vector layer, to allow selection of node for editing
+         (if snapped to edge, it would offer creation of a new vertex there).
+        """
+        map_point = self.toMapCoordinates(pos)
+        tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
+        snap_type = QgsPointLocator.Type(QgsPointLocator.Edge)
+
+        snap_layers = []
+        for layer in self.canvas.layers():
+            if not isinstance(layer, QgsVectorLayer):
+                continue
+            snap_layers.append(QgsSnappingUtils.LayerConfig(
+                layer, snap_type, tol, QgsTolerance.ProjectUnits))
+
+        snap_util = self.canvas.snappingUtils()
+        old_layers = snap_util.layers()
+        old_mode = snap_util.snapToMapMode()
+        old_inter = snap_util.snapOnIntersections()
+        snap_util.setLayers(snap_layers)
+        snap_util.setSnapToMapMode(QgsSnappingUtils.SnapAdvanced)
+        snap_util.setSnapOnIntersections(False)
+        m = snap_util.snapToMap(map_point)
+        snap_util.setLayers(old_layers)
+        snap_util.setSnapToMapMode(old_mode)
+        snap_util.setSnapOnIntersections(old_inter)
+        return m
 
 
 

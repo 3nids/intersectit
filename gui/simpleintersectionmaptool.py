@@ -27,11 +27,10 @@
 #
 #---------------------------------------------------------------------
 
-from qgis.core import QGis, QgsFeatureRequest, QgsFeature, QgsPoint, QgsGeometry, QgsMapLayerRegistry, QgsMapLayer, QgsTolerance, QgsSnapper
+from qgis.core import QGis, QgsFeatureRequest, QgsFeature, QgsPoint, QgsGeometry, QgsMapLayerRegistry, QgsMapLayer, QgsTolerance, QgsPointLocator, QgsVectorLayer, QgsSnappingUtils
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
-from ..core.isfeaturerendered import isFeatureRendered
 
 
 class SimpleIntersectionMapTool(QgsMapTool):
@@ -40,60 +39,29 @@ class SimpleIntersectionMapTool(QgsMapTool):
         self.mapCanvas = iface.mapCanvas()
         QgsMapTool.__init__(self, self.mapCanvas)
         self.settings = MySettings()
-        self.rubber = QgsRubberBand(self.mapCanvas)
+        self.rubber = QgsRubberBand(self.mapCanvas, QGis.Point)
 
     def deactivate(self):
         self.rubber.reset()
-        self.mapCanvas.layersChanged.disconnect(self.updateSnapperList)
-        self.mapCanvas.scaleChanged.disconnect(self.updateSnapperList)
         QgsMapTool.deactivate(self)
 
     def activate(self):
         QgsMapTool.activate(self)
         self.rubber.setWidth(self.settings.value("rubberWidth"))
         self.rubber.setColor(self.settings.value("rubberColor"))
-        self.updateSnapperList()
-        self.mapCanvas.layersChanged.connect(self.updateSnapperList)
-        self.mapCanvas.scaleChanged.connect(self.updateSnapperList)
         self.checkLayer()
-
-    def updateSnapperList(self, dummy=None):
-        # make a snapper list of all line and polygons layers
-        self.snapperList = []
-        scale = self.iface.mapCanvas().mapRenderer().scale()
-        for layer in self.mapCanvas.layers():
-            if layer.type() == QgsMapLayer.VectorLayer and layer.hasGeometryType():
-                if layer.geometryType() in (QGis.Line, QGis.Polygon):
-                    if not layer.hasScaleBasedVisibility() or layer.minimumScale() < scale <= layer.maximumScale():
-                        snapLayer = QgsSnapper.SnapLayer()
-                        snapLayer.mLayer = layer
-                        snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
-                        snapLayer.mTolerance = self.settings.value("selectTolerance")
-                        if self.settings.value("selectUnits") == "map":
-                            snapLayer.mUnitType = QgsTolerance.MapUnits
-                        else:
-                            snapLayer.mUnitType = QgsTolerance.Pixels
-                        self.snapperList.append(snapLayer)
 
     def canvasMoveEvent(self, mouseEvent):
         # put the observations within tolerance in the rubber band
-        self.rubber.reset()
-        for f in self.getFeatures(mouseEvent.pos()):
-            self.rubber.addGeometry(f.geometry(), None)
+        self.rubber.reset(QGis.Point)
+        match = self.snap_to_intersection(mouseEvent.pos())
+        if match.type() == QgsPointLocator.Vertex and match.layer() is None:
+            self.rubber.addPoint(match.point())
 
     def canvasPressEvent(self, mouseEvent):
         self.rubber.reset()
-        pos = mouseEvent.pos()
-        features = self.getFeatures(pos)
-        nFeat = len(features)
-        if nFeat < 2:
-            layerNames = " , ".join([feature.layer.name() for feature in features])
-            self.iface.messageBar().pushMessage("Intersect It", "You need 2 features to proceed a simple intersection."
-                                                " %u given (%s)" % (nFeat, layerNames), QgsMessageBar.WARNING, 3)
-            return
-        intersectionP = self.intersection(features, pos)
-        if intersectionP == QgsPoint(0,0):
-            self.iface.messageBar().pushMessage("Intersect It", "Objects do not intersect.", QgsMessageBar.WARNING, 2)
+        match = self.snap_to_intersection(mouseEvent.pos())
+        if match.type() != QgsPointLocator.Vertex or match.layer() is not None:
             return
 
         layer = self.checkLayer()
@@ -103,60 +71,38 @@ class SimpleIntersectionMapTool(QgsMapTool):
         initFields = layer.dataProvider().fields()
         f.setFields(initFields)
         f.initAttributes(initFields.size())
-        f.setGeometry(QgsGeometry().fromPoint(intersectionP))
+        f.setGeometry(QgsGeometry().fromPoint(match.point()))
         layer.editBuffer().addFeature(f)
         layer.triggerRepaint()
 
-    def getFeatures(self, pixPoint):
-        # do the snapping
-        snapper = QgsSnapper(self.mapCanvas.mapRenderer())
-        snapper.setSnapLayers(self.snapperList)
-        snapper.setSnapMode(QgsSnapper.SnapWithResultsWithinTolerances)
-        ok, snappingResults = snapper.snapPoint(pixPoint, [])
-        # output snapped features
-        features = []
-        alreadyGot = []
-        for result in snappingResults:
-            featureId = result.snappedAtGeometry
-            f = QgsFeature()
-            if (result.layer.id(), featureId) not in alreadyGot:
-                if result.layer.getFeatures(QgsFeatureRequest().setFilterFid(featureId)).nextFeature(f) is False:
-                    continue
-                if not isFeatureRendered(self.mapCanvas, result.layer, f):
-                    continue
-                features.append(QgsFeature(f))
-                features[-1].layer = result.layer
-                alreadyGot.append((result.layer.id(), featureId))
-        return features
+    def snap_to_intersection(self, pos):
+        """ Temporarily override snapping config and snap to vertices and edges
+         of any editable vector layer, to allow selection of node for editing
+         (if snapped to edge, it would offer creation of a new vertex there).
+        """
+        map_point = self.toMapCoordinates(pos)
+        tol = QgsTolerance.vertexSearchRadius(self.canvas().mapSettings())
+        snap_type = QgsPointLocator.Type(QgsPointLocator.Edge)
 
-    def intersection(self, features, pos):
-        # try all the combinations
-        nFeat = len(features)
-        intersections = []
-        for i in range(nFeat-1):
-            for j in range(i+1,nFeat):
-                intersection = features[i].geometry().intersection(features[j].geometry())
-                intersectionMP = intersection.asMultiPoint()
-                intersectionP = intersection.asPoint()
-                if len(intersectionMP) == 0:
-                    intersectionMP = intersection.asPolyline()
-                if len(intersectionMP) == 0 and intersectionP == QgsPoint(0, 0):
-                    continue
-                if len(intersectionMP) > 1:
-                    mousePoint = self.toMapCoordinates(pos)
-                    intersectionP = intersectionMP[0]
-                    for point in intersectionMP[1:]:
-                        if mousePoint.sqrDist(point) < mousePoint.sqrDist(intersectionP):
-                            intersectionP = QgsPoint(point.x(), point.y())
-                if intersectionP != QgsPoint(0,0):
-                    intersections.append(intersectionP)
-        if len(intersections) == 0:
-            return QgsPoint(0,0)
-        intersectionP = intersections[0]
-        for point in intersections[1:]:
-            if mousePoint.sqrDist(point) < mousePoint.sqrDist(intersectionP):
-                intersectionP = QgsPoint(point.x(), point.y())
-        return intersectionP
+        snap_layers = []
+        for layer in self.canvas().layers():
+            if not isinstance(layer, QgsVectorLayer):
+                continue
+            snap_layers.append(QgsSnappingUtils.LayerConfig(
+                layer, snap_type, tol, QgsTolerance.ProjectUnits))
+
+        snap_util = self.canvas().snappingUtils()
+        old_layers = snap_util.layers()
+        old_mode = snap_util.snapToMapMode()
+        old_inter = snap_util.snapOnIntersections()
+        snap_util.setLayers(snap_layers)
+        snap_util.setSnapToMapMode(QgsSnappingUtils.SnapAdvanced)
+        snap_util.setSnapOnIntersections(True)
+        m = snap_util.snapToMap(map_point)
+        snap_util.setLayers(old_layers)
+        snap_util.setSnapToMapMode(old_mode)
+        snap_util.setSnapOnIntersections(old_inter)
+        return m
 
     def checkLayer(self):
         # check output layer is defined
