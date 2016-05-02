@@ -1,4 +1,9 @@
 
+### 3.5 02.05.2016
+
+* use new snapping API (QGIS min 2.8)
+* improved handling of the settings
+
 ### 3.4.2 23.10.2014
 
 * added spanish translation (thanks to Lucas Alonso)

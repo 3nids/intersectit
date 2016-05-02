@@ -1,9 +1,10 @@
 
 [general]
 name=Intersect It
-description=Intersect It Intersect is a QGIS plugin to construct points by intersecting distances and orientations and to draw dimensions.
-version=3.4.2
-qgisMinimumVersion=2.0
+description=Intersect It is a QGIS plugin to construct points by intersection.
+about=Intersect It is a QGIS plugin to construct points by with simple intersection from any layer of the map or by advanced intersection using 2 or more observations (distances and orientations). Advanced intersection is perfomed using a Least-Squares approach. Dimensions can also be saved from observations.
+version=3.5
+qgisMinimumVersion=2.8
 
 experimental=False
 icon=icons/intersectit-128.png
