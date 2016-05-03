@@ -1,6 +1,11 @@
 
 ### 3.5 02.05.2016
 
+* use new snapping API (part 2)
+* use new legend API
+
+### 3.5 02.05.2016
+
 * use new snapping API (QGIS min 2.8)
 * improved handling of the settings
 
