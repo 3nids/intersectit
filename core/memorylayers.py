@@ -1,4 +1,4 @@
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 #
 # Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
@@ -7,7 +7,7 @@
 # Copyright    : (C) 2013 Denis Rouzaud
 # Email        : denis.rouzaud@gmail.com
 #
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 #
 # licensed under the terms of GNU GPL 2
 #
@@ -25,10 +25,10 @@
 # with this progsram; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 
-from qgis.core import QgsMapLayerRegistry, QgsVectorLayer
-
+from PyQt4.QtCore import Qt
+from qgis.core import QgsMapLayerRegistry, QgsVectorLayer, QgsProject
 from mysettings import MySettings
 
 
@@ -36,6 +36,11 @@ class MemoryLayers():
     def __init__(self, iface):
         self.iface = iface
         self.settings = MySettings()
+
+    def setLayerVisible(self, layer):
+        root = QgsProject.instance().layerTreeRoot()
+        node = root.findLayer(layer.id())
+        node.setVisible(Qt.Checked)
 
     def lineLayer(self):
         layerID = self.settings.value("memoryLineLayer")
@@ -48,7 +53,7 @@ class MemoryLayers():
             layer.featureDeleted.connect(self.__lineLayerFeatureDeleted)
             self.settings.setValue("memoryLineLayer", layer.id())
         else:
-            self.iface.legendInterface().setLayerVisible(layer, True)
+            self.setLayerVisible(layer)
         return layer
 
     def __lineLayerDeleted(self):
@@ -68,7 +73,7 @@ class MemoryLayers():
             layer.layerDeleted.connect(self.__pointLayerDeleted)
             self.settings.setValue("memoryPointLayer", layer.id())
         else:
-            self.iface.legendInterface().setLayerVisible(layer, True)
+            self.setLayerVisible(layer)
         return layer
 
     def __pointLayerDeleted(self):
