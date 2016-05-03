@@ -81,8 +81,8 @@ class Observation():
         fields = self.pointLayer.dataProvider().fields()
         f.setFields(fields)
         f["id"] = self.id
-        ok, l = f.setGeometry(QgsGeometry().fromPoint(self.point))
-        self.pointLayer.dataProvider().addFeatures([f])
+        f.setGeometry(QgsGeometry().fromPoint(self.point))
+        ok, l = self.pointLayer.dataProvider().addFeatures([f])
         self.pointLayer.updateExtents()
         self.pointLayer.setCacheImage(None)
         self.pointLayer.triggerRepaint()
