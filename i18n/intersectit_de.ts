@@ -137,182 +137,162 @@
 <context>
     <name>Settings</name>
     <message>
-        <location filename="ui_settings.py" line="297"/>
+        <location filename="ui_settings.py" line="288"/>
         <source>Intersect It :: settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="308"/>
+        <location filename="ui_settings.py" line="299"/>
         <source>General</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="298"/>
+        <location filename="ui_settings.py" line="289"/>
         <source>Map</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="299"/>
+        <location filename="ui_settings.py" line="290"/>
         <source>select objects within</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="300"/>
+        <location filename="ui_settings.py" line="291"/>
         <source>pixels</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="301"/>
+        <location filename="ui_settings.py" line="292"/>
         <source>map units</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="302"/>
+        <location filename="ui_settings.py" line="293"/>
         <source>None</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="303"/>
+        <location filename="ui_settings.py" line="294"/>
         <source>+</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="304"/>
+        <location filename="ui_settings.py" line="295"/>
         <source>X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="305"/>
+        <location filename="ui_settings.py" line="296"/>
         <source>&#xe2;&#x96;&#xa1;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="306"/>
+        <location filename="ui_settings.py" line="297"/>
         <source>O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="307"/>
+        <location filename="ui_settings.py" line="298"/>
         <source>rubber band size and color</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="318"/>
+        <location filename="ui_settings.py" line="305"/>
         <source>Observations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="309"/>
+        <location filename="ui_settings.py" line="300"/>
         <source>Distances</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="310"/>
-        <source>Snapping</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui_settings.py" line="311"/>
-        <source>no</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui_settings.py" line="312"/>
-        <source>according to project settings</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui_settings.py" line="313"/>
-        <source>on vertex of all layers</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="ui_settings.py" line="314"/>
+        <location filename="ui_settings.py" line="301"/>
         <source>Default precision for distances [m]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="315"/>
+        <location filename="ui_settings.py" line="302"/>
         <source>Orientations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="316"/>
+        <location filename="ui_settings.py" line="303"/>
         <source>Default precision for orientations [&#xc2;&#xb0;]</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="317"/>
+        <location filename="ui_settings.py" line="304"/>
         <source>Length of drawn line</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="327"/>
+        <location filename="ui_settings.py" line="314"/>
         <source>Intersection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="319"/>
+        <location filename="ui_settings.py" line="306"/>
         <source>Advanced intersection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="320"/>
+        <location filename="ui_settings.py" line="307"/>
         <source>write intersection report in field</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="326"/>
+        <location filename="ui_settings.py" line="313"/>
         <source>write point in layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="322"/>
+        <location filename="ui_settings.py" line="309"/>
         <source>m</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="323"/>
+        <location filename="ui_settings.py" line="310"/>
         <source>Least-squares Convergence threshold</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="324"/>
+        <location filename="ui_settings.py" line="311"/>
         <source>Maximum iterations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="325"/>
+        <location filename="ui_settings.py" line="312"/>
         <source>Simple intersection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="336"/>
+        <location filename="ui_settings.py" line="323"/>
         <source>Dimensions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="328"/>
+        <location filename="ui_settings.py" line="315"/>
         <source>place orientation dimensions</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="333"/>
+        <location filename="ui_settings.py" line="320"/>
         <source>in layer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="334"/>
+        <location filename="ui_settings.py" line="321"/>
         <source>place observation value in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="335"/>
+        <location filename="ui_settings.py" line="322"/>
         <source>place precision in</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ui_settings.py" line="332"/>
+        <location filename="ui_settings.py" line="319"/>
         <source>place distance dimensions</source>
         <translation type="unfinished"></translation>
     </message>

@@ -42,9 +42,6 @@ class MySettingsDialog(QDialog, Ui_Settings, SettingDialog):
         QDialog.__init__(self)
         self.setupUi(self)
         self.settings = MySettings()
-        self.obsDistanceSnapping.setItemData(0, "no")
-        self.obsDistanceSnapping.setItemData(1, "project")
-        self.obsDistanceSnapping.setItemData(2, "all")
 
         # distance combos
         self.dimensionDistanceLayer.setFilters(QgsMapLayerProxyModel.LineLayer)
