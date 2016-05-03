@@ -1,4 +1,4 @@
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 #
 # Intersect It is a QGIS plugin to place observations (distance or orientation)
 # with their corresponding precision, intersect them using a least-squares solution
@@ -7,7 +7,7 @@
 # Copyright    : (C) 2013 Denis Rouzaud
 # Email        : denis.rouzaud@gmail.com
 #
-#-----------------------------------------------------------
+# -----------------------------------------------------------
 #
 # licensed under the terms of GNU GPL 2
 #
@@ -25,7 +25,7 @@
 # with this progsram; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-#---------------------------------------------------------------------
+# ---------------------------------------------------------------------
 
 from PyQt4.QtCore import pyqtSignature
 from PyQt4.QtGui import QDialog
