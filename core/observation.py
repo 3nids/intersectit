@@ -36,8 +36,8 @@ from memory_layers import MemoryLayers
 class Observation():
     def __init__(self, iface, obsType, point, observation, precision):
         memoryLayers = MemoryLayers(iface)
-        self.lineLayer = memoryLayers.lineLayer()
-        self.pointLayer = memoryLayers.pointLayer()
+        self.lineLayer = memoryLayers.line_layer()
+        self.pointLayer = memoryLayers.point_layer()
 
         # generate ID;
         self.id = datetime.now().strftime("%Y%m%d%H%M%S%f")

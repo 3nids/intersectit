@@ -57,7 +57,7 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         QgsMapTool.activate(self)
         self.rubber.setWidth(self.settings.value("rubberWidth"))
         self.rubber.setColor(self.settings.value("rubberColor"))
-        lineLayer = MemoryLayers(self.iface).lineLayer()
+        lineLayer = MemoryLayers(self.iface).line_layer()
         # unset this tool if the layer is removed
         lineLayer.layerDeleted.connect(self.unsetMapTool)
         self.layerId = lineLayer.id()

@@ -48,9 +48,6 @@ class IntersectIt ():
     def __init__(self, iface):
         self.iface = iface
         self.mapCanvas = iface.mapCanvas()
-        memLay = MemoryLayers(iface)
-        lineLayer = MemoryLayers(iface).lineLayer
-        pointLayer = MemoryLayers(iface).pointLayer
 
         # Initialise the translation environment.
         userPluginPath = QFileInfo(QgsApplication.qgisUserDbFilePath()).path()+"/python/plugins/intersectit"
@@ -58,9 +55,9 @@ class IntersectIt ():
         locale = QSettings().value("locale/userLocale")
         myLocale = locale[0:2]
         if QFileInfo(userPluginPath).exists():
-            pluginPath = userPluginPath+"/i18n/intersectit_"+myLocale+".qm"
+            pluginPath = '{}/i18n/intersectit_{}.qm'.format(userPluginPath, myLocale)
         elif QFileInfo(systemPluginPath).exists():
-            pluginPath = systemPluginPath+"/i18n/intersectit_"+myLocale+".qm"
+            pluginPath = '{}/i18n/intersectit_{}.qm'.format(systemPluginPath, myLocale)
         self.localePath = pluginPath
         if QFileInfo(self.localePath).exists():
             self.translator = QTranslator()
@@ -139,7 +136,7 @@ class IntersectIt ():
         self.cleanerAction = QAction(QIcon(":/plugins/intersectit/icons/eraser.svg"),
                                      QCoreApplication.translate("IntersectIt", "erase construction features"),
                                      self.iface.mainWindow())
-        self.cleanerAction.triggered.connect(self.cleanMemoryLayers)
+        self.cleanerAction.triggered.connect(self.clean_memory_layers)
         self.toolBar.addAction(self.cleanerAction)
         self.iface.addPluginToMenu("&Intersect It", self.cleanerAction)
         # help
@@ -173,11 +170,7 @@ class IntersectIt ():
         self.iface.removeToolBarIcon(self.cleanerAction)
         self.iface.removeToolBarIcon(self.helpAction)
         del self.toolBar
-        try:
-            QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
-            QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer().id())
-        except AttributeError:
-            return
+        MemoryLayers(self.iface).remove_layers()
 
     def setMapTool(self, action):
         if action == self.distanceAction:
@@ -193,12 +186,8 @@ class IntersectIt ():
         if action == self.dimensionOrientationAction:
             self.mapCanvas.setMapTool(self.dimensionOrientationMapTool)
 
-    def cleanMemoryLayers(self):
-        for layer in (self.lineLayer(), self.pointLayer()):
-            layer.selectAll()
-            ids = layer.selectedFeaturesIds()
-            layer.dataProvider().deleteFeatures(ids)
-        self.mapCanvas.refresh()
+    def clean_memory_layers(self):
+        MemoryLayers(self.iface).clean_layers()
 
     def showSettings(self):
         MySettingsDialog().exec_()

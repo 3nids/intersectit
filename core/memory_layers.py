@@ -37,35 +37,52 @@ class MemoryLayers():
         self.iface = iface
         self.settings = MySettings()
 
-    def setLayerVisible(self, layer):
+    def set_layer_visible(self, layer):
         root = QgsProject.instance().layerTreeRoot()
         node = root.findLayer(layer.id())
         node.setVisible(Qt.Checked)
+        
+    def remove_layers(self):
+        try:
+            QgsMapLayerRegistry.instance().removeMapLayer(self.settings.value("memoryLineLayer"))
+            QgsMapLayerRegistry.instance().removeMapLayer(self.settings.value("memoryPointLayer"))
+        except AttributeError:
+            return
+        
+    def clean_layers(self):
+        for layer_name in ('memoryLineLayer', 'memoryPointLayer'):
+            layer_id = self.settings.value(layer_name)
+            layer = QgsMapLayerRegistry.instance().mapLayer(layer_id)
+            layer.selectAll()
+            fids = layer.selectedFeaturesIds()
+            layer.dataProvider().deleteFeatures(fids)
+            layer.featuresDeleted.emit(fids)
+        self.iface.mapCanvas.refresh()
 
-    def lineLayer(self):
-        layerID = self.settings.value("memoryLineLayer")
-        layer = QgsMapLayerRegistry.instance().mapLayer(layerID)
+    def line_layer(self):
+        layer_id = self.settings.value("memoryLineLayer")
+        layer = QgsMapLayerRegistry.instance().mapLayer(layer_id)
         if layer is None:
             epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
             layer = QgsVectorLayer("LineString?crs=%s&field=id:string&field=type:string&field=x:double&field=y:double&field=observation:double&field=precision:double&index=yes" % epsg, "IntersectIt Lines", "memory")
             QgsMapLayerRegistry.instance().addMapLayer(layer)
-            layer.layerDeleted.connect(self.__lineLayerDeleted)
-            layer.featureDeleted.connect(self.__lineLayerFeatureDeleted)
+            layer.layerDeleted.connect(self.__line_layer_deleted)
+            layer.featureDeleted.connect(self.__line_layer_feature_deleted)
             self.settings.setValue("memoryLineLayer", layer.id())
         else:
-            self.setLayerVisible(layer)
+            self.set_layer_visible(layer)
         return layer
 
-    def __lineLayerDeleted(self):
+    def __line_layer_deleted(self):
         self.settings.setValue("memoryLineLayer", "")
 
-    def __lineLayerFeatureDeleted(self, fid):
+    def __line_layer_feature_deleted(self, fid):
         # todo: delete corresponding feature in other layer
         print "hay"
 
-    def pointLayer(self):
-        layerID = self.settings.value("memoryPointLayer")
-        layer = QgsMapLayerRegistry.instance().mapLayer(layerID)
+    def point_layer(self):
+        layer_id = self.settings.value("memoryPointLayer")
+        layer = QgsMapLayerRegistry.instance().mapLayer(layer_id)
         if layer is None:
             epsg = self.iface.mapCanvas().mapRenderer().destinationCrs().authid()
             layer = QgsVectorLayer("Point?crs=%s&field=id:string&index=yes" % epsg, "IntersectIt Points", "memory")
@@ -73,7 +90,7 @@ class MemoryLayers():
             layer.layerDeleted.connect(self.__pointLayerDeleted)
             self.settings.setValue("memoryPointLayer", layer.id())
         else:
-            self.setLayerVisible(layer)
+            self.set_layer_visible(layer)
         return layer
 
     def __pointLayerDeleted(self):

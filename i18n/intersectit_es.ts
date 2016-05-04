@@ -3,77 +3,77 @@
 <context>
     <name>IntersectIt</name>
     <message>
-        <location filename="intersectit.py" line="75"/>
+        <location filename="intersectit_plugin.py" line="72"/>
         <source>settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="80"/>
+        <location filename="intersectit_plugin.py" line="77"/>
         <source>place distance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="88"/>
+        <location filename="intersectit_plugin.py" line="85"/>
         <source>place orientation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="99"/>
+        <location filename="intersectit_plugin.py" line="96"/>
         <source>simple intersection of 2 objects</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="108"/>
+        <location filename="intersectit_plugin.py" line="105"/>
         <source>advanced intersection of 2+ observations</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="119"/>
+        <location filename="intersectit_plugin.py" line="116"/>
         <source>edit distance dimension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="128"/>
+        <location filename="intersectit_plugin.py" line="125"/>
         <source>edit orientation dimension</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="139"/>
+        <location filename="intersectit_plugin.py" line="136"/>
         <source>erase construction features</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectit.py" line="146"/>
+        <location filename="intersectit_plugin.py" line="143"/>
         <source>help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="advancedintersectionmaptool.py" line="132"/>
+        <location filename="advanced_intersection_maptool.py" line="132"/>
         <source>To place the intersection solution, you must select a layer in the settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="advancedintersectionmaptool.py" line="142"/>
+        <location filename="advanced_intersection_maptool.py" line="142"/>
         <source>To save the intersection report, please select a field for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="advancedintersectionmaptool.py" line="177"/>
+        <location filename="advanced_intersection_maptool.py" line="177"/>
         <source>To place dimensions, you must define a layer in the settings.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="advancedintersectionmaptool.py" line="189"/>
+        <location filename="advanced_intersection_maptool.py" line="189"/>
         <source>To save the observation in the layer, please select a field for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="advancedintersectionmaptool.py" line="200"/>
+        <location filename="advanced_intersection_maptool.py" line="200"/>
         <source>To save the precision of observation, please select a field for it.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="intersectiondialog.py" line="85"/>
+        <location filename="intersection_dialog.py" line="85"/>
         <source>No intersection can be done with less than 2 observations.</source>
         <translation type="unfinished"></translation>
     </message>

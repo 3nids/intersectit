@@ -41,12 +41,13 @@ from distance_dialog import DistanceDialog
 class DistanceMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
-        self.lineLayer = MemoryLayers(iface).lineLayer()
+        self.line_layer = None
         self.settings = MySettings()
         QgsMapTool.__init__(self, iface.mapCanvas())
 
     def activate(self):
         QgsMapTool.activate(self)
+        self.line_layer = MemoryLayers(self.iface).line_layer
         self.rubber = QgsRubberBand(self.canvas(), QGis.Point)
         self.rubber.setColor(self.settings.value("rubberColor"))
         self.rubber.setIcon(self.settings.value("rubberIcon"))
@@ -75,7 +76,7 @@ class DistanceMapTool(QgsMapTool):
     def canvasMoveEvent(self, mouseEvent):
         match = self.snap_to_vertex(mouseEvent.pos())
         self.rubber.reset(QGis.Point)
-        if match.type() == QgsPointLocator.Vertex and match.layer() != self.lineLayer:
+        if match.type() == QgsPointLocator.Vertex and match.layer() != self.line_layer:
             self.rubber.addPoint(match.point())
         self.displaySnapInfo(match)
 
@@ -83,7 +84,7 @@ class DistanceMapTool(QgsMapTool):
         if mouseEvent.button() != Qt.LeftButton:
             return
         match = self.snap_to_vertex(mouseEvent.pos())
-        if match.type() != QgsPointLocator.Vertex and match.layer() != self.lineLayer:
+        if match.type() != QgsPointLocator.Vertex and match.layer() != self.line_layer:
             point = self.toMapCoordinates(mouseEvent.pos())
         else:
             point = match.point()
