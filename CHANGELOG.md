@@ -1,5 +1,9 @@
 
-### 3.5 02.05.2016
+### 3.5.2 04.05.2016
+
+* fix creating layer on startup
+
+### 3.5.1 03.05.2016
 
 * use new snapping API (part 2)
 * use new legend API
