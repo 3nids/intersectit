@@ -29,7 +29,7 @@
 
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMessageBox
-from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint, QgsSnapper, QgsTolerance
+from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint, QgsTolerance, QgsSnappingUtils, QgsPointLocator
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
@@ -57,13 +57,13 @@ class AdvancedIntersectionMapTool(QgsMapTool):
         QgsMapTool.activate(self)
         self.rubber.setWidth(self.settings.value("rubberWidth"))
         self.rubber.setColor(self.settings.value("rubberColor"))
-        lineLayer = MemoryLayers(self.iface).line_layer()
+        line_layer = MemoryLayers(self.iface).line_layer()
         # unset this tool if the layer is removed
-        lineLayer.layerDeleted.connect(self.unsetMapTool)
-        self.layerId = lineLayer.id()
+        line_layer.layerDeleted.connect(self.unsetMapTool)
+        self.layerId = line_layer.id()
         # create snapper for this layer
         self.snapLayer = QgsSnapper.SnapLayer()
-        self.snapLayer.mLayer = lineLayer
+        self.snapLayer.mLayer = line_layer
         self.snapLayer.mSnapTo = QgsSnapper.SnapToVertexAndSegment
         self.snapLayer.mTolerance = self.settings.value("selectTolerance")
         if self.settings.value("selectUnits") == "map":
@@ -76,9 +76,9 @@ class AdvancedIntersectionMapTool(QgsMapTool):
 
     def deactivate(self):
         self.rubber.reset()
-        lineLayer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
-        if lineLayer is not None:
-            lineLayer.layerDeleted.disconnect(self.unsetMapTool)
+        line_layer = QgsMapLayerRegistry.instance().mapLayer(self.layerId)
+        if line_layer is not None:
+            line_layer.layerDeleted.disconnect(self.unsetMapTool)
         QgsMapTool.deactivate(self)
 
     def canvasMoveEvent(self, mouseEvent):
