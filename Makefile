@@ -50,7 +50,7 @@ GEN_FILES = ${UI_FILES} ${RC_FILES}
 all: $(GEN_FILES)
 
 $(UI_FILES): %.py: %.ui
-	python /usr/share/qgis/python/PyQt/uic/pyuic.py -o $@ $<
+	PYTHONPATH=$PYTHONPATH:/usr/share/qgis/python python -m qgis.PyQt.uic.pyuic -o $@ $<
 
 $(RC_FILES): %_rc.py: %.qrc
 	pyrcc4 -o $@ $<
@@ -85,7 +85,7 @@ zip: clean deploy dclean
 	rm -f $(PLUGINNAME)-$(VERSION).zip
 	cd $(QGISDIR)/python/plugins; zip -9r $(CURDIR)/$(PLUGINNAME)-$(VERSION).zip $(PLUGINNAME)
 
-publish: zip
+release: zip
 	$(OPEN) http://plugins.qgis.org/plugins/$(PLUGINNAME)/version/add/ &
 
 
