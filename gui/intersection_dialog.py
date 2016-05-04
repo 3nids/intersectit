@@ -35,7 +35,7 @@ from qgis.gui import QgsRubberBand
 from ..qgissettingmanager import SettingDialog, UpdateMode
 
 from ..core.mysettings import MySettings
-from ..core.leastsquares import LeastSquares
+from ..core.least_squares import LeastSquares
 from ..core.intersections import TwoCirclesIntersection, TwoOrientationIntersection, DistanceOrientationIntersection
 
 from ..ui.ui_intersection import Ui_Intersection

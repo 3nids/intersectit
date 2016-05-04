@@ -29,7 +29,7 @@
 
 
 def classFactory(iface):
-    from intersectit import IntersectIt
+    from intersectit_plugin import IntersectIt
     return IntersectIt(iface)
     
 

@@ -30,16 +30,16 @@
 
 from PyQt4.QtCore import QUrl, QCoreApplication, QFileInfo, QSettings, QTranslator
 from PyQt4.QtGui import QAction, QIcon, QDesktopServices
-from qgis.core import QgsApplication
+from qgis.core import QgsApplication, QgsMapLayerRegistry
 
-from core.memorylayers import MemoryLayers
+from core.memory_layers import MemoryLayers
 
-from gui.mysettingsdialog import MySettingsDialog
-from gui.dimensioneditmaptool import DimensionEditMapTool
-from gui.distancemaptool import DistanceMapTool
-from gui.orientationmaptool import OrientationMapTool
-from gui.advancedintersectionmaptool import AdvancedIntersectionMapTool
-from gui.simpleintersectionmaptool import SimpleIntersectionMapTool
+from gui.my_settings_dialog import MySettingsDialog
+from gui.dimension_edit_maptool import DimensionEditMapTool
+from gui.distance_maptool import DistanceMapTool
+from gui.orientation_maptool import OrientationMapTool
+from gui.advanced_intersection_maptool import AdvancedIntersectionMapTool
+from gui.simple_intersection_maptool import SimpleIntersectionMapTool
 
 import resources
 
@@ -49,8 +49,8 @@ class IntersectIt ():
         self.iface = iface
         self.mapCanvas = iface.mapCanvas()
         memLay = MemoryLayers(iface)
-        self.lineLayer = memLay.lineLayer
-        self.pointLayer = memLay.pointLayer
+        lineLayer = MemoryLayers(iface).lineLayer
+        pointLayer = MemoryLayers(iface).pointLayer
 
         # Initialise the translation environment.
         userPluginPath = QFileInfo(QgsApplication.qgisUserDbFilePath()).path()+"/python/plugins/intersectit"
@@ -174,9 +174,8 @@ class IntersectIt ():
         self.iface.removeToolBarIcon(self.helpAction)
         del self.toolBar
         try:
-            print "IntersecIt :: Removing temporary layer"
-            #QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
-            #QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer().id())
+            QgsMapLayerRegistry.instance().removeMapLayer(self.lineLayer().id())
+            QgsMapLayerRegistry.instance().removeMapLayer(self.pointLayer().id())
         except AttributeError:
             return
 

@@ -33,11 +33,11 @@ from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerReg
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
-from ..core.memorylayers import MemoryLayers
+from ..core.memory_layers import MemoryLayers
 from ..core.arc import Arc
 
-from mysettingsdialog import MySettingsDialog
-from intersectiondialog import IntersectionDialog
+from my_settings_dialog import MySettingsDialog
+from intersection_dialog import IntersectionDialog
 
 
 class AdvancedIntersectionMapTool(QgsMapTool):

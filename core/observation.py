@@ -30,7 +30,7 @@
 
 from qgis.core import QgsPoint, QgsGeometry, QgsFeature
 from datetime import datetime
-from memorylayers import MemoryLayers
+from memory_layers import MemoryLayers
 
 
 class Observation():

@@ -31,7 +31,7 @@ from qgis.core import QgsMapLayerRegistry, QgsTolerance, QgsPointLocator, QgsSna
 from qgis.gui import QgsRubberBand, QgsMapTool, QgsMessageBar
 
 from ..core.arc import Arc
-from ..core.orientationline import OrientationLine
+from ..core.orientation_line import OrientationLine
 from ..core.mysettings import MySettings
 
 

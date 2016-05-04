@@ -28,98 +28,96 @@
 #---------------------------------------------------------------------
 
 from PyQt4.QtCore import Qt
-from qgis.core import QGis, QgsGeometry, QgsPoint, QgsTolerance, QgsPointLocator, QgsVectorLayer, QgsSnappingUtils
-from qgis.gui import QgsRubberBand, QgsMapTool, QgsMapCanvasSnapper, QgsMessageBar
+from qgis.core import QGis, QgsTolerance, QgsPointLocator, QgsSnappingUtils, QgsVectorLayer
+from qgis.gui import QgsRubberBand, QgsMapTool
 
+from ..core.orientation import Orientation
 from ..core.mysettings import MySettings
-from ..core.distance import Distance
-from ..core.memorylayers import MemoryLayers
 
-from distancedialog import DistanceDialog
+from orientation_dialog import OrientationDialog
 
 
-class DistanceMapTool(QgsMapTool):
+class OrientationMapTool(QgsMapTool):
     def __init__(self, iface):
         self.iface = iface
-        self.lineLayer = MemoryLayers(iface).lineLayer()
         self.settings = MySettings()
-        QgsMapTool.__init__(self, iface.mapCanvas())
+        self.canvas = iface.mapCanvas()
+        self.rubber = QgsRubberBand(self.canvas)
+        QgsMapTool.__init__(self, self.canvas)
 
     def activate(self):
         QgsMapTool.activate(self)
-        self.rubber = QgsRubberBand(self.canvas(), QGis.Point)
+        self.rubber.setWidth(self.settings.value("rubberWidth"))
         self.rubber.setColor(self.settings.value("rubberColor"))
-        self.rubber.setIcon(self.settings.value("rubberIcon"))
-        self.rubber.setIconSize(self.settings.value("rubberSize"))
-        self.messageWidget = self.iface.messageBar().createMessage("Intersect It", "Not snapped.")
-        self.messageWidgetExist = True
-        self.messageWidget.destroyed.connect(self.messageWidgetRemoved)
 
     def deactivate(self):
-        self.iface.messageBar().popWidget(self.messageWidget)
         self.rubber.reset()
         QgsMapTool.deactivate(self)
 
-    def messageWidgetRemoved(self):
-        self.messageWidgetExist = False
-
-    def displaySnapInfo(self, match=None):
-        if not self.messageWidgetExist:
-            return
-        if match is None:
-            message = "No snap"
-        else:
-            message = 'Snapped to: <b>{}</b>'.format(match.layer())
-        self.messageWidget.setText(message)
-
     def canvasMoveEvent(self, mouseEvent):
-        match = self.snap_to_vertex(mouseEvent.pos())
-        self.rubber.reset(QGis.Point)
-        if match.type() == QgsPointLocator.Vertex and match.layer() != self.lineLayer:
-            self.rubber.addPoint(match.point())
-        self.displaySnapInfo(match)
+        ori = self.get_orientation(mouseEvent.pos())
+        if ori is None:
+            self.rubber.reset()
+        else:
+            self.rubber.setToGeometry(ori.geometry(), None)
 
     def canvasPressEvent(self, mouseEvent):
         if mouseEvent.button() != Qt.LeftButton:
+            self.rubber.reset()
             return
-        match = self.snap_to_vertex(mouseEvent.pos())
-        if match.type() != QgsPointLocator.Vertex and match.layer() != self.lineLayer:
-            point = self.toMapCoordinates(mouseEvent.pos())
-        else:
-            point = match.point()
-        self.rubber.addPoint(point)
-        distance = Distance(self.iface, point, 1)
-        dlg = DistanceDialog(distance, self.canvas())
+        ori = self.get_orientation(mouseEvent.pos())
+        if ori is None:
+            self.rubber.reset()
+            return
+        dlg = OrientationDialog(ori, self.rubber)
         if dlg.exec_():
-            distance.save()
+            if ori.length != 0:
+                ori.save()
         self.rubber.reset()
 
-    def snap_to_vertex(self, pos):
+    def get_orientation(self, pos):
+        match = self.snap_to_segment(pos)
+        if not match.hasEdge():
+            return None
+        vertices = match.edgePoints()
+        po = match.point()
+        dist = (po.sqrDist(vertices[0]), po.sqrDist(vertices[1]))
+        mindist = min(dist)
+        if mindist == 0:
+            return None
+        i = dist.index(mindist)
+        ve = vertices[i]
+        az = po.azimuth(ve)
+        return Orientation(self.iface, ve, az)
+
+    def snap_to_segment(self, pos):
         """ Temporarily override snapping config and snap to vertices and edges
          of any editable vector layer, to allow selection of node for editing
          (if snapped to edge, it would offer creation of a new vertex there).
         """
         map_point = self.toMapCoordinates(pos)
-        tol = QgsTolerance.vertexSearchRadius(self.canvas().mapSettings())
-        snap_type = QgsPointLocator.Type(QgsPointLocator.Vertex)
+        tol = QgsTolerance.vertexSearchRadius(self.canvas.mapSettings())
+        snap_type = QgsPointLocator.Type(QgsPointLocator.Edge)
 
         snap_layers = []
-        for layer in self.canvas().layers():
+        for layer in self.canvas.layers():
             if not isinstance(layer, QgsVectorLayer):
                 continue
             snap_layers.append(QgsSnappingUtils.LayerConfig(
                 layer, snap_type, tol, QgsTolerance.ProjectUnits))
 
-        snap_util = self.canvas().snappingUtils()
+        snap_util = self.canvas.snappingUtils()
         old_layers = snap_util.layers()
         old_mode = snap_util.snapToMapMode()
         old_inter = snap_util.snapOnIntersections()
         snap_util.setLayers(snap_layers)
         snap_util.setSnapToMapMode(QgsSnappingUtils.SnapAdvanced)
-        snap_util.setSnapOnIntersections(True)
+        snap_util.setSnapOnIntersections(False)
         m = snap_util.snapToMap(map_point)
         snap_util.setLayers(old_layers)
         snap_util.setSnapToMapMode(old_mode)
         snap_util.setSnapOnIntersections(old_inter)
         return m
+
+
 
