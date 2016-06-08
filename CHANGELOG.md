@@ -1,4 +1,8 @@
 
+### 3.5.3 08.06.2016
+
+* fix advanced intersection map tool (missing import)
+
 ### 3.5.2 04.05.2016
 
 * fix creating layer on startup
