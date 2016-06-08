@@ -29,7 +29,7 @@
 
 from PyQt4.QtCore import QCoreApplication
 from PyQt4.QtGui import QMessageBox
-from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint, QgsTolerance, QgsSnappingUtils, QgsPointLocator
+from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry, QgsMapLayerRegistry, QgsPoint, QgsTolerance, QgsSnapper, QgsSnappingUtils, QgsPointLocator
 from qgis.gui import QgsMapTool, QgsRubberBand, QgsMessageBar
 
 from ..core.mysettings import MySettings
