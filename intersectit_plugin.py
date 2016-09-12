@@ -54,6 +54,7 @@ class IntersectIt ():
         systemPluginPath = QgsApplication.prefixPath()+"/share/qgis/python/plugins/intersectit"
         locale = QSettings().value("locale/userLocale")
         myLocale = locale[0:2]
+        pluginPath = "" # default case
         if QFileInfo(userPluginPath).exists():
             pluginPath = '{}/i18n/intersectit_{}.qm'.format(userPluginPath, myLocale)
         elif QFileInfo(systemPluginPath).exists():
