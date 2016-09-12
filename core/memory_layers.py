@@ -57,7 +57,7 @@ class MemoryLayers():
             fids = layer.selectedFeaturesIds()
             layer.dataProvider().deleteFeatures(fids)
             layer.featuresDeleted.emit(fids)
-        self.iface.mapCanvas.refresh()
+        self.iface.mapCanvas().refresh()
 
     def line_layer(self):
         layer_id = self.settings.value("memoryLineLayer")
