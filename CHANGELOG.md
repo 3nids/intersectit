@@ -1,4 +1,8 @@
 
+### 3.5.4 07.09.2017
+
+* fix python crash
+
 ### 3.5.3 08.06.2016
 
 * fix advanced intersection map tool (missing import)
