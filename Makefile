@@ -15,15 +15,16 @@
 # CONFIGURATION
 
 # QGIS DIR
-QGISDIR = $(HOME)/.qgis2
+QGIS_DIR=$(HOME)/.qgis2
+QGIS_BUILD_DIR=/home/rouzaudd/opt/QGIS2/build
 
 # i18n
-LN_DIR = i18n
-TRANSLATED_LANG = fr de es
+LN_DIR=i18n
+TRANSLATED_LANG=fr de es
 
 # COMMAND TO RUN DEFAULT APPLICATION (launch a URL)
 # Linux 'open' or 'xdg-open' / OSX: 'open' / Win: 'start'
-OPEN = xdg-open
+OPEN=xdg-open
 
 
 
@@ -45,12 +46,12 @@ RC_FILES=$(join $(dir $(RC_SOURCES)), $(notdir $(RC_SOURCES:%.qrc=%_rc.py)))
 LN_SOURCES=$(wildcard *.ts) $(wildcard **/*.ts)
 LN_FILES=$(join $(dir $(LN_SOURCES)), $(notdir $(LN_SOURCES:%.ts=%.qm)))
 
-GEN_FILES = ${UI_FILES} ${RC_FILES}
+GEN_FILES=${UI_FILES} ${RC_FILES}
 
 all: $(GEN_FILES)
 
 $(UI_FILES): %.py: %.ui
-	PYTHONPATH=$(PYTHONPATH):/home/rouzaudd/opt/QGIS2/build/output/python python -m qgis.PyQt.uic.pyuic -o $@ $<
+	PYTHONPATH=$(PYTHONPATH):$(QGIS_BUILD_DIR)/output/python python -m qgis.PyQt.uic.pyuic -o $@ $<
 
 $(RC_FILES): %_rc.py: %.qrc
 	pyrcc4 -o $@ $<
@@ -68,22 +69,22 @@ transup:
 	$(foreach lang,$(TRANSLATED_LANG),pylupdate4 -noobsolete $(UI_SOURCES) $(PY_FILES) -ts $(LN_DIR)/$(PLUGINNAME)_$(lang).ts;)
 
 deploy: compile transup
-	mkdir -p $(QGISDIR)/python/plugins/$(PLUGINNAME)
-	cp -rvf * $(QGISDIR)/python/plugins/$(PLUGINNAME)/
-	rm -f $(QGISDIR)/python/plugins/$(PLUGINNAME)/$(PLUGINNAME)*.zip
+	mkdir -p $(QGIS_DIR)/python/plugins/$(PLUGINNAME)
+	cp -rvf * $(QGIS_DIR)/python/plugins/$(PLUGINNAME)/
+	rm -f $(QGIS_DIR)/python/plugins/$(PLUGINNAME)/$(PLUGINNAME)*.zip
 
 # The dclean target removes compiled python files from plugin directory
 dclean:
-	find $(QGISDIR)/python/plugins/$(PLUGINNAME) -iname "*.pyc" -delete
-	rm -f $(QGISDIR)/python/plugins/$(PLUGINNAME)/$(PLUGINNAME)*.zip
+	find $(QGIS_DIR)/python/plugins/$(PLUGINNAME) -iname "*.pyc" -delete
+	rm -f $(QGIS_DIR)/python/plugins/$(PLUGINNAME)/$(PLUGINNAME)*.zip
 
 # The derase deletes deployed plugin
 derase:
-	rm -Rf $(QGISDIR)/python/plugins/$(PLUGINNAME)
+	rm -Rf $(QGIS_DIR)/python/plugins/$(PLUGINNAME)
 
 zip: clean deploy dclean
 	rm -f $(PLUGINNAME)-$(VERSION).zip
-	cd $(QGISDIR)/python/plugins; zip -9r $(CURDIR)/$(PLUGINNAME)-$(VERSION).zip $(PLUGINNAME)
+	cd $(QGIS_DIR)/python/plugins; zip -9r $(CURDIR)/$(PLUGINNAME)-$(VERSION).zip $(PLUGINNAME)
 
 release: zip
 	$(OPEN) http://plugins.qgis.org/plugins/$(PLUGINNAME)/version/add/ &

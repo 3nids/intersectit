@@ -136,7 +136,7 @@
   <customwidget>
    <class>ObservationTable</class>
    <extends>QTableWidget</extends>
-   <header>..gui.observationtable</header>
+   <header>..gui.observation_table</header>
   </customwidget>
  </customwidgets>
  <resources/>

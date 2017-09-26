@@ -41,7 +41,7 @@ from gui.orientation_maptool import OrientationMapTool
 from gui.advanced_intersection_maptool import AdvancedIntersectionMapTool
 from gui.simple_intersection_maptool import SimpleIntersectionMapTool
 
-import resources
+import resources_rc
 
 
 class IntersectIt ():

@@ -1,4 +1,12 @@
 
+### 3.5.6 26.09.2017
+
+* fix several release issues
+
+### 3.5.5 07.09.2017
+
+* fix bad release
+
 ### 3.5.4 07.09.2017
 
 * fix python crash
